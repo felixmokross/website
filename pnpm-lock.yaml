@@ -6,6 +6,8 @@ settings:
 
 importers:
 
+  .: {}
+
   apps/website-cms:
     dependencies:
       '@payloadcms/db-mongodb':
