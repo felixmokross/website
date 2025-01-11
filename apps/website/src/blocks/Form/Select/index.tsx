@@ -1,28 +1,28 @@
-import type { SelectField } from '@payloadcms/plugin-form-builder/types'
-import type { Control, FieldErrorsImpl, FieldValues } from 'react-hook-form'
+import type { SelectField } from "@payloadcms/plugin-form-builder/types";
+import type { Control, FieldErrorsImpl, FieldValues } from "react-hook-form";
 
-import { Label } from '@/components/ui/label'
+import { Label } from "@/components/ui/label";
 import {
   Select as SelectComponent,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import React from 'react'
-import { Controller } from 'react-hook-form'
+} from "@/components/ui/select";
+import React from "react";
+import { Controller } from "react-hook-form";
 
-import { Error } from '../Error'
-import { Width } from '../Width'
+import { Error } from "../Error";
+import { Width } from "../Width";
 
 export const Select: React.FC<
   SelectField & {
-    control: Control<FieldValues, unknown>
+    control: Control<FieldValues, unknown>;
     errors: Partial<
       FieldErrorsImpl<{
-        [x: string]: unknown
+        [x: string]: unknown;
       }>
-    >
+    >;
   }
 > = ({ name, control, errors, label, options, required, width }) => {
   return (
@@ -33,10 +33,13 @@ export const Select: React.FC<
         defaultValue=""
         name={name}
         render={({ field: { onChange, value } }) => {
-          const controlledValue = options.find((t) => t.value === value)
+          const controlledValue = options.find((t) => t.value === value);
 
           return (
-            <SelectComponent onValueChange={(val) => onChange(val)} value={controlledValue?.value}>
+            <SelectComponent
+              onValueChange={(val) => onChange(val)}
+              value={controlledValue?.value}
+            >
               <SelectTrigger className="w-full" id={name}>
                 <SelectValue placeholder={label} />
               </SelectTrigger>
@@ -46,15 +49,15 @@ export const Select: React.FC<
                     <SelectItem key={value} value={value}>
                       {label}
                     </SelectItem>
-                  )
+                  );
                 })}
               </SelectContent>
             </SelectComponent>
-          )
+          );
         }}
         rules={{ required }}
       />
       {required && errors[name] && <Error />}
     </Width>
-  )
-}
+  );
+};
