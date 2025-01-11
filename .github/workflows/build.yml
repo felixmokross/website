@@ -101,6 +101,8 @@ jobs:
             --build-only \
             --image-label ${{ steps.image-name.outputs.image_tag }} \
             --label org.opencontainers.image.version=${{ steps.image-name.outputs.image_tag }} \
+            --env DATABASE_URI=${{ secrets.STAGING_DATABASE_URI }} \
+            --env PAYLOAD_SECRET=${{ secrets.STAGING_PAYLOAD_SECRET }} \
             --push \
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
