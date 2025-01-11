@@ -12,7 +12,7 @@ RUN corepack enable pnpm
 
 # Install dependencies
 COPY --link pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY --link apps/website website
+COPY --link apps/website apps/website
 RUN pnpm --filter website deploy website.deployed
 
 # Next.js collects completely anonymous telemetry data about general usage.
