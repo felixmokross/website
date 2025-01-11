@@ -14,6 +14,7 @@ import {
 } from "@payloadcms/richtext-lexical";
 import { searchFields } from "@/search/fieldOverrides";
 import { beforeSyncWithSearch } from "@/search/beforeSync";
+import { s3Storage } from "@payloadcms/storage-s3";
 
 import { Page, Post } from "@/payload-types";
 import { getServerSideURL } from "@/utilities/getURL";
@@ -100,4 +101,18 @@ export const plugins: Plugin[] = [
     },
   }),
   payloadCloudPlugin(),
+
+  s3Storage({
+    collections: {
+      media: true,
+    },
+    bucket: process.env.MEDIA_S3_BUCKET!,
+    config: {
+      credentials: {
+        accessKeyId: process.env.MEDIA_S3_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.MEDIA_S3_SECRET_ACCESS_KEY!,
+      },
+      region: process.env.MEDIA_S3_REGION!,
+    },
+  }),
 ];
