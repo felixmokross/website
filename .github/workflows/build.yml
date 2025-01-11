@@ -220,6 +220,7 @@ jobs:
             --image ${{ needs.website-build-push.outputs.image }} \
             --env MEDIA_S3_REGION=${{ env.MEDIA_S3_REGION }} \
             --env MEDIA_S3_BUCKET=${{ needs.define-env.outputs.s3_bucket }} \
+            --build-arg NEXT_PUBLIC_SERVER_URL=https://${{ needs.define-env.outputs.canonical_hostname_website }} \
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
