@@ -1,0 +1,15 @@
+name: "Setup"
+description: Sets up PNPM and Node.js
+runs:
+  using: "composite"
+  steps:
+    - name: Install PNPM
+      uses: pnpm/action-setup@v4
+      with:
+        version: ${{ env.PNPM_VERSION }}
+    - name: Set up Node.js with PNPM cache
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: "pnpm"
+        cache-dependency-path: pnpm-lock.yaml

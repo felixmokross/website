@@ -1,0 +1,54 @@
+# From https://github.com/vercel/next.js/blob/canary/examples/with-docker/Dockerfile
+
+FROM node:22-alpine AS base
+
+# Install dependencies only when needed
+FROM base AS builder
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+RUN corepack enable pnpm
+
+# Install dependencies
+COPY --link pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY --link website website
+RUN pnpm --filter website deploy website.deployed
+
+# Next.js collects completely anonymous telemetry data about general usage.
+# Learn more here: https://nextjs.org/telemetry
+# Uncomment the following line in case you want to disable telemetry during the build.
+# ENV NEXT_TELEMETRY_DISABLED 1
+
+RUN pnpm --dir website.deployed build
+
+# Production image, copy all the files and run next
+FROM base AS runner
+RUN corepack enable pnpm
+WORKDIR /app
+
+ENV NODE_ENV=production
+# Uncomment the following line in case you want to disable telemetry during runtime.
+# ENV NEXT_TELEMETRY_DISABLED 1
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy source files so that we can run scripts like 'payload migrate'
+COPY --from=builder /app/website.deployed .
+
+RUN mv .next/static .next/standalone/website.deployed/.next/static
+RUN cp public .next/standalone/website.deployed/public -r
+
+# Set the correct permission for prerender cache
+RUN chown nextjs:nodejs .next
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT=3000
+
+# server.js is created by next build from the standalone output
+# https://nextjs.org/docs/pages/api-reference/next-config-js/output
+CMD HOSTNAME="0.0.0.0" node .next/standalone/website.deployed/server.js

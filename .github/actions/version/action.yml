@@ -1,0 +1,61 @@
+name: "Version"
+description: Returns the release version as output and sets it on the package.json files.
+outputs:
+  version:
+    value: ${{ steps.complete-version.outputs.version }}
+    description: The version for this release
+runs:
+  using: "composite"
+  steps:
+    - name: Verify checkout with full history
+      run: |
+        if [ -f .git/shallow ]; then
+          echo "Checkout must be with 'fetch-depth: 0' for the versioning to work correctly"
+          exit 1
+        fi
+      shell: bash
+    - name: Generate base version information
+      uses: paulhatch/semantic-version@v5.3.0
+      id: semantic-version
+      with:
+        search_commit_body: true
+    - name: Print base version information
+      run: |
+        echo "Version: ${{ steps.semantic-version.outputs.version }}"
+        echo "Major: ${{ steps.semantic-version.outputs.major }}"
+        echo "Minor: ${{ steps.semantic-version.outputs.minor }}"
+        echo "Patch: ${{ steps.semantic-version.outputs.patch }}"
+        echo "Version type: ${{ steps.semantic-version.outputs.version_type }}"
+        echo "Version tag: ${{ steps.semantic-version.outputs.version_tag }}"
+        echo "Increment: ${{ steps.semantic-version.outputs.increment }}"
+        echo "Current commit: ${{ steps.semantic-version.outputs.current_commit }}"
+        echo "Is tagged: ${{ steps.semantic-version.outputs.is_tagged }}"
+      shell: bash
+    - name: Generate complete version
+      id: complete-version
+      run: |
+        if [ ${{ steps.semantic-version.outputs.is_tagged }} == "true" ]; then
+            pre_release_postfix=""
+        else
+            if [ "$GITHUB_REF_NAME" == "main" ]; then
+                pre_release_postfix="-pre${{ steps.semantic-version.outputs.increment }}"
+            else
+                pre_release_postfix="-$GITHUB_HEAD_REF-${{ steps.semantic-version.outputs.increment }}"
+            fi
+        fi
+        echo "version=${{ steps.semantic-version.outputs.version }}$pre_release_postfix" >> "$GITHUB_OUTPUT"
+      shell: bash
+    - name: Print complete version
+      run: echo "Complete version is ${{ steps.complete-version.outputs.version }}"
+      shell: bash
+    - name: Install PNPM
+      uses: pnpm/action-setup@v4
+      with:
+        version: ${{ env.PNPM_VERSION }}
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - name: Set version on website
+      run: pnpm --filter website version ${{ steps.complete-version.outputs.version }} --git-tag-version false
+      shell: bash

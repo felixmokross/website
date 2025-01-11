@@ -1,0 +1,360 @@
+name: Build
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+    tags:
+      - v*
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        required: true
+        default: "staging"
+        options:
+          - staging
+          - production
+
+env:
+  NODE_VERSION: 22
+  PNPM_VERSION: 10
+  FLYCTL_VERSION: 0.3.55
+  WEBSITE_INTERNAL_PORT: 3000
+  # PREVIEW_MEDIA_S3_BUCKET: lapuertahostels-media-preview
+  # MEDIA_S3_REGION: eu-west-3
+
+jobs:
+  website-lint:
+    name: "Website: Lint"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup
+        uses: ./.github/actions/setup
+      - name: Install dependencies
+        run: pnpm --filter website install
+      - name: Run lint
+        run: pnpm --filter website lint --max-warnings=0
+
+  website-check-format:
+    name: "Website: Check Format"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup
+        uses: ./.github/actions/setup
+      - name: Install dependencies
+        run: pnpm --filter website install
+      - name: Check format in frontend
+        run: pnpm --filter website check-format
+
+  # frontend-unit-tests:
+  #   name: "Frontend: Unit Tests"
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     - name: Set up frontend
+  #       uses: ./.github/actions/setup
+  #       with:
+  #         working-directory: frontend
+  #     - name: Populate CMS types
+  #       uses: ./.github/actions/populate-cms-types
+  #     - name: Run unit tests in frontend
+  #       run: pnpm test
+  #       working-directory: frontend
+
+  website-build-push:
+    name: "Website: Build and Push"
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    outputs:
+      image: ${{ steps.image-name.outputs.image }}
+    steps:
+      - name: Checkout with full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+        with:
+          version: ${{ env.FLYCTL_VERSION }}
+      - name: Generate version
+        uses: ./.github/actions/version
+        id: version
+      - name: Get website image name
+        id: image-name
+        run: |
+          IMAGE_NAME=fxmk-staging
+          IMAGE_TAG=v${{ steps.version.outputs.version }}
+          echo "image_name=$IMAGE_NAME" >> "$GITHUB_OUTPUT"
+          echo "image_tag=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
+          echo "image=registry.fly.io/$IMAGE_NAME:$IMAGE_TAG" >> "$GITHUB_OUTPUT"
+      - name: Build and push frontend Docker image
+        run: |
+          flyctl deploy \
+            --app ${{ steps.image-name.outputs.image_name }} \
+            --dockerfile Dockerfile.website \
+            --build-only \
+            --image-label ${{ steps.image-name.outputs.image_tag }} \
+            --label org.opencontainers.image.version=${{ steps.image-name.outputs.image_tag }} \
+            --push \
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+  # frontend-publish-chromatic:
+  #   name: "Frontend: Publish to Chromatic"
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout with full history
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+  #     - name: Set up frontend
+  #       uses: ./.github/actions/setup
+  #       with:
+  #         working-directory: frontend
+  #     - name: Populate CMS types
+  #       uses: ./.github/actions/populate-cms-types
+  #     - name: Publish frontend to Chromatic
+  #       uses: chromaui/action@v1
+  #       with:
+  #         projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+  #         exitOnceUploaded: true
+  #         onlyChanged: true
+  #         workingDir: frontend
+  #       env:
+  #         STORYBOOK_IMAGEKIT_BASE_URL: ${{ env.STORYBOOK_IMAGEKIT_BASE_URL }}
+  #         STORYBOOK_USE_IMAGE_CACHE_BUSTER: true
+  #         STORYBOOK_GOOGLE_MAPS_API_KEY: ${{ secrets.PREVIEW_GOOGLE_MAPS_API_KEY }}
+
+  # frontend-deploy-preview:
+  #   name: "Frontend: Deploy Preview"
+  #   runs-on: ubuntu-latest
+  #   if: github.event_name == 'pull_request'
+  #   env:
+  #     FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+  #     FLY_ORG: ${{ vars.FLY_ORG }}
+  #   needs: frontend-build-push
+  #   environment:
+  #     name: preview-frontend
+  #     url: ${{ steps.app-name.outputs.app-url }}
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     - name: Set up flyctl
+  #       uses: superfly/flyctl-actions/setup-flyctl@master
+  #       with:
+  #         version: ${{ env.FLYCTL_VERSION }}
+  #     - name: Get frontend preview app name
+  #       uses: ./.github/actions/app-name
+  #       id: app-name
+  #       with:
+  #         component: frontend
+  #     - name: Get CMS preview app name
+  #       uses: ./.github/actions/app-name
+  #       id: cms-app-name
+  #       with:
+  #         component: cms
+  #     - name: Delete frontend preview app if exists
+  #       run: |
+  #         flyctl apps destroy --yes ${{ steps.app-name.outputs.app-name }} || true
+  #     - name: Create frontend preview app
+  #       run: |
+  #         echo Creating app ${{ steps.app-name.outputs.app-name }}:
+  #         flyctl apps create --name ${{ steps.app-name.outputs.app-name }} --org $FLY_ORG
+
+  #         echo Setting secrets:
+  #         flyctl secrets set PAYLOAD_CMS_API_KEY=$PREVIEW_PAYLOAD_CMS_API_KEY \
+  #           SESSION_SECRET=$(openssl rand -hex 32) \
+  #           GOOGLE_MAPS_API_KEY=$PREVIEW_GOOGLE_MAPS_API_KEY \
+  #           --app ${{ steps.app-name.outputs.app-name }} --stage
+  #       env:
+  #         PREVIEW_PAYLOAD_CMS_API_KEY: ${{ secrets.PREVIEW_PAYLOAD_CMS_API_KEY }}
+  #         PREVIEW_GOOGLE_MAPS_API_KEY: ${{ secrets.PREVIEW_GOOGLE_MAPS_API_KEY }}
+  #       working-directory: frontend
+  #     - name: Deploy frontend preview app
+  #       run: |
+  #         flyctl deploy \
+  #           --app ${{ steps.app-name.outputs.app-name }} \
+  #           --config fly.frontend.preview.toml \
+  #           --ha=false \
+  #           --image ${{ needs.frontend-build-push.outputs.image }} \
+  #           --env IMAGEKIT_BASE_URL=${{ env.PREVIEW_IMAGEKIT_BASE_URL }} \
+  #           --env PAYLOAD_CMS_BASE_URL=${{ steps.cms-app-name.outputs.app-url }} \
+  #           --env CANONICAL_HOSTNAME=${{ steps.app-name.outputs.app-domain }} \
+
+  # frontend-deploy:
+  #   name: "Frontend: Deploy"
+  #   runs-on: ubuntu-latest
+  #   if: github.event_name != 'pull_request'
+  #   needs:
+  #     - frontend-build-push
+  #     - frontend-publish-chromatic
+  #     - frontend-check-format
+  #     - frontend-lint
+  #     - frontend-typecheck
+  #     - frontend-unit-tests
+  #     - e2e-tests
+  #     - define-env
+  #   environment:
+  #     name: ${{ needs.define-env.outputs.environment }}-frontend
+  #     url: https://${{ needs.define-env.outputs.canonical_hostname_frontend }}/
+  #   steps:
+  #     - name: Set up flyctl
+  #       uses: superfly/flyctl-actions/setup-flyctl@master
+  #       with:
+  #         version: ${{ env.FLYCTL_VERSION }}
+  #     - name: Deploy frontend
+  #       run: |
+  #         flyctl deploy \
+  #           --app ${{ needs.define-env.outputs.fly_app_frontend }} \
+  #           --config fly.frontend.toml \
+  #           --image ${{ needs.frontend-build-push.outputs.image }} \
+  #           --env ANALYTICS_DOMAIN=${{ needs.define-env.outputs.analytics_domain_frontend }} \
+  #           --env CANONICAL_HOSTNAME=${{ needs.define-env.outputs.canonical_hostname_frontend }} \
+  #           --env IMAGEKIT_BASE_URL=${{ needs.define-env.outputs.imagekit_base_url }} \
+  #           --env PAYLOAD_CMS_BASE_URL=https://${{ needs.define-env.outputs.domain_cms }} \
+  #       env:
+  #         FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+  # e2e-tests:
+  #   name: End-to-End Tests
+  #   timeout-minutes: 60
+  #   runs-on: ubuntu-latest
+  #   needs: [frontend-build-push, cms-build-push]
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     - name: Set up e2e
+  #       uses: ./.github/actions/setup
+  #       with:
+  #         working-directory: e2e
+  #     - name: Set up flyctl
+  #       uses: superfly/flyctl-actions/setup-flyctl@master
+  #       with:
+  #         version: ${{ env.FLYCTL_VERSION }}
+  #     - name: Authenticate Fly.io Docker registry
+  #       run: flyctl auth docker
+  #       env:
+  #         FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+  #     - name: Start services
+  #       run: docker compose up -d && sleep 3
+  #       env:
+  #         FRONTEND_IMAGE: ${{ needs.frontend-build-push.outputs.image }}
+  #         SESSION_SECRET: $(openssl rand -hex 32)
+  #         CMS_IMAGE: ${{ needs.cms-build-push.outputs.image }}
+  #         PAYLOAD_SECRET: $(openssl rand -hex 12)
+  #         PREVIEW_MEDIA_S3_ACCESS_KEY_ID: ${{ secrets.PREVIEW_MEDIA_S3_ACCESS_KEY_ID }}
+  #         PREVIEW_MEDIA_S3_SECRET_ACCESS_KEY: ${{ secrets.PREVIEW_MEDIA_S3_SECRET_ACCESS_KEY }}
+  #         PREVIEW_OPENAI_API_KEY: ${{ secrets.PREVIEW_OPENAI_API_KEY }}
+  #       working-directory: e2e
+  #     - name: Get Playwright version
+  #       id: playwright-version
+  #       run: |
+  #         PLAYWRIGHT_VERSION=$(pnpm list @playwright/test --depth=0 | grep '@playwright/test' | awk '{print $2}')
+  #         echo "playwright_version=${PLAYWRIGHT_VERSION}" >> $GITHUB_OUTPUT
+  #       working-directory: e2e
+  #     - name: Cache Playwright browsers
+  #       uses: actions/cache@v4
+  #       id: playwright-cache
+  #       with:
+  #         path: ~/.cache/ms-playwright
+  #         key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.playwright_version }}
+  #     - name: Install Playwright dependencies
+  #       run: pnpm playwright install --with-deps chromium
+  #       if: steps.playwright-cache.outputs.cache-hit != 'true'
+  #       working-directory: e2e
+  #     - name: Populate CMS types
+  #       uses: ./.github/actions/populate-cms-types
+  #     - name: Run e2e tests
+  #       run: pnpm playwright test
+  #       working-directory: e2e
+  #       env:
+  #         FRONTEND_BASE_URL: http://localhost:${{ env.FRONTEND_INTERNAL_PORT }}
+  #         CMS_BASE_URL: http://localhost:${{ env.CMS_INTERNAL_PORT }}
+  #         CMS_API_KEY: apikey
+  #     - name: Upload Playwright report
+  #       uses: actions/upload-artifact@v4
+  #       if: always()
+  #       with:
+  #         name: playwright-report
+  #         path: e2e/playwright-report/
+  #         retention-days: 30
+
+  # clean-preview:
+  #   name: Clean Preview Apps
+  #   uses: ./.github/workflows/clean-preview.yml
+  #   secrets: inherit
+  #   needs: [frontend-deploy-preview, cms-deploy-preview]
+
+  # define-env:
+  #   name: Define Environment
+  #   runs-on: ubuntu-latest
+  #   if: github.event_name != 'pull_request'
+  #   outputs:
+  #     environment: ${{ steps.define-env.outputs.environment }}
+  #     fly_app_frontend: ${{ steps.define-env.outputs.fly_app_frontend }}
+  #     fly_app_cms: ${{ steps.define-env.outputs.fly_app_cms }}
+  #     analytics_domain_frontend: ${{ steps.define-env.outputs.analytics_domain_frontend }}
+  #     canonical_hostname_frontend: ${{ steps.define-env.outputs.canonical_hostname_frontend }}
+  #     domain_cms: ${{ steps.define-env.outputs.domain_cms }}
+  #     s3_bucket: ${{ steps.define-env.outputs.s3_bucket }}
+  #     imagekit_base_url: ${{ steps.define-env.outputs.imagekit_base_url }}
+  #   steps:
+  #     - name: Define environment
+  #       run: |
+  #         environment=${{ inputs.environment || 'staging' }}
+  #         echo "environment=$environment" >> "$GITHUB_OUTPUT"
+
+  #         case $environment in
+  #           production)
+  #             echo "fly_app_frontend=lapuertahostels-2" >> "$GITHUB_OUTPUT"
+  #             echo "fly_app_cms=lapuertahostels-cms" >> "$GITHUB_OUTPUT"
+  #             echo "analytics_domain_frontend=lapuertahostels.co" >> "$GITHUB_OUTPUT"
+  #             echo "canonical_hostname_frontend=www.lapuertahostels.co" >> "$GITHUB_OUTPUT"
+  #             echo "domain_cms=admin.lapuertahostels.co" >> "$GITHUB_OUTPUT"
+  #             echo "s3_bucket=lapuertahostels-media" >> "$GITHUB_OUTPUT"
+  #             echo "imagekit_base_url=https://ik.imagekit.io/lapuertahostels" >> "$GITHUB_OUTPUT"
+  #             ;;
+  #           staging)
+  #             echo "fly_app_frontend=lapuertahostels-staging" >> "$GITHUB_OUTPUT"
+  #             echo "fly_app_cms=lapuertahostels-cms-staging" >> "$GITHUB_OUTPUT"
+  #             echo "analytics_domain_frontend=staging.lapuertahostels.co" >> "$GITHUB_OUTPUT"
+  #             echo "canonical_hostname_frontend=www.staging.lapuertahostels.co" >> "$GITHUB_OUTPUT"
+  #             echo "domain_cms=admin.staging.lapuertahostels.co" >> "$GITHUB_OUTPUT"
+  #             echo "s3_bucket=lapuertahostels-media-staging" >> "$GITHUB_OUTPUT"
+  #             echo "imagekit_base_url=https://ik.imagekit.io/lapuertahostels/staging" >> "$GITHUB_OUTPUT"
+  #             ;;
+  #         esac
+  #       id: define-env
+
+  # create-release:
+  #   name: Create Release
+  #   runs-on: ubuntu-latest
+  #   if: startsWith(github.ref, 'refs/tags/')
+  #   needs:
+  #     - frontend-build-push
+  #     - frontend-publish-chromatic
+  #     - frontend-check-format
+  #     - frontend-lint
+  #     - frontend-typecheck
+  #     - frontend-unit-tests
+  #     - cms-build-push
+  #     - cms-check-format
+  #     - e2e-tests
+  #   steps:
+  #     - name: Checkout with full history
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+  #     - name: Generate version
+  #       uses: ./.github/actions/version
+  #     - name: Create release
+  #       uses: softprops/action-gh-release@v1
+  #   permissions:
+  #     contents: write
