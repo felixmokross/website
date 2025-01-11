@@ -189,39 +189,34 @@ jobs:
   #           --env PAYLOAD_CMS_BASE_URL=${{ steps.cms-app-name.outputs.app-url }} \
   #           --env CANONICAL_HOSTNAME=${{ steps.app-name.outputs.app-domain }} \
 
-  # frontend-deploy:
-  #   name: "Frontend: Deploy"
-  #   runs-on: ubuntu-latest
-  #   if: github.event_name != 'pull_request'
-  #   needs:
-  #     - frontend-build-push
-  #     - frontend-publish-chromatic
-  #     - frontend-check-format
-  #     - frontend-lint
-  #     - frontend-typecheck
-  #     - frontend-unit-tests
-  #     - e2e-tests
-  #     - define-env
-  #   environment:
-  #     name: ${{ needs.define-env.outputs.environment }}-frontend
-  #     url: https://${{ needs.define-env.outputs.canonical_hostname_frontend }}/
-  #   steps:
-  #     - name: Set up flyctl
-  #       uses: superfly/flyctl-actions/setup-flyctl@master
-  #       with:
-  #         version: ${{ env.FLYCTL_VERSION }}
-  #     - name: Deploy frontend
-  #       run: |
-  #         flyctl deploy \
-  #           --app ${{ needs.define-env.outputs.fly_app_frontend }} \
-  #           --config fly.frontend.toml \
-  #           --image ${{ needs.frontend-build-push.outputs.image }} \
-  #           --env ANALYTICS_DOMAIN=${{ needs.define-env.outputs.analytics_domain_frontend }} \
-  #           --env CANONICAL_HOSTNAME=${{ needs.define-env.outputs.canonical_hostname_frontend }} \
-  #           --env IMAGEKIT_BASE_URL=${{ needs.define-env.outputs.imagekit_base_url }} \
-  #           --env PAYLOAD_CMS_BASE_URL=https://${{ needs.define-env.outputs.domain_cms }} \
-  #       env:
-  #         FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+  frontend-deploy:
+    name: "Website: Deploy"
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    needs:
+      - website-build-push
+      #- frontend-publish-chromatic
+      - website-check-format
+      - website-lint
+      #- frontend-unit-tests
+      #- e2e-tests
+      - define-env
+    environment:
+      name: ${{ needs.define-env.outputs.environment }}-website
+      url: https://${{ needs.define-env.outputs.canonical_hostname_website }}/
+    steps:
+      - name: Set up flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+        with:
+          version: ${{ env.FLYCTL_VERSION }}
+      - name: Deploy website
+        run: |
+          flyctl deploy \
+            --app ${{ needs.define-env.outputs.fly_app_website }} \
+            --config fly.website.toml \
+            --image ${{ needs.website-build-push.outputs.image }} \
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
   # e2e-tests:
   #   name: End-to-End Tests
@@ -293,46 +288,40 @@ jobs:
   #   secrets: inherit
   #   needs: [frontend-deploy-preview, cms-deploy-preview]
 
-  # define-env:
-  #   name: Define Environment
-  #   runs-on: ubuntu-latest
-  #   if: github.event_name != 'pull_request'
-  #   outputs:
-  #     environment: ${{ steps.define-env.outputs.environment }}
-  #     fly_app_frontend: ${{ steps.define-env.outputs.fly_app_frontend }}
-  #     fly_app_cms: ${{ steps.define-env.outputs.fly_app_cms }}
-  #     analytics_domain_frontend: ${{ steps.define-env.outputs.analytics_domain_frontend }}
-  #     canonical_hostname_frontend: ${{ steps.define-env.outputs.canonical_hostname_frontend }}
-  #     domain_cms: ${{ steps.define-env.outputs.domain_cms }}
-  #     s3_bucket: ${{ steps.define-env.outputs.s3_bucket }}
-  #     imagekit_base_url: ${{ steps.define-env.outputs.imagekit_base_url }}
-  #   steps:
-  #     - name: Define environment
-  #       run: |
-  #         environment=${{ inputs.environment || 'staging' }}
-  #         echo "environment=$environment" >> "$GITHUB_OUTPUT"
+  define-env:
+    name: Define Environment
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    outputs:
+      environment: ${{ steps.define-env.outputs.environment }}
+      fly_app_website: ${{ steps.define-env.outputs.fly_app_frontend }}
+      # analytics_domain_website: ${{ steps.define-env.outputs.analytics_domain_website }}
+      canonical_hostname_website: ${{ steps.define-env.outputs.canonical_hostname_website }}
+      # s3_bucket: ${{ steps.define-env.outputs.s3_bucket }}
+    steps:
+      - name: Define environment
+        run: |
+          environment=${{ inputs.environment || 'staging' }}
+          echo "environment=$environment" >> "$GITHUB_OUTPUT"
 
-  #         case $environment in
-  #           production)
-  #             echo "fly_app_frontend=lapuertahostels-2" >> "$GITHUB_OUTPUT"
-  #             echo "fly_app_cms=lapuertahostels-cms" >> "$GITHUB_OUTPUT"
-  #             echo "analytics_domain_frontend=lapuertahostels.co" >> "$GITHUB_OUTPUT"
-  #             echo "canonical_hostname_frontend=www.lapuertahostels.co" >> "$GITHUB_OUTPUT"
-  #             echo "domain_cms=admin.lapuertahostels.co" >> "$GITHUB_OUTPUT"
-  #             echo "s3_bucket=lapuertahostels-media" >> "$GITHUB_OUTPUT"
-  #             echo "imagekit_base_url=https://ik.imagekit.io/lapuertahostels" >> "$GITHUB_OUTPUT"
-  #             ;;
-  #           staging)
-  #             echo "fly_app_frontend=lapuertahostels-staging" >> "$GITHUB_OUTPUT"
-  #             echo "fly_app_cms=lapuertahostels-cms-staging" >> "$GITHUB_OUTPUT"
-  #             echo "analytics_domain_frontend=staging.lapuertahostels.co" >> "$GITHUB_OUTPUT"
-  #             echo "canonical_hostname_frontend=www.staging.lapuertahostels.co" >> "$GITHUB_OUTPUT"
-  #             echo "domain_cms=admin.staging.lapuertahostels.co" >> "$GITHUB_OUTPUT"
-  #             echo "s3_bucket=lapuertahostels-media-staging" >> "$GITHUB_OUTPUT"
-  #             echo "imagekit_base_url=https://ik.imagekit.io/lapuertahostels/staging" >> "$GITHUB_OUTPUT"
-  #             ;;
-  #         esac
-  #       id: define-env
+          case $environment in
+            # production)
+            #   echo "fly_app_frontend=lapuertahostels-2" >> "$GITHUB_OUTPUT"
+            #   echo "fly_app_cms=lapuertahostels-cms" >> "$GITHUB_OUTPUT"
+            #   echo "analytics_domain_frontend=lapuertahostels.co" >> "$GITHUB_OUTPUT"
+            #   echo "canonical_hostname_frontend=www.lapuertahostels.co" >> "$GITHUB_OUTPUT"
+            #   echo "domain_cms=admin.lapuertahostels.co" >> "$GITHUB_OUTPUT"
+            #   echo "s3_bucket=lapuertahostels-media" >> "$GITHUB_OUTPUT"
+            #   echo "imagekit_base_url=https://ik.imagekit.io/lapuertahostels" >> "$GITHUB_OUTPUT"
+            #   ;;
+            staging)
+              echo "fly_app_website=fxmk-staging" >> "$GITHUB_OUTPUT"
+              # echo "analytics_domain_website=staging.lapuertahostels.co" >> "$GITHUB_OUTPUT"
+              echo "canonical_hostname_website=fxmk-staging.fly.dev" >> "$GITHUB_OUTPUT"
+              # echo "s3_bucket=lapuertahostels-media-staging" >> "$GITHUB_OUTPUT"
+              ;;
+          esac
+        id: define-env
 
   # create-release:
   #   name: Create Release
