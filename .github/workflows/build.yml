@@ -96,11 +96,11 @@ jobs:
       - name: Build and push frontend Docker image
         run: |
          if [ "${{ needs.define-env.outputs.environment }}" == "production" ]; then
-            DATABASE_URI=${{ secrets.PRODUCTION_DATABASE_URI }}
-            PAYLOAD_SECRET=${{ secrets.PRODUCTION_PAYLOAD_SECRET }}
+            DATABASE_URI="${{ secrets.PRODUCTION_DATABASE_URI }}"
+            PAYLOAD_SECRET="${{ secrets.PRODUCTION_PAYLOAD_SECRET }}"
           else
-            DATABASE_URI=${{ secrets.STAGING_DATABASE_URI }}
-            PAYLOAD_SECRET=${{ secrets.STAGING_PAYLOAD_SECRET }}
+            DATABASE_URI="${{ secrets.STAGING_DATABASE_URI }}"
+            PAYLOAD_SECRET="${{ secrets.STAGING_PAYLOAD_SECRET }}"
           fi
 
           flyctl deploy \
