@@ -207,6 +207,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          sparse-checkout: .
       - name: Set up flyctl
         uses: superfly/flyctl-actions/setup-flyctl@master
         with:
@@ -215,7 +217,7 @@ jobs:
         run: |
           flyctl deploy \
             --app ${{ needs.define-env.outputs.fly_app_website }} \
-            --config ./fly.website.toml \
+            --config fly.website.toml \
             --image ${{ needs.website-build-push.outputs.image }} \
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
@@ -296,7 +298,7 @@ jobs:
     if: github.event_name != 'pull_request'
     outputs:
       environment: ${{ steps.define-env.outputs.environment }}
-      fly_app_website: ${{ steps.define-env.outputs.fly_app_frontend }}
+      fly_app_website: ${{ steps.define-env.outputs.fly_app_website }}
       # analytics_domain_website: ${{ steps.define-env.outputs.analytics_domain_website }}
       canonical_hostname_website: ${{ steps.define-env.outputs.canonical_hostname_website }}
       # s3_bucket: ${{ steps.define-env.outputs.s3_bucket }}
