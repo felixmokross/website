@@ -4,8 +4,6 @@ import { getPayload, type PayloadRequest } from 'payload'
 import configPromise from '@payload-config'
 import { CollectionSlug } from 'payload'
 
-const payloadToken = 'payload-token'
-
 export async function GET(
   req: Request & {
     cookies: {
