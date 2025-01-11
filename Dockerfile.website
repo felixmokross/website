@@ -20,7 +20,11 @@ RUN pnpm --filter website deploy website.deployed
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN pnpm --dir website.deployed build
+RUN --mount=type=secret,id=DATABASE_URI \
+    --mount=type=secret,id=PAYLOAD_SECRET \
+    DATABASE_URI="$(cat /run/secrets/DATABASE_URI)" \
+    PAYLOAD_SECRET="$(cat /run/secrets/PAYLOAD_SECRET)" \
+    pnpm --dir website.deployed build
 
 # Production image, copy all the files and run next
 FROM base AS runner
