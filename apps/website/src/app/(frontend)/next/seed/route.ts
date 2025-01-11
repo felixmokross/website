@@ -24,7 +24,8 @@ export async function POST(): Promise<Response> {
     await seed({ payload, req: payloadReq });
 
     return Response.json({ success: true });
-  } catch {
+  } catch (e) {
+    console.error(e);
     return new Response("Error seeding data.", { status: 500 });
   }
 }
