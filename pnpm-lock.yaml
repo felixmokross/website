@@ -8,7 +8,7 @@ importers:
 
   .: {}
 
-  apps/website-cms:
+  apps/website:
     dependencies:
       '@payloadcms/db-mongodb':
         specifier: latest
