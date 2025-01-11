@@ -205,6 +205,8 @@ jobs:
       name: ${{ needs.define-env.outputs.environment }}-website
       url: https://${{ needs.define-env.outputs.canonical_hostname_website }}/
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Set up flyctl
         uses: superfly/flyctl-actions/setup-flyctl@master
         with:
