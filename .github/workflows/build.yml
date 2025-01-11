@@ -88,21 +88,29 @@ jobs:
       - name: Get website image name
         id: image-name
         run: |
-          IMAGE_NAME=fxmk-staging
+          IMAGE_NAME=${{ needs.define-env.outputs.fly_app_website }}
           IMAGE_TAG=v${{ steps.version.outputs.version }}
           echo "image_name=$IMAGE_NAME" >> "$GITHUB_OUTPUT"
           echo "image_tag=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
           echo "image=registry.fly.io/$IMAGE_NAME:$IMAGE_TAG" >> "$GITHUB_OUTPUT"
       - name: Build and push frontend Docker image
         run: |
+         if [ "${{ needs.define-env.outputs.environment }}" == "production" ]; then
+            DATABASE_URI=${{ secrets.PRODUCTION_DATABASE_URI }}
+            PAYLOAD_SECRET=${{ secrets.PRODUCTION_PAYLOAD_SECRET }}
+          else
+            DATABASE_URI=${{ secrets.STAGING_DATABASE_URI }}
+            PAYLOAD_SECRET=${{ secrets.STAGING_PAYLOAD_SECRET }}
+          fi
+
           flyctl deploy \
             --app ${{ steps.image-name.outputs.image_name }} \
             --config fly.website.toml \
             --build-only \
             --image-label ${{ steps.image-name.outputs.image_tag }} \
             --label org.opencontainers.image.version=${{ steps.image-name.outputs.image_tag }} \
-            --build-secret DATABASE_URI="${{ secrets.STAGING_DATABASE_URI }}" \
-            --build-secret PAYLOAD_SECRET="${{ secrets.STAGING_PAYLOAD_SECRET }}" \
+            --build-secret DATABASE_URI="$DATABASE_URI" \
+            --build-secret PAYLOAD_SECRET="$PAYLOAD_SECRET" \
             --build-arg NEXT_PUBLIC_SERVER_URL=https://${{ needs.define-env.outputs.canonical_hostname_website }} \
             --push \
         env:
@@ -190,7 +198,7 @@ jobs:
   #           --env PAYLOAD_CMS_BASE_URL=${{ steps.cms-app-name.outputs.app-url }} \
   #           --env CANONICAL_HOSTNAME=${{ steps.app-name.outputs.app-domain }} \
 
-  frontend-deploy:
+  website-deploy:
     name: "Website: Deploy"
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request'
@@ -312,15 +320,12 @@ jobs:
           echo "environment=$environment" >> "$GITHUB_OUTPUT"
 
           case $environment in
-            # production)
-            #   echo "fly_app_frontend=lapuertahostels-2" >> "$GITHUB_OUTPUT"
-            #   echo "fly_app_cms=lapuertahostels-cms" >> "$GITHUB_OUTPUT"
-            #   echo "analytics_domain_frontend=lapuertahostels.co" >> "$GITHUB_OUTPUT"
-            #   echo "canonical_hostname_frontend=www.lapuertahostels.co" >> "$GITHUB_OUTPUT"
-            #   echo "domain_cms=admin.lapuertahostels.co" >> "$GITHUB_OUTPUT"
-            #   echo "s3_bucket=lapuertahostels-media" >> "$GITHUB_OUTPUT"
-            #   echo "imagekit_base_url=https://ik.imagekit.io/lapuertahostels" >> "$GITHUB_OUTPUT"
-            #   ;;
+            production)
+              echo "fly_app_website=fxmk" >> "$GITHUB_OUTPUT"
+              # echo "analytics_domain_website=staging.lapuertahostels.co" >> "$GITHUB_OUTPUT"
+              echo "canonical_hostname_website=fxmk.fly.dev" >> "$GITHUB_OUTPUT"
+              echo "s3_bucket=fxmk-media" >> "$GITHUB_OUTPUT"
+              ;;
             staging)
               echo "fly_app_website=fxmk-staging" >> "$GITHUB_OUTPUT"
               # echo "analytics_domain_website=staging.lapuertahostels.co" >> "$GITHUB_OUTPUT"
