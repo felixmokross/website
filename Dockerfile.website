@@ -45,7 +45,7 @@ RUN mv .next/static .next/standalone/website.deployed/.next/static
 RUN cp public .next/standalone/website.deployed/public -r
 
 # Set the correct permission for prerender cache
-RUN chown nextjs:nodejs .next
+RUN chown nextjs:nodejs .next/standalone/website.deployed/.next
 
 USER nextjs
 
