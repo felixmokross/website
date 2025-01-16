@@ -1,19 +1,14 @@
 version: "3"
 
 services:
-  payload:
-    image: node:18-alpine
+  redis:
+    image: redis:latest
     ports:
-      - "3000:3000"
+      - "6379:6379"
+    command:
+      - redis-server
     volumes:
-      - .:/home/node/app
-      - node_modules:/home/node/app/node_modules
-    working_dir: /home/node/app/
-    command: sh -c "yarn install && yarn dev"
-    depends_on:
-      - mongo
-    env_file:
-      - .env
+      - data:/data/cache
 
   mongo:
     image: mongo:latest
@@ -28,4 +23,3 @@ services:
 
 volumes:
   data:
-  node_modules:

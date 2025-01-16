@@ -24,6 +24,11 @@ const nextConfig = {
   reactStrictMode: true,
   redirects,
   output: "standalone",
+
+  cacheHandler: import.meta
+    .resolve("./cache-handler.cjs")
+    .replace("file://", ""),
+  cacheMaxMemorySize: 0,
 };
 
 export default withPayload(nextConfig);
