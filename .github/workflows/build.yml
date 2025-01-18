@@ -122,6 +122,10 @@ jobs:
       name: ${{ needs.define-env.outputs.environment }}-frontend
       url: https://${{ needs.define-env.outputs.canonical_hostname_frontend }}/
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: .
       - name: Set up flyctl
         uses: superfly/flyctl-actions/setup-flyctl@master
         with:
