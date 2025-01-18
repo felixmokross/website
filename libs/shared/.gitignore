@@ -1,0 +1,4 @@
+/node_modules
+/dist
+/src/payload-types.ts
+/tsconfig.tsbuildinfo

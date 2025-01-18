@@ -1,8 +1,9 @@
 {
   "folders": [
     { "name": "<root>", "path": "." },
-    { "path": "./apps/frontend" },
-    { "path": "./apps/website" }
+    { "name": "apps/frontend", "path": "./apps/frontend" },
+    { "name": "apps/website", "path": "./apps/website" },
+    { "name": "libs/shared", "path": "./libs/shared" }
   ],
   "settings": {
     "github.copilot.enable": {
