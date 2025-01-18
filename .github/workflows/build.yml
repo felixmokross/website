@@ -23,6 +23,52 @@ env:
   MEDIA_S3_REGION: eu-west-3
 
 jobs:
+  frontend-lint:
+    name: "Frontend: Lint"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup
+        uses: ./.github/actions/setup
+      - name: Install dependencies
+        run: pnpm --filter frontend install
+      # - name: Populate CMS types
+      #   uses: ./.github/actions/populate-cms-types
+      - name: Run lint in frontend
+        run: pnpm lint --max-warnings=0
+        working-directory: frontend
+
+  frontend-check-format:
+    name: "Frontend: Check Format"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup
+        uses: ./.github/actions/setup
+      - name: Install dependencies
+        run: pnpm --filter frontend install
+      - name: Check format in frontend
+        run: pnpm check-format
+        working-directory: frontend
+
+  frontend-typecheck:
+    name: "Frontend: Typecheck"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup
+        uses: ./.github/actions/setup
+      - name: Install dependencies
+        run: pnpm --filter frontend install
+      # - name: Populate CMS types
+      #   uses: ./.github/actions/populate-cms-types
+      - name: Run typecheck in frontend
+        run: pnpm typecheck
+        working-directory: frontend
+
   website-lint:
     name: "Website: Lint"
     runs-on: ubuntu-latest
@@ -95,24 +141,24 @@ jobs:
           echo "image=registry.fly.io/$IMAGE_NAME:$IMAGE_TAG" >> "$GITHUB_OUTPUT"
       - name: Build and push frontend Docker image
         run: |
-         if [ "${{ needs.define-env.outputs.environment }}" == "production" ]; then
-            DATABASE_URI="${{ secrets.PRODUCTION_DATABASE_URI }}"
-            PAYLOAD_SECRET="${{ secrets.PRODUCTION_PAYLOAD_SECRET }}"
-          else
-            DATABASE_URI="${{ secrets.STAGING_DATABASE_URI }}"
-            PAYLOAD_SECRET="${{ secrets.STAGING_PAYLOAD_SECRET }}"
-          fi
+          if [ "${{ needs.define-env.outputs.environment }}" == "production" ]; then
+             DATABASE_URI="${{ secrets.PRODUCTION_DATABASE_URI }}"
+             PAYLOAD_SECRET="${{ secrets.PRODUCTION_PAYLOAD_SECRET }}"
+           else
+             DATABASE_URI="${{ secrets.STAGING_DATABASE_URI }}"
+             PAYLOAD_SECRET="${{ secrets.STAGING_PAYLOAD_SECRET }}"
+           fi
 
-          flyctl deploy \
-            --app ${{ steps.image-name.outputs.image_name }} \
-            --config fly.website.toml \
-            --build-only \
-            --image-label ${{ steps.image-name.outputs.image_tag }} \
-            --label org.opencontainers.image.version=${{ steps.image-name.outputs.image_tag }} \
-            --build-secret DATABASE_URI="$DATABASE_URI" \
-            --build-secret PAYLOAD_SECRET="$PAYLOAD_SECRET" \
-            --build-arg NEXT_PUBLIC_SERVER_URL=https://${{ needs.define-env.outputs.canonical_hostname_website }} \
-            --push \
+           flyctl deploy \
+             --app ${{ steps.image-name.outputs.image_name }} \
+             --config fly.website.toml \
+             --build-only \
+             --image-label ${{ steps.image-name.outputs.image_tag }} \
+             --label org.opencontainers.image.version=${{ steps.image-name.outputs.image_tag }} \
+             --build-secret DATABASE_URI="$DATABASE_URI" \
+             --build-secret PAYLOAD_SECRET="$PAYLOAD_SECRET" \
+             --build-arg NEXT_PUBLIC_SERVER_URL=https://${{ needs.define-env.outputs.canonical_hostname_website }} \
+             --push \
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 

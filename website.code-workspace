@@ -1,16 +1,17 @@
 {
   "folders": [
     { "name": "<root>", "path": "." },
-    { "path": "./apps/website" },
+    { "path": "./apps/frontend" },
+    { "path": "./apps/website" }
   ],
   "settings": {
     "github.copilot.enable": {
       "*": true,
       "plaintext": false,
       "markdown": false,
-      "scminput": false,
+      "scminput": false
     },
     "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-  },
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

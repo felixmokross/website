@@ -1,0 +1,8 @@
+node_modules
+
+/.cache
+/build
+.env
+/storybook-static
+*.log
+/pnpm-lock.yaml
