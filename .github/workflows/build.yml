@@ -441,6 +441,7 @@ jobs:
               echo "fly_app_frontend=fxmk-frontend" >> "$GITHUB_OUTPUT"
               echo "fly_app_website=fxmk" >> "$GITHUB_OUTPUT"
               # echo "analytics_domain_website=staging.lapuertahostels.co" >> "$GITHUB_OUTPUT"
+              echo "canonical_hostname_frontend=fxmk-frontend.fly.dev" >> "$GITHUB_OUTPUT"
               echo "canonical_hostname_website=fxmk.fly.dev" >> "$GITHUB_OUTPUT"
               echo "s3_bucket=fxmk-media" >> "$GITHUB_OUTPUT"
               ;;
