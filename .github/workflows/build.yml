@@ -66,6 +66,76 @@ jobs:
       - name: Run typecheck in frontend
         run: pnpm --filter frontend typecheck
 
+  frontend-build-push:
+    name: "Frontend: Build and Push"
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.image-name.outputs.image }}
+    steps:
+      - name: Checkout with full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+        with:
+          version: ${{ env.FLYCTL_VERSION }}
+      - name: Generate version
+        uses: ./.github/actions/version
+        id: version
+      # - name: Populate CMS types
+      #   uses: ./.github/actions/populate-cms-types
+      - name: Get frontend image name
+        id: image-name
+        run: |
+          IMAGE_NAME=fxmk-frontend-staging
+          IMAGE_TAG=v${{ steps.version.outputs.version }}
+          echo "image_name=$IMAGE_NAME" >> "$GITHUB_OUTPUT"
+          echo "image_tag=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
+          echo "image=registry.fly.io/$IMAGE_NAME:$IMAGE_TAG" >> "$GITHUB_OUTPUT"
+      - name: Build and push frontend Docker image
+        run: |
+          flyctl deploy \
+            --app ${{ steps.image-name.outputs.image_name }} \
+            --config fly.frontend.toml \
+            --build-only \
+            --image-label ${{ steps.image-name.outputs.image_tag }} \
+            --label org.opencontainers.image.version=${{ steps.image-name.outputs.image_tag }} \
+            --push \
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+  frontend-deploy:
+    name: "Frontend: Deploy"
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    needs:
+      - frontend-build-push
+      # - frontend-publish-chromatic
+      - frontend-check-format
+      - frontend-lint
+      - frontend-typecheck
+      # - frontend-unit-tests
+      # - e2e-tests
+      - define-env
+    environment:
+      name: ${{ needs.define-env.outputs.environment }}-frontend
+      url: https://${{ needs.define-env.outputs.canonical_hostname_frontend }}/
+    steps:
+      - name: Set up flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+        with:
+          version: ${{ env.FLYCTL_VERSION }}
+      - name: Deploy frontend
+        run: |
+          flyctl deploy \
+            --app ${{ needs.define-env.outputs.fly_app_frontend }} \
+            --config fly.frontend.toml \
+            --image ${{ needs.frontend-build-push.outputs.image }} \
+            --env CANONICAL_HOSTNAME=${{ needs.define-env.outputs.canonical_hostname_frontend }} \
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
   website-lint:
     name: "Website: Lint"
     runs-on: ubuntu-latest
@@ -111,8 +181,6 @@ jobs:
   website-build-push:
     name: "Website: Build and Push"
     runs-on: ubuntu-latest
-    permissions:
-      packages: write
     outputs:
       image: ${{ steps.image-name.outputs.image }}
     needs: [define-env]
@@ -352,8 +420,10 @@ jobs:
     if: github.event_name != 'pull_request'
     outputs:
       environment: ${{ steps.define-env.outputs.environment }}
+      fly_app_frontend: ${{ steps.define-env.outputs.fly_app_frontend }}
       fly_app_website: ${{ steps.define-env.outputs.fly_app_website }}
       # analytics_domain_website: ${{ steps.define-env.outputs.analytics_domain_website }}
+      canonical_hostname_frontend: ${{ steps.define-env.outputs.canonical_hostname_frontend }}
       canonical_hostname_website: ${{ steps.define-env.outputs.canonical_hostname_website }}
       s3_bucket: ${{ steps.define-env.outputs.s3_bucket }}
     steps:
@@ -364,14 +434,17 @@ jobs:
 
           case $environment in
             production)
+              echo "fly_app_frontend=fxmk-frontend" >> "$GITHUB_OUTPUT"
               echo "fly_app_website=fxmk" >> "$GITHUB_OUTPUT"
               # echo "analytics_domain_website=staging.lapuertahostels.co" >> "$GITHUB_OUTPUT"
               echo "canonical_hostname_website=fxmk.fly.dev" >> "$GITHUB_OUTPUT"
               echo "s3_bucket=fxmk-media" >> "$GITHUB_OUTPUT"
               ;;
             staging)
+              echo "fly_app_frontend=fxmk-frontend-staging" >> "$GITHUB_OUTPUT"
               echo "fly_app_website=fxmk-staging" >> "$GITHUB_OUTPUT"
               # echo "analytics_domain_website=staging.lapuertahostels.co" >> "$GITHUB_OUTPUT"
+              echo "canonical_hostname_frontend=fxmk-frontend-staging.fly.dev" >> "$GITHUB_OUTPUT"
               echo "canonical_hostname_website=fxmk-staging.fly.dev" >> "$GITHUB_OUTPUT"
               echo "s3_bucket=fxmk-media-staging" >> "$GITHUB_OUTPUT"
               ;;
