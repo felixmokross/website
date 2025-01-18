@@ -36,8 +36,7 @@ jobs:
       # - name: Populate CMS types
       #   uses: ./.github/actions/populate-cms-types
       - name: Run lint in frontend
-        run: pnpm lint --max-warnings=0
-        working-directory: frontend
+        run: pnpm --filter frontend lint --max-warnings=0
 
   frontend-check-format:
     name: "Frontend: Check Format"
@@ -50,8 +49,7 @@ jobs:
       - name: Install dependencies
         run: pnpm --filter frontend install
       - name: Check format in frontend
-        run: pnpm check-format
-        working-directory: frontend
+        run: pnpm --filter frontend check-format
 
   frontend-typecheck:
     name: "Frontend: Typecheck"
@@ -66,8 +64,7 @@ jobs:
       # - name: Populate CMS types
       #   uses: ./.github/actions/populate-cms-types
       - name: Run typecheck in frontend
-        run: pnpm typecheck
-        working-directory: frontend
+        run: pnpm --filter frontend typecheck
 
   website-lint:
     name: "Website: Lint"
