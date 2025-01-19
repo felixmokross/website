@@ -56,6 +56,11 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ env.NODE_VERSION }}
-    - name: Set version on website
-      run: pnpm --filter website version ${{ steps.complete-version.outputs.version }} --git-tag-version false
+    - name: Set version on frontend
+      run: pnpm version ${{ steps.complete-version.outputs.version }} --git-tag-version false
       shell: bash
+      working-directory: apps/frontend
+    - name: Set version on CMS
+      run: pnpm version ${{ steps.complete-version.outputs.version }} --git-tag-version false
+      shell: bash
+      working-directory: apps/cms

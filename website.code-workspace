@@ -2,7 +2,7 @@
   "folders": [
     { "name": "<root>", "path": "." },
     { "name": "apps/frontend", "path": "./apps/frontend" },
-    { "name": "apps/website", "path": "./apps/website" },
+    { "name": "apps/cms", "path": "./apps/cms" },
     { "name": "libs/shared", "path": "./libs/shared" }
   ],
   "settings": {

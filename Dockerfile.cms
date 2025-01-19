@@ -14,8 +14,8 @@ RUN corepack enable pnpm
 
 # Install dependencies
 COPY --link pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY --link apps/website apps/website
-RUN pnpm --filter website deploy website.deployed
+COPY --link apps/cms apps/cms
+RUN pnpm --filter cms deploy cms.deployed
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
@@ -27,7 +27,7 @@ RUN --mount=type=secret,id=DATABASE_URI \
     --mount=type=secret,id=PAYLOAD_SECRET \
     DATABASE_URI="$(cat /run/secrets/DATABASE_URI)" \
     PAYLOAD_SECRET="$(cat /run/secrets/PAYLOAD_SECRET)" \
-    pnpm --dir website.deployed build
+    pnpm --dir cms.deployed build
 
 # Production image, copy all the files and run next
 FROM base AS runner
@@ -42,13 +42,13 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copy source files so that we can run scripts like 'payload migrate'
-COPY --from=builder /app/website.deployed .
+COPY --from=builder /app/cms.deployed .
 
-RUN mv .next/static .next/standalone/website.deployed/.next/static
-RUN cp public .next/standalone/website.deployed/public -r
+RUN mv .next/static .next/standalone/cms.deployed/.next/static
+RUN cp public .next/standalone/cms.deployed/public -r
 
 # Set the correct permission for prerender cache
-RUN chown nextjs:nodejs .next/standalone/website.deployed/.next
+RUN chown nextjs:nodejs .next/standalone/cms.deployed/.next
 
 USER nextjs
 
@@ -58,4 +58,4 @@ ENV PORT=3000
 
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
-CMD HOSTNAME="0.0.0.0" node .next/standalone/website.deployed/server.js
+CMD HOSTNAME="0.0.0.0" node .next/standalone/cms.deployed/server.js

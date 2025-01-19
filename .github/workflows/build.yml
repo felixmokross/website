@@ -19,7 +19,7 @@ on:
 env:
   NODE_VERSION: 22
   FLYCTL_VERSION: 0.3.55
-  WEBSITE_INTERNAL_PORT: 3000
+  CMS_INTERNAL_PORT: 3001
   MEDIA_S3_REGION: eu-west-3
 
 jobs:
@@ -140,8 +140,8 @@ jobs:
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
-  website-lint:
-    name: "Website: Lint"
+  cms-lint:
+    name: "CMS: Lint"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -149,12 +149,12 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
       - name: Install dependencies
-        run: pnpm --filter website install
+        run: pnpm --filter cms install
       - name: Run lint
-        run: pnpm --filter website lint --max-warnings=0
+        run: pnpm --filter cms lint --max-warnings=0
 
-  website-check-format:
-    name: "Website: Check Format"
+  cms-check-format:
+    name: "CMS: Check Format"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -162,9 +162,9 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
       - name: Install dependencies
-        run: pnpm --filter website install
+        run: pnpm --filter cms install
       - name: Check format in frontend
-        run: pnpm --filter website check-format
+        run: pnpm --filter cms check-format
 
   # frontend-unit-tests:
   #   name: "Frontend: Unit Tests"
@@ -182,8 +182,8 @@ jobs:
   #       run: pnpm test
   #       working-directory: frontend
 
-  website-build-push:
-    name: "Website: Build and Push"
+  cms-build-push:
+    name: "CMS: Build and Push"
     runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.image-name.outputs.image }}
@@ -200,10 +200,10 @@ jobs:
       - name: Generate version
         uses: ./.github/actions/version
         id: version
-      - name: Get website image name
+      - name: Get CMS image name
         id: image-name
         run: |
-          IMAGE_NAME=${{ needs.define-env.outputs.fly_app_website }}
+          IMAGE_NAME=${{ needs.define-env.outputs.fly_app_cms }}
           IMAGE_TAG=v${{ steps.version.outputs.version }}
           echo "image_name=$IMAGE_NAME" >> "$GITHUB_OUTPUT"
           echo "image_tag=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
@@ -220,13 +220,13 @@ jobs:
 
            flyctl deploy \
              --app ${{ steps.image-name.outputs.image_name }} \
-             --config fly.website.toml \
+             --config fly.cms.toml \
              --build-only \
              --image-label ${{ steps.image-name.outputs.image_tag }} \
              --label org.opencontainers.image.version=${{ steps.image-name.outputs.image_tag }} \
              --build-secret DATABASE_URI="$DATABASE_URI" \
              --build-secret PAYLOAD_SECRET="$PAYLOAD_SECRET" \
-             --build-arg NEXT_PUBLIC_SERVER_URL=https://${{ needs.define-env.outputs.canonical_hostname_website }} \
+             --build-arg NEXT_PUBLIC_SERVER_URL=https://${{ needs.define-env.outputs.canonical_hostname_cms }} \
              --push \
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
@@ -313,21 +313,21 @@ jobs:
   #           --env PAYLOAD_CMS_BASE_URL=${{ steps.cms-app-name.outputs.app-url }} \
   #           --env CANONICAL_HOSTNAME=${{ steps.app-name.outputs.app-domain }} \
 
-  website-deploy:
-    name: "Website: Deploy"
+  cms-deploy:
+    name: "CMS: Deploy"
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request'
     needs:
-      - website-build-push
+      - cms-build-push
       #- frontend-publish-chromatic
-      - website-check-format
-      - website-lint
+      - cms-check-format
+      - cms-lint
       #- frontend-unit-tests
       #- e2e-tests
       - define-env
     environment:
-      name: ${{ needs.define-env.outputs.environment }}-website
-      url: https://${{ needs.define-env.outputs.canonical_hostname_website }}/
+      name: ${{ needs.define-env.outputs.environment }}-cms
+      url: https://${{ needs.define-env.outputs.canonical_hostname_cms }}/
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -337,12 +337,12 @@ jobs:
         uses: superfly/flyctl-actions/setup-flyctl@master
         with:
           version: ${{ env.FLYCTL_VERSION }}
-      - name: Deploy website
+      - name: Deploy CMS
         run: |
           flyctl deploy \
-            --app ${{ needs.define-env.outputs.fly_app_website }} \
-            --config fly.website.toml \
-            --image ${{ needs.website-build-push.outputs.image }} \
+            --app ${{ needs.define-env.outputs.fly_app_cms }} \
+            --config fly.cms.toml \
+            --image ${{ needs.cms-build-push.outputs.image }} \
             --env MEDIA_S3_REGION=${{ env.MEDIA_S3_REGION }} \
             --env MEDIA_S3_BUCKET=${{ needs.define-env.outputs.s3_bucket }} \
         env:
@@ -425,10 +425,10 @@ jobs:
     outputs:
       environment: ${{ steps.define-env.outputs.environment }}
       fly_app_frontend: ${{ steps.define-env.outputs.fly_app_frontend }}
-      fly_app_website: ${{ steps.define-env.outputs.fly_app_website }}
-      # analytics_domain_website: ${{ steps.define-env.outputs.analytics_domain_website }}
+      fly_app_cms: ${{ steps.define-env.outputs.fly_app_cms }}
+      # analytics_domain_cms: ${{ steps.define-env.outputs.analytics_domain_cms }}
       canonical_hostname_frontend: ${{ steps.define-env.outputs.canonical_hostname_frontend }}
-      canonical_hostname_website: ${{ steps.define-env.outputs.canonical_hostname_website }}
+      canonical_hostname_cms: ${{ steps.define-env.outputs.canonical_hostname_cms }}
       s3_bucket: ${{ steps.define-env.outputs.s3_bucket }}
     steps:
       - name: Define environment
@@ -439,18 +439,16 @@ jobs:
           case $environment in
             production)
               echo "fly_app_frontend=fxmk-frontend" >> "$GITHUB_OUTPUT"
-              echo "fly_app_website=fxmk" >> "$GITHUB_OUTPUT"
-              # echo "analytics_domain_website=staging.lapuertahostels.co" >> "$GITHUB_OUTPUT"
+              echo "fly_app_cms=fxmk-cms" >> "$GITHUB_OUTPUT"
               echo "canonical_hostname_frontend=fxmk-frontend.fly.dev" >> "$GITHUB_OUTPUT"
-              echo "canonical_hostname_website=fxmk.fly.dev" >> "$GITHUB_OUTPUT"
+              echo "canonical_hostname_cms=fxmk-cms.fly.dev" >> "$GITHUB_OUTPUT"
               echo "s3_bucket=fxmk-media" >> "$GITHUB_OUTPUT"
               ;;
             staging)
               echo "fly_app_frontend=fxmk-frontend-staging" >> "$GITHUB_OUTPUT"
-              echo "fly_app_website=fxmk-staging" >> "$GITHUB_OUTPUT"
-              # echo "analytics_domain_website=staging.lapuertahostels.co" >> "$GITHUB_OUTPUT"
+              echo "fly_app_cms=fxmk-cms-staging" >> "$GITHUB_OUTPUT"
               echo "canonical_hostname_frontend=fxmk-frontend-staging.fly.dev" >> "$GITHUB_OUTPUT"
-              echo "canonical_hostname_website=fxmk-staging.fly.dev" >> "$GITHUB_OUTPUT"
+              echo "canonical_hostname_cms=fxmk-cms-staging.fly.dev" >> "$GITHUB_OUTPUT"
               echo "s3_bucket=fxmk-media-staging" >> "$GITHUB_OUTPUT"
               ;;
           esac
