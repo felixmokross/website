@@ -1,3 +1,5 @@
+import { useLoaderData } from "react-router";
+import { tryGetPage } from "~/cms-data.server";
 import { Container, Photos, SocialLink } from "~/components";
 import { XIcon, InstagramIcon, GitHubIcon, LinkedInIcon } from "~/icons";
 
@@ -8,7 +10,13 @@ export function meta() {
   ];
 }
 
+export async function loader() {
+  const result = await tryGetPage("home", "en");
+  return { result };
+}
+
 export default function Home() {
+  const { result } = useLoaderData<typeof loader>();
   return (
     <>
       <Container className="mt-9">
@@ -43,6 +51,9 @@ export default function Home() {
         </div>
       </Container>
       <Photos />
+      <Container className="mt-12">
+        <pre className="text-white">{JSON.stringify(result, null, 2)}</pre>
+      </Container>
     </>
   );
 }
