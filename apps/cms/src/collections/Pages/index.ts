@@ -35,9 +35,10 @@ export const Pages: CollectionConfig<"pages"> = {
   defaultPopulate: {
     title: true,
     slug: true,
+    pathname: true,
   },
   admin: {
-    defaultColumns: ["title", "slug", "updatedAt"],
+    defaultColumns: ["title", "slug", "pathname", "updatedAt"],
     livePreview: {
       url: ({ data, req }) => {
         const path = generatePreviewPath({
@@ -55,7 +56,7 @@ export const Pages: CollectionConfig<"pages"> = {
         collection: "pages",
         req,
       }),
-    useAsTitle: "title",
+    useAsTitle: "pathname",
   },
   fields: [
     {
@@ -121,6 +122,21 @@ export const Pages: CollectionConfig<"pages"> = {
       },
     },
     ...slugField(),
+    {
+      name: "pathname",
+      type: "text",
+      index: true,
+      required: true,
+      access: {
+        update: () => false,
+      },
+      admin: {
+        position: "sidebar",
+        placeholder: "e.g. /experiences/lost-city",
+        description:
+          "The pathname is used to navigate to this page. It must be unique and cannot be changed after the page has been created.",
+      },
+    },
   ],
   hooks: {
     afterChange: [revalidatePage],

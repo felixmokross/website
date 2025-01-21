@@ -8,13 +8,12 @@ const CACHE_EXPIRY_IN_MS = 1000 * 60; // 1 min
 
 async function loadAndCacheData<TData, TResult>(
   url: string,
-  locale: string,
   cacheFilePath: string,
   depth: number,
   queryParams: Record<string, string>,
   getResultFn: (data: TData | null) => TResult | null,
 ) {
-  const result = getResultFn(await loadData(url, locale, depth, queryParams));
+  const result = getResultFn(await loadData(url, depth, queryParams));
 
   if (result) {
     await cacheData(cacheFilePath, result);
@@ -33,20 +32,19 @@ function getCacheFolder(cacheKey: string) {
   return `${CACHE_DIR}/${cacheKey}`;
 }
 
-function getCacheFilePath(cacheKey: string, locale: string) {
-  return `${getCacheFolder(cacheKey)}/${locale}.json`;
+function getCacheFilePath(cacheKey: string) {
+  return `${getCacheFolder(cacheKey)}/data.json`;
 }
 
 async function getData<TData, TResult>(
   pathname: string,
   cacheKey: string,
-  locale: string,
   depth = 1,
   queryParams = {},
   getResultFn: (data: TData | null) => TResult | null = (data: TData | null) =>
     data as TResult,
 ) {
-  const cacheFilePath = getCacheFilePath(cacheKey, locale);
+  const cacheFilePath = getCacheFilePath(cacheKey);
   try {
     const cache = await fs.readFile(cacheFilePath, "utf8");
 
@@ -58,14 +56,13 @@ async function getData<TData, TResult>(
         const cacheExpired =
           cacheLastModified.getTime() + CACHE_EXPIRY_IN_MS < Date.now();
         if (!cacheExpired) {
-          console.log(`Cache not expired for ${cacheKey} in ${locale}`);
+          console.log(`Cache not expired for ${cacheKey}`);
           return;
         }
 
-        console.log(`Cache expired for ${cacheKey} in ${locale}`);
+        console.log(`Cache expired for ${cacheKey}`);
         await loadAndCacheData(
           pathname,
-          locale,
           cacheFilePath,
           depth,
           queryParams,
@@ -74,20 +71,19 @@ async function getData<TData, TResult>(
       } catch (e) {
         // As this runs in the background, just log the error
         console.error(
-          `Failed to refresh cache in microtask for ${cacheKey} in ${locale}: ${e}`,
+          `Failed to refresh cache in microtask for ${cacheKey}: ${e}`,
         );
       }
     });
 
-    console.log(`Cache hit for ${pathname} in ${locale}`);
+    console.log(`Cache hit for ${pathname}`);
     return JSON.parse(cache) as TResult;
   } catch (e) {
     if ((e as NodeJS.ErrnoException)?.code !== "ENOENT") throw e;
 
-    console.log(`Cache miss for ${pathname} in ${locale}`);
+    console.log(`Cache miss for ${pathname}`);
     return await loadAndCacheData(
       pathname,
-      locale,
       cacheFilePath,
       depth,
       queryParams,
@@ -98,7 +94,6 @@ async function getData<TData, TResult>(
 
 export async function loadData(
   pathname: string,
-  locale: string,
   depth: number,
   queryParams: Record<string, string>,
 ) {
@@ -109,7 +104,6 @@ export async function loadData(
     throw new Error("PAYLOAD_CMS_API_KEY is not set");
   }
   const url = new URL(`/api/${pathname}`, process.env.PAYLOAD_CMS_BASE_URL);
-  url.searchParams.set("locale", locale);
   url.searchParams.set("depth", depth.toString());
   url.searchParams.set("draft", "false");
   url.searchParams.set("pagination", "false");
@@ -117,7 +111,7 @@ export async function loadData(
     url.searchParams.set(key, value);
   });
 
-  console.log(`Loading data from CMS for ${url.toString()} in ${locale}`);
+  console.log(`Loading data from CMS for ${url.toString()}`);
   const response = await fetch(url, {
     headers: {
       Authorization: `users API-Key ${process.env.PAYLOAD_CMS_API_KEY}`,
@@ -133,15 +127,13 @@ export async function loadData(
   return await response.json();
 }
 
-export async function tryGetPage(pathname: string, locale: string) {
+export async function tryGetPage(pathname: string) {
   return await getData<{ docs: Page[] }, Page>(
     `pages`,
     `pages_${pathname.replaceAll("/", ":")}`,
-    locale,
     PAGE_DEPTH,
     {
-      // TODO slug/pathname concept
-      "where[slug][equals]": pathname,
+      "where[pathname][equals]": pathname,
       limit: 1,
     },
     (data) => (data && data.docs.length > 0 ? data.docs[0] : null),
