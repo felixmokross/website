@@ -13,8 +13,18 @@ import image3 from "~/images/photos/image-3.jpg";
 import image4 from "~/images/photos/image-4.jpg";
 import image5 from "~/images/photos/image-5.jpg";
 import { Header } from "./header";
+import type { Header as HeaderType, Footer as FooterType } from "@fxmk/shared";
 
-export function LayoutContainer({ children }: PropsWithChildren) {
+type LayoutContainerProps = PropsWithChildren<{
+  header: HeaderType;
+  footer: FooterType;
+}>;
+
+export function LayoutContainer({
+  children,
+  header,
+  footer,
+}: LayoutContainerProps) {
   return (
     <>
       <div className="fixed inset-0 flex justify-center sm:px-8">
@@ -23,9 +33,9 @@ export function LayoutContainer({ children }: PropsWithChildren) {
         </div>
       </div>
       <div className="relative flex w-full flex-col">
-        <Header />
+        <Header {...header} />
         <main className="flex-auto">{children}</main>
-        <Footer />
+        <Footer {...footer} />
       </div>
     </>
   );
@@ -48,7 +58,9 @@ export function NavLink({
   );
 }
 
-export function Footer() {
+type FooterProps = FooterType;
+
+export function Footer({ navItems }: FooterProps) {
   return (
     <footer className="mt-32 flex-none">
       <ContainerOuter>
@@ -56,10 +68,11 @@ export function Footer() {
           <ContainerInner>
             <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
               <div className="flex flex-wrap justify-center gap-x-6 gap-y-1 text-sm font-medium text-zinc-800 dark:text-zinc-200">
-                <NavLink to="/about">About</NavLink>
-                <NavLink to="/projects">Projects</NavLink>
-                <NavLink to="/speaking">Speaking</NavLink>
-                <NavLink to="/uses">Uses</NavLink>
+                {navItems?.map((ni) => (
+                  <NavLink key={ni.id} to={ni.link.url ?? "#"}>
+                    {ni.link.label}
+                  </NavLink>
+                ))}
               </div>
               <p className="text-sm text-zinc-400 dark:text-zinc-500">
                 &copy; {new Date().getFullYear()} Spencer Sharp. All rights

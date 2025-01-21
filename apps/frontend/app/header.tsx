@@ -12,6 +12,8 @@ import { Link, NavLink, useLocation } from "react-router";
 import { ChevronDownIcon, CloseIcon } from "./icons";
 import { Container } from "./components";
 
+import { type Header as HeaderType } from "@fxmk/shared";
+
 function MobileNavItem({
   to,
   children,
@@ -28,9 +30,10 @@ function MobileNavItem({
   );
 }
 
-function MobileNavigation(
-  props: React.ComponentPropsWithoutRef<typeof Popover>,
-) {
+type MobileNavigationProps = React.ComponentPropsWithoutRef<typeof Popover> &
+  Pick<HeaderType, "navItems">;
+
+function MobileNavigation({ navItems, ...props }: MobileNavigationProps) {
   return (
     <Popover {...props}>
       <PopoverButton className="group flex items-center rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-zinc-800 shadow-lg shadow-zinc-800/5 ring-1 ring-zinc-900/5 backdrop-blur dark:bg-zinc-800/90 dark:text-zinc-200 dark:ring-white/10 dark:hover:ring-white/20">
@@ -56,11 +59,11 @@ function MobileNavigation(
         </div>
         <nav className="mt-6">
           <ul className="-my-2 divide-y divide-zinc-100 text-base text-zinc-800 dark:divide-zinc-100/5 dark:text-zinc-300">
-            <MobileNavItem to="/about">About</MobileNavItem>
-            <MobileNavItem to="/articles">Articles</MobileNavItem>
-            <MobileNavItem to="/projects">Projects</MobileNavItem>
-            <MobileNavItem to="/speaking">Speaking</MobileNavItem>
-            <MobileNavItem to="/uses">Uses</MobileNavItem>
+            {navItems?.map((ni) => (
+              <MobileNavItem key={ni.id} to={ni.link.url ?? "#"}>
+                {ni.link.label}
+              </MobileNavItem>
+            ))}
           </ul>
         </nav>
       </PopoverPanel>
@@ -95,15 +98,18 @@ function NavItem({ to, children }: { to: string; children: React.ReactNode }) {
   );
 }
 
-function DesktopNavigation(props: React.ComponentPropsWithoutRef<"nav">) {
+type DesktopNavigationProps = React.ComponentPropsWithoutRef<"nav"> &
+  Pick<HeaderType, "navItems">;
+
+function DesktopNavigation({ navItems, ...props }: DesktopNavigationProps) {
   return (
     <nav {...props}>
       <ul className="flex rounded-full bg-white/90 px-3 text-sm font-medium text-zinc-800 shadow-lg shadow-zinc-800/5 ring-1 ring-zinc-900/5 backdrop-blur dark:bg-zinc-800/90 dark:text-zinc-200 dark:ring-white/10">
-        <NavItem to="/about">About</NavItem>
-        <NavItem to="/articles">Articles</NavItem>
-        <NavItem to="/projects">Projects</NavItem>
-        <NavItem to="/speaking">Speaking</NavItem>
-        <NavItem to="/uses">Uses</NavItem>
+        {navItems?.map((ni) => (
+          <NavItem key={ni.id} to={ni.link.url ?? "#"}>
+            {ni.link.label}
+          </NavItem>
+        ))}
       </ul>
     </nav>
   );
@@ -179,7 +185,9 @@ function Avatar({
   );
 }
 
-export function Header() {
+type HeaderProps = HeaderType;
+
+export function Header({ navItems }: HeaderProps) {
   const location = useLocation();
   const isHomePage = location.pathname === "/";
 
@@ -358,8 +366,14 @@ export function Header() {
                 )}
               </div>
               <div className="flex flex-1 justify-end md:justify-center">
-                <MobileNavigation className="pointer-events-auto md:hidden" />
-                <DesktopNavigation className="pointer-events-auto hidden md:block" />
+                <MobileNavigation
+                  navItems={navItems}
+                  className="pointer-events-auto md:hidden"
+                />
+                <DesktopNavigation
+                  navItems={navItems}
+                  className="pointer-events-auto hidden md:block"
+                />
               </div>
               <div className="flex justify-end md:flex-1">
                 <div className="pointer-events-auto">

@@ -5,11 +5,13 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "react-router";
 
 import type { Route } from "./+types/root";
 import stylesheet from "./app.css?url";
 import { LayoutContainer } from "./components";
+import { getFooter, getHeader } from "./cms-data.server";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -25,7 +27,14 @@ export const links: Route.LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
 ];
 
+export async function loader() {
+  const [header, footer] = await Promise.all([getHeader(), getFooter()]);
+
+  return { header, footer };
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
+  const { header, footer } = useLoaderData<typeof loader>();
   return (
     <html lang="en" className="h-full antialiased">
       <head>
@@ -36,7 +45,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className="flex h-full bg-zinc-50 dark:bg-black">
         <div className="flex w-full">
-          <LayoutContainer>{children}</LayoutContainer>
+          <LayoutContainer header={header} footer={footer}>
+            {children}
+          </LayoutContainer>
         </div>
         <ScrollRestoration />
         <Scripts />

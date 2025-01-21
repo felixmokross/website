@@ -1,5 +1,5 @@
 import fs from "fs/promises";
-import { type Page } from "@fxmk/shared";
+import { type Footer, type Header, type Page } from "@fxmk/shared";
 import path from "path";
 import { PAGE_DEPTH } from "./cms-data";
 
@@ -125,6 +125,28 @@ export async function loadData(
   }
 
   return await response.json();
+}
+
+export async function getHeader() {
+  const header = (await getData(
+    "globals/header",
+    "globals_header",
+    0,
+  )) as Header | null;
+  if (!header) throw new Error("Could not load Header global");
+
+  return header;
+}
+
+export async function getFooter() {
+  const footer = (await getData(
+    "globals/footer",
+    "globals_footer",
+    0,
+  )) as Footer | null;
+  if (!footer) throw new Error("Could not load Header global");
+
+  return footer;
 }
 
 export async function tryGetPage(pathname: string) {
