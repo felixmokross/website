@@ -25,6 +25,10 @@ export const Footer: GlobalConfig = {
         },
       },
     },
+    {
+      name: "copyrightText",
+      type: "text",
+    },
   ],
   hooks: {
     afterChange: [revalidateFooter],

@@ -60,7 +60,7 @@ export function NavLink({
 
 type FooterProps = FooterType;
 
-export function Footer({ navItems }: FooterProps) {
+export function Footer({ navItems, copyrightText }: FooterProps) {
   return (
     <footer className="mt-32 flex-none">
       <ContainerOuter>
@@ -75,8 +75,7 @@ export function Footer({ navItems }: FooterProps) {
                 ))}
               </div>
               <p className="text-sm text-zinc-400 dark:text-zinc-500">
-                &copy; {new Date().getFullYear()} Spencer Sharp. All rights
-                reserved.
+                {copyrightText}
               </p>
             </div>
           </ContainerInner>
