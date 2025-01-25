@@ -189,7 +189,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       image: ${{ steps.image-name.outputs.image }}
-    needs: [define-env]
     steps:
       - name: Checkout with full history
         uses: actions/checkout@v4
@@ -205,30 +204,19 @@ jobs:
       - name: Get CMS image name
         id: image-name
         run: |
-          IMAGE_NAME=${{ needs.define-env.outputs.fly_app_cms }}
+          IMAGE_NAME=fxmk-cms-staging
           IMAGE_TAG=v${{ steps.version.outputs.version }}
           echo "image_name=$IMAGE_NAME" >> "$GITHUB_OUTPUT"
           echo "image_tag=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
           echo "image=registry.fly.io/$IMAGE_NAME:$IMAGE_TAG" >> "$GITHUB_OUTPUT"
       - name: Build and push frontend Docker image
         run: |
-          if [ "${{ needs.define-env.outputs.environment }}" == "production" ]; then
-             DATABASE_URI="${{ secrets.PRODUCTION_DATABASE_URI }}"
-             PAYLOAD_SECRET="${{ secrets.PRODUCTION_PAYLOAD_SECRET }}"
-           else
-             DATABASE_URI="${{ secrets.STAGING_DATABASE_URI }}"
-             PAYLOAD_SECRET="${{ secrets.STAGING_PAYLOAD_SECRET }}"
-           fi
-
            flyctl deploy \
              --app ${{ steps.image-name.outputs.image_name }} \
              --config fly.cms.toml \
              --build-only \
              --image-label ${{ steps.image-name.outputs.image_tag }} \
              --label org.opencontainers.image.version=${{ steps.image-name.outputs.image_tag }} \
-             --build-secret DATABASE_URI="$DATABASE_URI" \
-             --build-secret PAYLOAD_SECRET="$PAYLOAD_SECRET" \
-             --build-arg NEXT_PUBLIC_SERVER_URL=https://${{ needs.define-env.outputs.canonical_hostname_cms }} \
              --push \
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

@@ -16,7 +16,6 @@ import { beforeSyncWithSearch } from "@/search/beforeSync";
 import { s3Storage } from "@payloadcms/storage-s3";
 
 import { Page, Post } from "@/payload-types";
-import { getServerSideURL } from "@/utilities/getURL";
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   return doc?.title
@@ -24,10 +23,11 @@ const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
     : "Payload Website Template";
 };
 
-const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
-  const url = getServerSideURL();
+const generateURL: GenerateURL<Post | Page> = () => {
+  // const url = getServerSideURL();
 
-  return doc?.slug ? `${url}/${doc.slug}` : url;
+  // return doc?.slug ? `${url}/${doc.slug}` : url;
+  throw new Error("Not implemented");
 };
 
 export const plugins: Plugin[] = [
