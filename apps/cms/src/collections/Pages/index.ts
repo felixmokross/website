@@ -21,10 +21,7 @@ import {
 } from "@payloadcms/plugin-seo/fields";
 import { PhotosBlock } from "@/blocks/Photos/config";
 import { refreshCacheHook } from "@/hooks/refresh-cache-hook";
-import {
-  getFullCollectionCacheKey,
-  getPageCacheKey,
-} from "@/utilities/frontend-cache";
+import { getPageCacheKey } from "@/utilities/frontend-cache";
 
 export const Pages: CollectionConfig<"pages"> = {
   slug: "pages",
