@@ -7,12 +7,12 @@ import {
 } from "@headlessui/react";
 import clsx from "clsx";
 
-import avatarImage from "~/images/avatar.jpg";
 import { Link, NavLink, useLocation } from "react-router";
 import { ChevronDownIcon, CloseIcon } from "./icons";
 import { Container } from "./components";
 
-import { type Header as HeaderType } from "@fxmk/shared";
+import { type Header, type Header as HeaderType } from "@fxmk/shared";
+import { useEnvironment } from "./environment";
 
 function MobileNavItem({
   to,
@@ -161,10 +161,15 @@ function AvatarContainer({
 function Avatar({
   large = false,
   className,
+  avatar,
   ...props
 }: Omit<React.ComponentPropsWithoutRef<typeof Link>, "to"> & {
   large?: boolean;
+  avatar: HeaderType["avatar"];
 }) {
+  const { payloadCmsBaseUrl } = useEnvironment();
+
+  if (typeof avatar !== "object" || !avatar.sizes?.thumbnail?.url) return null;
   return (
     <Link
       to="/"
@@ -173,7 +178,7 @@ function Avatar({
       {...props}
     >
       <img
-        src={avatarImage}
+        src={new URL(avatar.sizes.thumbnail.url, payloadCmsBaseUrl).toString()}
         alt=""
         sizes={large ? "4rem" : "2.25rem"}
         className={clsx(
@@ -187,7 +192,7 @@ function Avatar({
 
 type HeaderProps = HeaderType;
 
-export function Header({ navItems }: HeaderProps) {
+export function Header({ navItems, avatar }: HeaderProps) {
   const location = useLocation();
   const isHomePage = location.pathname === "/";
 
@@ -336,6 +341,7 @@ export function Header({ navItems }: HeaderProps) {
                     large
                     className="block h-16 w-16 origin-left"
                     style={{ transform: "var(--avatar-image-transform)" }}
+                    avatar={avatar}
                   />
                 </div>
               </div>
@@ -361,7 +367,7 @@ export function Header({ navItems }: HeaderProps) {
               <div className="flex flex-1">
                 {!isHomePage && (
                   <AvatarContainer>
-                    <Avatar />
+                    <Avatar avatar={avatar} />
                   </AvatarContainer>
                 )}
               </div>

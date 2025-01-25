@@ -25,6 +25,12 @@ export const Header: GlobalConfig = {
         },
       },
     },
+    {
+      name: "avatar",
+      type: "upload",
+      relationTo: "media",
+      required: true,
+    },
   ],
   hooks: {
     afterChange: [revalidateHeader],

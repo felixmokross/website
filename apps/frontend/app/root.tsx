@@ -12,6 +12,7 @@ import type { Route } from "./+types/root";
 import stylesheet from "./app.css?url";
 import { LayoutContainer } from "./components";
 import { getFooter, getHeader } from "./cms-data.server";
+import { EnvironmentContext } from "./environment";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -30,11 +31,17 @@ export const links: Route.LinksFunction = () => [
 export async function loader() {
   const [header, footer] = await Promise.all([getHeader(), getFooter()]);
 
-  return { header, footer };
+  return {
+    header,
+    footer,
+    environment: {
+      payloadCmsBaseUrl: process.env.PAYLOAD_CMS_BASE_URL as string,
+    },
+  };
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { header, footer } = useLoaderData<typeof loader>();
+  const { header, footer, environment } = useLoaderData<typeof loader>();
   return (
     <html lang="en" className="h-full antialiased">
       <head>
@@ -44,11 +51,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="flex h-full bg-zinc-50 dark:bg-black">
-        <div className="flex w-full">
-          <LayoutContainer header={header} footer={footer}>
-            {children}
-          </LayoutContainer>
-        </div>
+        <EnvironmentContext.Provider value={environment}>
+          <div className="flex w-full">
+            <LayoutContainer header={header} footer={footer}>
+              {children}
+            </LayoutContainer>
+          </div>
+        </EnvironmentContext.Provider>
         <ScrollRestoration />
         <Scripts />
       </body>

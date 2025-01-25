@@ -131,7 +131,7 @@ export async function getHeader() {
   const header = (await getData(
     "globals/header",
     "globals_header",
-    0,
+    1,
   )) as Header | null;
   if (!header) throw new Error("Could not load Header global");
 

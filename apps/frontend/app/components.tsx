@@ -7,13 +7,13 @@ import type {
 } from "react";
 import { Link } from "react-router";
 
-import image1 from "~/images/photos/image-1.jpg";
-import image2 from "~/images/photos/image-2.jpg";
-import image3 from "~/images/photos/image-3.jpg";
-import image4 from "~/images/photos/image-4.jpg";
-import image5 from "~/images/photos/image-5.jpg";
 import { Header } from "./header";
-import type { Header as HeaderType, Footer as FooterType } from "@fxmk/shared";
+import type {
+  Header as HeaderType,
+  Footer as FooterType,
+  PhotosBlock,
+} from "@fxmk/shared";
+import { useEnvironment } from "./environment";
 
 type LayoutContainerProps = PropsWithChildren<{
   header: HeaderType;
@@ -148,7 +148,13 @@ export function SocialLink({
   );
 }
 
-export function Photos() {
+type PhotosProps = PhotosBlock;
+
+export function Photos({ photos }: PhotosProps) {
+  const { payloadCmsBaseUrl } = useEnvironment();
+
+  if (!photos) return;
+
   const rotations = [
     "rotate-2",
     "-rotate-2",
@@ -160,20 +166,26 @@ export function Photos() {
   return (
     <div className="mt-16 sm:mt-20">
       <div className="-my-4 flex justify-center gap-5 overflow-hidden py-4 sm:gap-8">
-        {[image1, image2, image3, image4, image5].map((image, imageIndex) => (
+        {photos.map((photo, photoIndex) => (
           <div
-            key={image}
+            key={photo.id}
             className={clsx(
               "relative aspect-[9/10] w-44 flex-none overflow-hidden rounded-xl bg-zinc-100 sm:w-72 sm:rounded-2xl dark:bg-zinc-800",
-              rotations[imageIndex % rotations.length],
+              rotations[photoIndex % rotations.length],
             )}
           >
-            <img
-              src={image}
-              alt=""
-              sizes="(min-width: 640px) 18rem, 11rem"
-              className="absolute inset-0 h-full w-full object-cover"
-            />
+            {typeof photo.image === "object" &&
+              photo.image.sizes?.small?.url && (
+                <img
+                  src={new URL(
+                    photo.image.sizes.small.url,
+                    payloadCmsBaseUrl,
+                  ).toString()}
+                  alt=""
+                  sizes="(min-width: 640px) 18rem, 11rem"
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              )}
           </div>
         ))}
       </div>

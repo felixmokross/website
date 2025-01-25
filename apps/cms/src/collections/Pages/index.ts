@@ -20,6 +20,7 @@ import {
   OverviewField,
   PreviewField,
 } from "@payloadcms/plugin-seo/fields";
+import { PhotosBlock } from "@/blocks/Photos/config";
 
 export const Pages: CollectionConfig<"pages"> = {
   slug: "pages",
@@ -76,7 +77,14 @@ export const Pages: CollectionConfig<"pages"> = {
             {
               name: "layout",
               type: "blocks",
-              blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock],
+              blocks: [
+                CallToAction,
+                Content,
+                MediaBlock,
+                Archive,
+                FormBlock,
+                PhotosBlock,
+              ],
               required: true,
               admin: {
                 initCollapsed: true,
@@ -127,9 +135,6 @@ export const Pages: CollectionConfig<"pages"> = {
       type: "text",
       index: true,
       required: true,
-      access: {
-        update: () => false,
-      },
       admin: {
         position: "sidebar",
         placeholder: "e.g. /experiences/lost-city",
