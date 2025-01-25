@@ -8,4 +8,4 @@ runs:
       shell: bash
     - run: pnpm pull-payload-types
       shell: bash
-      working-directory: shared
+      working-directory: libs/shared
