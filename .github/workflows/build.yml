@@ -61,8 +61,8 @@ jobs:
         uses: ./.github/actions/setup
       - name: Install dependencies
         run: pnpm --filter frontend install
-      # - name: Populate CMS types
-      #   uses: ./.github/actions/populate-cms-types
+      - name: Populate CMS types
+        uses: ./.github/actions/populate-cms-types
       - name: Run typecheck in frontend
         run: pnpm --filter frontend typecheck
 

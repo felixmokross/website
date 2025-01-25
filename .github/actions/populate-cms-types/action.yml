@@ -1,0 +1,11 @@
+name: "Populate CMS Types"
+description: "Generates the CMS types into the `shared` package"
+runs:
+  using: "composite"
+  steps:
+    - name: "Install dependencies"
+      run: pnpm --filter cms install
+      shell: bash
+    - run: pnpm pull-payload-types
+      shell: bash
+      working-directory: shared
