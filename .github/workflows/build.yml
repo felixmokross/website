@@ -137,6 +137,7 @@ jobs:
             --config fly.frontend.toml \
             --image ${{ needs.frontend-build-push.outputs.image }} \
             --env CANONICAL_HOSTNAME=${{ needs.define-env.outputs.canonical_hostname_frontend }} \
+            --env PAYLOAD_CMS_BASE_URL=https://${{ needs.define-env.outputs.canonical_hostname_cms }} \
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
