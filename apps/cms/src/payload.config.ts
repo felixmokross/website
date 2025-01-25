@@ -3,7 +3,7 @@ import { mongooseAdapter } from "@payloadcms/db-mongodb";
 
 import sharp from "sharp"; // sharp-import
 import path from "path";
-import { buildConfig, Config, PayloadRequest } from "payload";
+import { buildConfig, PayloadRequest } from "payload";
 import { fileURLToPath } from "url";
 
 import { Categories } from "./collections/Categories";
@@ -16,6 +16,7 @@ import { Header } from "./Header/config";
 import { plugins } from "./plugins";
 import { defaultLexical } from "@/fields/defaultLexical";
 import { getServerSideURL } from "./utilities/getURL";
+import { Config } from "./payload-types";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
