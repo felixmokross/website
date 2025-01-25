@@ -11,7 +11,6 @@ import { hero } from "@/heros/config";
 import { slugField } from "@/fields/slug";
 import { populatePublishedAt } from "../../hooks/populatePublishedAt";
 import { generatePreviewPath } from "../../utilities/generatePreviewPath";
-import { revalidateDelete, revalidatePage } from "./hooks/revalidatePage";
 
 import {
   MetaDescriptionField,
@@ -21,6 +20,11 @@ import {
   PreviewField,
 } from "@payloadcms/plugin-seo/fields";
 import { PhotosBlock } from "@/blocks/Photos/config";
+import { refreshCacheHook } from "@/hooks/refresh-cache-hook";
+import {
+  getFullCollectionCacheKey,
+  getPageCacheKey,
+} from "@/utilities/frontend-cache";
 
 export const Pages: CollectionConfig<"pages"> = {
   slug: "pages",
@@ -144,9 +148,14 @@ export const Pages: CollectionConfig<"pages"> = {
     },
   ],
   hooks: {
-    afterChange: [revalidatePage],
+    afterChange: [
+      ({ doc, req }) =>
+        refreshCacheHook({
+          cacheKey: getPageCacheKey(doc),
+          pageUrl: doc.pathname,
+        })({ req }),
+    ],
     beforeChange: [populatePublishedAt],
-    beforeDelete: [revalidateDelete],
   },
   versions: {
     drafts: {
