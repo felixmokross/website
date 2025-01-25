@@ -441,15 +441,15 @@ jobs:
             production)
               echo "fly_app_frontend=fxmk-frontend" >> "$GITHUB_OUTPUT"
               echo "fly_app_cms=fxmk-cms" >> "$GITHUB_OUTPUT"
-              echo "canonical_hostname_frontend=fxmk-frontend.fly.dev" >> "$GITHUB_OUTPUT"
-              echo "canonical_hostname_cms=fxmk-cms.fly.dev" >> "$GITHUB_OUTPUT"
+              echo "canonical_hostname_frontend=www.fxmk.dev" >> "$GITHUB_OUTPUT"
+              echo "canonical_hostname_cms=admin.fxmk.dev" >> "$GITHUB_OUTPUT"
               echo "s3_bucket=fxmk-media" >> "$GITHUB_OUTPUT"
               ;;
             staging)
               echo "fly_app_frontend=fxmk-frontend-staging" >> "$GITHUB_OUTPUT"
               echo "fly_app_cms=fxmk-cms-staging" >> "$GITHUB_OUTPUT"
-              echo "canonical_hostname_frontend=fxmk-frontend-staging.fly.dev" >> "$GITHUB_OUTPUT"
-              echo "canonical_hostname_cms=fxmk-cms-staging.fly.dev" >> "$GITHUB_OUTPUT"
+              echo "canonical_hostname_frontend=www.staging.fxmk.dev" >> "$GITHUB_OUTPUT"
+              echo "canonical_hostname_cms=admin.fxmk.dev" >> "$GITHUB_OUTPUT"
               echo "s3_bucket=fxmk-media-staging" >> "$GITHUB_OUTPUT"
               ;;
           esac
