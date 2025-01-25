@@ -3,7 +3,7 @@ import { mongooseAdapter } from "@payloadcms/db-mongodb";
 
 import sharp from "sharp"; // sharp-import
 import path from "path";
-import { buildConfig, PayloadRequest } from "payload";
+import { buildConfig, Config, PayloadRequest } from "payload";
 import { fileURLToPath } from "url";
 
 import { Categories } from "./collections/Categories";
@@ -19,6 +19,10 @@ import { getServerSideURL } from "./utilities/getURL";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
+
+declare module "payload" {
+  export interface GeneratedTypes extends Config {}
+}
 
 export default buildConfig({
   admin: {
@@ -70,6 +74,7 @@ export default buildConfig({
   sharp,
   typescript: {
     outputFile: path.resolve(dirname, "payload-types.ts"),
+    declare: false,
   },
   jobs: {
     access: {
