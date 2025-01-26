@@ -13,5 +13,13 @@ export default defineConfig({
       plugins: [tailwindcss, autoprefixer],
     },
   },
-  plugins: [reactRouter(), tsconfigPaths()],
+  plugins: [!isVitest() && reactRouter(), tsconfigPaths()],
+  test: {
+    environment: "jsdom",
+    setupFiles: "./tests/setup.ts",
+  },
 });
+
+function isVitest() {
+  return !!process.env.VITEST;
+}

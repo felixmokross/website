@@ -1,4 +1,4 @@
-import type { Page } from "@fxmk/shared";
+import type { MediaBlock, Page } from "@fxmk/shared";
 
 export const IS_BOLD = 1;
 export const IS_ITALIC = 1 << 1;
@@ -20,29 +20,30 @@ export type ElementNode =
   | ParagraphElementNode
   | LinkElementNode
   | ListElementNode
-  | HeadingElementNode;
+  | HeadingElementNode
+  | BlockElementNode;
 
 export type Node = ElementNode | TextNode | LineBreakNode;
 
 export type LineBreakNode = { type: "linebreak" };
 
-type BaseElementNode = { children: Node[] };
+type ElementNodeWithChildren = { children: Node[] };
 
-export type ListItemElementNode = BaseElementNode & {
+export type ListItemElementNode = ElementNodeWithChildren & {
   type: "listitem";
 };
 
-export type ParagraphElementNode = BaseElementNode & {
+export type ParagraphElementNode = ElementNodeWithChildren & {
   type: "paragraph";
   indent?: number;
 };
 
-export type HeadingElementNode = BaseElementNode & {
+export type HeadingElementNode = ElementNodeWithChildren & {
   type: "heading";
   tag: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 };
 
-export type LinkElementNode = BaseElementNode & {
+export type LinkElementNode = ElementNodeWithChildren & {
   type: "link";
   fields:
     | {
@@ -58,7 +59,12 @@ export type LinkElementNode = BaseElementNode & {
       };
 };
 
-export type ListElementNode = BaseElementNode & {
+export type ListElementNode = ElementNodeWithChildren & {
   type: "list";
   tag: "ul" | "ol";
+};
+
+export type BlockElementNode = {
+  type: "block";
+  fields: MediaBlock;
 };
