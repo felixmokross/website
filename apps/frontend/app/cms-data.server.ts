@@ -142,7 +142,7 @@ export async function getFooter() {
   const footer = (await getData(
     "globals/footer",
     "globals_footer",
-    0,
+    1,
   )) as Footer | null;
   if (!footer) throw new Error("Could not load Header global");
 

@@ -1,7 +1,7 @@
 import type { GlobalConfig } from "payload";
 
 import { link } from "@/fields/link";
-import { revalidateFooter } from "./hooks/revalidateFooter";
+import { refreshCacheForGlobals } from "@/hooks/refresh-cache-hook";
 
 export const Footer: GlobalConfig = {
   slug: "footer",
@@ -31,6 +31,6 @@ export const Footer: GlobalConfig = {
     },
   ],
   hooks: {
-    afterChange: [revalidateFooter],
+    afterChange: [({ req }) => refreshCacheForGlobals(["header"], req)],
   },
 };
