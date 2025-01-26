@@ -1,8 +1,8 @@
 import type { PropsWithChildren } from "react";
 import { useLoaderData, type LoaderFunctionArgs } from "react-router";
+import { Archive } from "~/archive";
 import { tryGetPage } from "~/cms-data.server";
-import { Container, Photos, SocialLink } from "~/components";
-import { XIcon, InstagramIcon, GitHubIcon, LinkedInIcon } from "~/icons";
+import { Container, Photos } from "~/components";
 import { RichText } from "~/rich-text";
 import type { RichTextObject } from "~/rich-text.model";
 import { getCanonicalRequestUrl, getRequestUrl, toUrl } from "~/routing";
@@ -57,7 +57,7 @@ export default function Page() {
               }}
             />
           )}
-          <div className="mt-6 flex gap-6">
+          {/* <div className="mt-6 flex gap-6">
             <SocialLink to="#" aria-label="Follow on X" icon={XIcon} />
             <SocialLink
               to="#"
@@ -74,20 +74,19 @@ export default function Page() {
               aria-label="Follow on LinkedIn"
               icon={LinkedInIcon}
             />
-          </div>
+          </div> */}
         </div>
       </Container>
       {content.layout?.map((block) => {
         switch (block.blockType) {
           case "photos":
             return <Photos key={block.id} {...block} />;
+          case "archive":
+            return <Archive key={block.id} {...block} />;
           default:
             return null;
         }
       })}
-      <Container className="mt-12">
-        {/* <pre className="text-white">{JSON.stringify(data, null, 2)}</pre> */}
-      </Container>
     </>
   );
 }
