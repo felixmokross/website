@@ -3,7 +3,6 @@ import { Card, Container } from "./components";
 import { formatDate } from "./formatDate";
 import type { RichTextObject } from "./rich-text.model";
 import { RichText } from "./rich-text";
-import { richTextRoot } from "./rich-text.builders";
 
 export type ArchiveProps = ArchiveBlock;
 
@@ -46,13 +45,7 @@ function Article({ article }: { article: Post }) {
           {formatDate(article.publishedAt)}
         </Card.Eyebrow>
         <Card.Description>
-          <RichText
-            content={richTextRoot(
-              article.content.root.children.find(
-                (n) => n.type === "paragraph",
-              )!,
-            )}
-          />
+          <RichText content={article.content} />
         </Card.Description>
         <Card.Cta>Read article</Card.Cta>
       </Card>

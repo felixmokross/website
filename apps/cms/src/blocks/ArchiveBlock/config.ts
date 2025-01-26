@@ -87,10 +87,13 @@ export const Archive: Block = {
               // only take first paragraph of each post
               // TODO ideally transform to plain text here
               content: {
-                type: "root",
-                children: [
-                  p.content.root.children.find((e) => e.type === "paragraph"),
-                ],
+                root: {
+                  children: [
+                    ...p.content.root.children
+                      .filter((e) => e.type === "paragraph")
+                      .slice(0, 1),
+                  ],
+                },
               },
             }));
           },
