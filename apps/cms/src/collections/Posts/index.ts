@@ -28,10 +28,7 @@ import {
 } from "@payloadcms/plugin-seo/fields";
 import { slugField } from "@/fields/slug";
 import { refreshCacheHook } from "@/hooks/refresh-cache-hook";
-import {
-  getCollectionItemCacheKey,
-  getPageCacheKey,
-} from "@/utilities/frontend-cache";
+import { getCollectionItemCacheKey } from "@/utilities/frontend-cache";
 
 export const Posts: CollectionConfig<"posts"> = {
   slug: "posts",
