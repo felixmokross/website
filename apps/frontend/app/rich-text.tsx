@@ -19,6 +19,8 @@ import {
   IS_CODE,
   type Node,
 } from "./rich-text.model";
+import { MediaImage } from "./media-image";
+import { Code } from "./code";
 
 export type RichTextProps = {
   content?: RichTextObject;
@@ -116,13 +118,15 @@ function RenderedElementNode({
 }) {
   const { elements, content } = useRichTextContext();
 
-  const renderedChildren = node.children?.map((child, i) => (
-    <RenderedNode
-      key={i}
-      node={child}
-      isLast={i === node.children.length - 1}
-    />
-  ));
+  const renderedChildren =
+    "children" in node &&
+    node.children?.map((child, i) => (
+      <RenderedNode
+        key={i}
+        node={child}
+        isLast={i === node.children.length - 1}
+      />
+    ));
 
   switch (node.type) {
     case "paragraph":
@@ -149,13 +153,26 @@ function RenderedElementNode({
         <elements.link to={href}>{renderedChildren}</elements.link>
       );
     }
+    case "block": {
+      switch (node.fields.blockType) {
+        case "mediaBlock": {
+          return <MediaImage media={node.fields.media} />;
+        }
+        case "code": {
+          return <Code data={node.fields} />;
+        }
+        default:
+          throw new Error(
+            `Unsupported block type '${node.fields["blockType"]}': ${JSON.stringify(node.fields, null, 2)}`,
+          );
+      }
+    }
     default:
-      console.warn(
-        `Unsupported node type ${node["type"]}: ${JSON.stringify(node, null, 2)}
+      throw new Error(
+        `Unsupported node type '${node["type"]}': ${JSON.stringify(node, null, 2)}
 
 Rich text object: ${JSON.stringify(content, null, 2)}`,
       );
-      return null;
   }
 }
 

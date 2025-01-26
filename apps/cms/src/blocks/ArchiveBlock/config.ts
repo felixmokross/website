@@ -57,6 +57,50 @@ export const Archive: Block = {
       ],
     },
     {
+      name: "posts",
+      type: "json",
+      hidden: true,
+      virtual: true,
+      hooks: {
+        afterRead: [
+          async ({ siblingData, req }) => {
+            if (
+              siblingData?.populateBy !== "collection" ||
+              siblingData?.relationTo !== "posts"
+            ) {
+              return [];
+            }
+
+            const result = await req.payload.find({
+              collection: "posts",
+              pagination: false,
+              select: {
+                title: true,
+                slug: true,
+                publishedAt: true,
+                content: true,
+              },
+            });
+
+            return result.docs.map((p) => ({
+              ...p,
+              // only take first paragraph of each post
+              // TODO ideally transform to plain text here
+              content: {
+                root: {
+                  children: [
+                    ...p.content.root.children
+                      .filter((e) => e.type === "paragraph")
+                      .slice(0, 1),
+                  ],
+                },
+              },
+            }));
+          },
+        ],
+      },
+    },
+    {
       name: "categories",
       type: "relationship",
       admin: {
