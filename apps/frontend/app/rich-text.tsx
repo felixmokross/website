@@ -150,11 +150,12 @@ function RenderedElementNode({
       );
     }
     default:
-      throw new Error(
+      console.warn(
         `Unsupported node type ${node["type"]}: ${JSON.stringify(node, null, 2)}
 
 Rich text object: ${JSON.stringify(content, null, 2)}`,
       );
+      return null;
   }
 }
 

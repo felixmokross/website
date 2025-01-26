@@ -1,4 +1,6 @@
 import type { Config } from "tailwindcss";
+import typographyPlugin from "@tailwindcss/typography";
+import typographyStyles from "./typography";
 
 export default {
   content: ["./app/**/{**,.client,.server}/**/*.{js,jsx,ts,tsx}"],
@@ -18,6 +20,7 @@ export default {
       "8xl": ["6rem", { lineHeight: "1" }],
       "9xl": ["8rem", { lineHeight: "1" }],
     },
+    typography: typographyStyles,
   },
-  plugins: [],
+  plugins: [typographyPlugin],
 } satisfies Config;

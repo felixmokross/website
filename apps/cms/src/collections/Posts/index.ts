@@ -7,6 +7,8 @@ import {
   HorizontalRuleFeature,
   InlineToolbarFeature,
   lexicalEditor,
+  OrderedListFeature,
+  UnorderedListFeature,
 } from "@payloadcms/richtext-lexical";
 
 import { authenticated } from "../../access/authenticated";
@@ -79,11 +81,11 @@ export const Posts: CollectionConfig<"posts"> = {
       tabs: [
         {
           fields: [
-            {
-              name: "heroImage",
-              type: "upload",
-              relationTo: "media",
-            },
+            // {
+            //   name: "heroImage",
+            //   type: "upload",
+            //   relationTo: "media",
+            // },
             {
               name: "content",
               type: "richText",
@@ -98,6 +100,8 @@ export const Posts: CollectionConfig<"posts"> = {
                     FixedToolbarFeature(),
                     InlineToolbarFeature(),
                     HorizontalRuleFeature(),
+                    UnorderedListFeature(),
+                    OrderedListFeature(),
                   ];
                 },
               }),

@@ -4,4 +4,5 @@ export default [
   index("routes/home.tsx"),
   route("*", "routes/page.tsx"),
   route("/purge-cache", "routes/purge-cache.ts"),
+  route("/articles/:slug", "routes/post.tsx"),
 ] satisfies RouteConfig;

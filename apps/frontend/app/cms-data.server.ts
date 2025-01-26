@@ -1,5 +1,5 @@
 import fs from "fs/promises";
-import { type Footer, type Header, type Page } from "@fxmk/shared";
+import { type Footer, type Header, type Page, type Post } from "@fxmk/shared";
 import path from "path";
 import { PAGE_DEPTH } from "./cms-data";
 
@@ -156,6 +156,19 @@ export async function tryGetPage(pathname: string) {
     PAGE_DEPTH,
     {
       "where[pathname][equals]": pathname,
+      limit: 1,
+    },
+    (data) => (data && data.docs.length > 0 ? data.docs[0] : null),
+  );
+}
+
+export async function tryGetPost(slug: string) {
+  return await getData<{ docs: Post[] }, Post>(
+    `posts`,
+    `posts_${slug}`,
+    1,
+    {
+      "where[slug][equals]": slug,
       limit: 1,
     },
     (data) => (data && data.docs.length > 0 ? data.docs[0] : null),
