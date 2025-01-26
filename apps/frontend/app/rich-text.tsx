@@ -20,6 +20,7 @@ import {
   type Node,
 } from "./rich-text.model";
 import { MediaImage } from "./media-image";
+import { Code } from "./code";
 
 export type RichTextProps = {
   content?: RichTextObject;
@@ -153,9 +154,18 @@ function RenderedElementNode({
       );
     }
     case "block": {
-      if (typeof node.fields.media !== "object") return null;
-
-      return <MediaImage media={node.fields.media} />;
+      switch (node.fields.blockType) {
+        case "mediaBlock": {
+          return <MediaImage media={node.fields.media} />;
+        }
+        case "code": {
+          return <Code data={node.fields} />;
+        }
+        default:
+          throw new Error(
+            `Unsupported block type '${node.fields["blockType"]}': ${JSON.stringify(node.fields, null, 2)}`,
+          );
+      }
     }
     default:
       throw new Error(

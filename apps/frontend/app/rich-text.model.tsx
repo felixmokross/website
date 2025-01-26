@@ -1,4 +1,4 @@
-import type { MediaBlock, Page } from "@fxmk/shared";
+import type { CodeBlock, MediaBlock, Page } from "@fxmk/shared";
 
 export const IS_BOLD = 1;
 export const IS_ITALIC = 1 << 1;
@@ -66,5 +66,5 @@ export type ListElementNode = ElementNodeWithChildren & {
 
 export type BlockElementNode = {
   type: "block";
-  fields: MediaBlock;
+  fields: MediaBlock | CodeBlock;
 };

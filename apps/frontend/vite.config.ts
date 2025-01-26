@@ -3,6 +3,7 @@ import autoprefixer from "autoprefixer";
 import tailwindcss from "tailwindcss";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
+import prismjs from "vite-plugin-prismjs";
 
 export default defineConfig({
   server: {
@@ -13,7 +14,22 @@ export default defineConfig({
       plugins: [tailwindcss, autoprefixer],
     },
   },
-  plugins: [!isVitest() && reactRouter(), tsconfigPaths()],
+  plugins: [
+    !isVitest() && reactRouter(),
+    tsconfigPaths(),
+    prismjs({
+      languages: [
+        "typescript",
+        "clike",
+        "javascript",
+        "css",
+        "html",
+        "tsx",
+        "jsx",
+        "yaml",
+      ],
+    }),
+  ],
   test: {
     environment: "jsdom",
     setupFiles: "./tests/setup.ts",

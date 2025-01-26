@@ -21,6 +21,10 @@ export const Code: Block = {
           label: "CSS",
           value: "css",
         },
+        {
+          label: "C-Like",
+          value: "clike",
+        },
       ],
     },
     {
