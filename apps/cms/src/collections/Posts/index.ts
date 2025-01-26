@@ -18,7 +18,6 @@ import { Code } from "../../blocks/Code/config";
 import { MediaBlock } from "../../blocks/MediaBlock/config";
 import { generatePreviewPath } from "../../utilities/generatePreviewPath";
 import { populateAuthors } from "./hooks/populateAuthors";
-import { revalidateDelete, revalidatePost } from "./hooks/revalidatePost";
 
 import {
   MetaDescriptionField,
@@ -28,6 +27,11 @@ import {
   PreviewField,
 } from "@payloadcms/plugin-seo/fields";
 import { slugField } from "@/fields/slug";
+import { refreshCacheHook } from "@/hooks/refresh-cache-hook";
+import {
+  getCollectionItemCacheKey,
+  getPageCacheKey,
+} from "@/utilities/frontend-cache";
 
 export const Posts: CollectionConfig<"posts"> = {
   slug: "posts",
@@ -226,9 +230,15 @@ export const Posts: CollectionConfig<"posts"> = {
     ...slugField(),
   ],
   hooks: {
-    afterChange: [revalidatePost],
+    afterChange: [
+      ({ doc, req }) =>
+        refreshCacheHook({
+          cacheKey: getCollectionItemCacheKey("posts", doc.slug),
+          pageUrl: `/articles/${doc.slug}`,
+        })({ req }),
+    ],
+
     afterRead: [populateAuthors],
-    afterDelete: [revalidateDelete],
   },
   versions: {
     drafts: {
