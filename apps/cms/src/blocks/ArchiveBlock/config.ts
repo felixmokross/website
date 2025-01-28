@@ -75,6 +75,7 @@ export const Archive: Block = {
               await req.payload.find({
                 collection: "posts",
                 pagination: false,
+                sort: "-publishedAt",
               })
             ).docs.map((p) => ({
               // Note: We cannot use `select` here since content_summary is a virtual field, thus we need the full posts to be loaded
