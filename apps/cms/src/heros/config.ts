@@ -1,11 +1,13 @@
 import type { Field } from "payload";
 
 import {
+  BlocksFeature,
   FixedToolbarFeature,
   HeadingFeature,
   InlineToolbarFeature,
   lexicalEditor,
 } from "@payloadcms/richtext-lexical";
+import { SocialLinksBlock } from "@/blocks/SocialLinksBlock/config";
 
 export const hero: Field = {
   name: "hero",
@@ -46,6 +48,7 @@ export const hero: Field = {
             HeadingFeature({ enabledHeadingSizes: ["h1", "h2", "h3", "h4"] }),
             FixedToolbarFeature(),
             InlineToolbarFeature(),
+            BlocksFeature({ blocks: [SocialLinksBlock] }),
           ];
         },
       }),

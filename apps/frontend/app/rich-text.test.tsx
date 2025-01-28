@@ -265,6 +265,44 @@ describe("block element nodes", () => {
     );
     expect(screen.getByRole("img")).toHaveAttribute("alt", "Alternative Text");
   });
+
+  test("Social links block elements are rendered as a list of links.", () => {
+    render(
+      <RichText
+        content={richTextRoot({
+          type: "block",
+          fields: {
+            blockType: "social-links-block",
+            socialLinks: [
+              {
+                id: "social-link-1",
+                platform: "instagram",
+                url: "https://instagram.com",
+                createdAt: "2021-01-01T00:00:00Z",
+                updatedAt: "2021-01-01T00:00:00Z",
+              },
+              {
+                id: "social-link-2",
+                platform: "linkedin",
+                url: "https://linkedin.com",
+                createdAt: "2021-01-01T00:00:00Z",
+                updatedAt: "2021-01-01T00:00:00Z",
+              },
+            ],
+          },
+        })}
+      />,
+    );
+
+    const links = screen.getAllByRole("link");
+    expect(links).toHaveLength(2);
+
+    expect(links[0]).toHaveTextContent("instagram");
+    expect(links[0]).toHaveAttribute("href", "https://instagram.com");
+
+    expect(links[1]).toHaveTextContent("linkedin");
+    expect(links[1]).toHaveAttribute("href", "https://linkedin.com");
+  });
 });
 
 test("line breaks are rendered as <br /> elements.", () => {
