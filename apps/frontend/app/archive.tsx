@@ -2,7 +2,9 @@ import type { ArchiveBlock } from "@fxmk/shared";
 import { Card, Container } from "./components";
 import { formatDate } from "./formatDate";
 
-export type ArchiveProps = ArchiveBlock;
+export type ArchiveProps = ArchiveBlock & {
+  size: "full" | "small";
+};
 
 export function Archive({ posts, size }: ArchiveProps) {
   return size === "full" ? (
@@ -10,21 +12,17 @@ export function Archive({ posts, size }: ArchiveProps) {
       <div className="md:border-l md:border-zinc-100 md:pl-6 md:dark:border-zinc-700/40">
         <div className="flex max-w-3xl flex-col space-y-16">
           {(posts as Post[]).map((p) => (
-            <Article key={p.slug} article={p} />
+            <FullArticle key={p.slug} article={p} />
           ))}
         </div>
       </div>
     </Container>
   ) : size === "small" ? (
-    <Container className="mt-24 md:mt-28">
-      <div className="mx-auto grid max-w-xl grid-cols-1 gap-y-20 lg:max-w-none lg:grid-cols-2">
-        <div className="flex flex-col gap-16">
-          {(posts as Post[]).map((p) => (
-            <SmallArticle key={p.slug} article={p} />
-          ))}
-        </div>
-      </div>
-    </Container>
+    <div className="flex flex-col gap-16">
+      {(posts as Post[]).map((p) => (
+        <SmallArticle key={p.slug} article={p} />
+      ))}
+    </div>
   ) : undefined;
 }
 
@@ -35,7 +33,7 @@ type Post = {
   publishedAt: string;
 };
 
-function Article({ article }: { article: Post }) {
+function FullArticle({ article }: { article: Post }) {
   return (
     <article className="md:grid md:grid-cols-4 md:items-baseline">
       <Card className="md:col-span-3">

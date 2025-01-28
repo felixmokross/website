@@ -2,6 +2,7 @@ import type { PropsWithChildren } from "react";
 import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 import { Archive } from "~/archive";
 import { tryGetPage } from "~/cms-data.server";
+import { Columns } from "~/columns";
 import { Container, Photos } from "~/components";
 import { RichText } from "~/rich-text";
 import type { RichTextObject } from "~/rich-text.model";
@@ -82,7 +83,9 @@ export default function Page() {
           case "photos":
             return <Photos key={block.id} {...block} />;
           case "archive":
-            return <Archive key={block.id} {...block} />;
+            return <Archive key={block.id} {...block} size="full" />;
+          case "columns":
+            return <Columns key={block.id} {...block} />;
           default:
             return null;
         }

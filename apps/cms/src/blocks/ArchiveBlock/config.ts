@@ -31,38 +31,13 @@ export const Archive: Block = {
       },
     },
     {
-      type: "row",
-      fields: [
-        {
-          name: "size",
-          type: "select",
-          defaultValue: "full",
-          required: true,
-          admin: {
-            width: "50%",
-          },
-          options: [
-            {
-              label: "Full",
-              value: "full",
-            },
-            {
-              label: "Small",
-              value: "small",
-            },
-          ],
-        },
-        {
-          name: "limit",
-          type: "number",
-          admin: {
-            step: 1,
-            description: "Leave empty to show all posts",
-            width: "50%",
-          },
-          label: "Maximum number of posts to show",
-        },
-      ],
+      name: "limit",
+      type: "number",
+      admin: {
+        step: 1,
+        description: "Leave empty to show all posts",
+      },
+      label: "Maximum number of posts to show",
     },
   ],
   labels: {
