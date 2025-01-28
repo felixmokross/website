@@ -1,16 +1,5 @@
 import type { CollectionConfig } from "payload";
 
-import {
-  BlocksFeature,
-  FixedToolbarFeature,
-  HeadingFeature,
-  HorizontalRuleFeature,
-  InlineToolbarFeature,
-  lexicalEditor,
-  OrderedListFeature,
-  UnorderedListFeature,
-} from "@payloadcms/richtext-lexical";
-
 import { authenticated } from "../../access/authenticated";
 import { authenticatedOrPublished } from "../../access/authenticatedOrPublished";
 import { Banner } from "../../blocks/Banner/config";
