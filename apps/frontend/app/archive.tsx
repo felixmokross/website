@@ -4,10 +4,8 @@ import { formatDate } from "./formatDate";
 
 export type ArchiveProps = ArchiveBlock;
 
-export function Archive({ populateBy, posts }: ArchiveProps) {
-  if (populateBy !== "collection") return null;
-
-  return (
+export function Archive({ posts, size }: ArchiveProps) {
+  return size === "full" ? (
     <Container className="mt-16 sm:mt-20">
       <div className="md:border-l md:border-zinc-100 md:pl-6 md:dark:border-zinc-700/40">
         <div className="flex max-w-3xl flex-col space-y-16">
@@ -17,7 +15,17 @@ export function Archive({ populateBy, posts }: ArchiveProps) {
         </div>
       </div>
     </Container>
-  );
+  ) : size === "small" ? (
+    <Container className="mt-24 md:mt-28">
+      <div className="mx-auto grid max-w-xl grid-cols-1 gap-y-20 lg:max-w-none lg:grid-cols-2">
+        <div className="flex flex-col gap-16">
+          {(posts as Post[]).map((p) => (
+            <SmallArticle key={p.slug} article={p} />
+          ))}
+        </div>
+      </div>
+    </Container>
+  ) : undefined;
 }
 
 type Post = {
@@ -53,5 +61,20 @@ function Article({ article }: { article: Post }) {
         {formatDate(article.publishedAt)}
       </Card.Eyebrow>
     </article>
+  );
+}
+
+function SmallArticle({ article }: { article: Post }) {
+  return (
+    <Card as="article">
+      <Card.Title href={`/articles/${article.slug}`}>
+        {article.title}
+      </Card.Title>
+      <Card.Eyebrow as="time" dateTime={article.publishedAt} decorate>
+        {formatDate(article.publishedAt)}
+      </Card.Eyebrow>
+      <Card.Description>{article.content_summary}</Card.Description>
+      <Card.Cta>Read article</Card.Cta>
+    </Card>
   );
 }
