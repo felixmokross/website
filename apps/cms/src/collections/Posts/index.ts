@@ -1,21 +1,7 @@
 import type { CollectionConfig } from "payload";
 
-import {
-  BlocksFeature,
-  FixedToolbarFeature,
-  HeadingFeature,
-  HorizontalRuleFeature,
-  InlineToolbarFeature,
-  lexicalEditor,
-  OrderedListFeature,
-  UnorderedListFeature,
-} from "@payloadcms/richtext-lexical";
-
 import { authenticated } from "../../access/authenticated";
 import { authenticatedOrPublished } from "../../access/authenticatedOrPublished";
-import { Banner } from "../../blocks/Banner/config";
-import { Code } from "../../blocks/Code/config";
-import { MediaBlock } from "../../blocks/MediaBlock/config";
 import { generatePreviewPath } from "../../utilities/generatePreviewPath";
 
 import {
@@ -28,6 +14,7 @@ import {
 import { slugField } from "@/fields/slug";
 import { refreshCacheHook } from "@/hooks/refresh-cache-hook";
 import { getCollectionItemCacheKey } from "@/utilities/frontend-cache";
+import { contentFields } from "./content";
 
 export const Posts: CollectionConfig<"posts"> = {
   slug: "posts",
@@ -86,28 +73,7 @@ export const Posts: CollectionConfig<"posts"> = {
             //   type: "upload",
             //   relationTo: "media",
             // },
-            {
-              name: "content",
-              type: "richText",
-              editor: lexicalEditor({
-                features: ({ rootFeatures }) => {
-                  return [
-                    ...rootFeatures,
-                    HeadingFeature({
-                      enabledHeadingSizes: ["h1", "h2", "h3", "h4"],
-                    }),
-                    BlocksFeature({ blocks: [Banner, Code, MediaBlock] }),
-                    FixedToolbarFeature(),
-                    InlineToolbarFeature(),
-                    HorizontalRuleFeature(),
-                    UnorderedListFeature(),
-                    OrderedListFeature(),
-                  ];
-                },
-              }),
-              label: false,
-              required: true,
-            },
+            ...contentFields(),
           ],
           label: "Content",
         },

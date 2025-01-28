@@ -71,30 +71,18 @@ export const Archive: Block = {
               return [];
             }
 
-            const result = await req.payload.find({
-              collection: "posts",
-              pagination: false,
-              select: {
-                title: true,
-                slug: true,
-                publishedAt: true,
-                content: true,
-              },
-            });
-
-            return result.docs.map((p) => ({
-              ...p,
-              // only take first paragraph of each post
-              // TODO ideally transform to plain text here
-              content: {
-                root: {
-                  children: [
-                    ...p.content.root.children
-                      .filter((e) => e.type === "paragraph")
-                      .slice(0, 1),
-                  ],
-                },
-              },
+            return (
+              await req.payload.find({
+                collection: "posts",
+                pagination: false,
+                sort: "-publishedAt",
+              })
+            ).docs.map((p) => ({
+              // Note: We cannot use `select` here since content_summary is a virtual field, thus we need the full posts to be loaded
+              title: p.title,
+              slug: p.slug,
+              content_summary: p.content_summary,
+              publishedAt: p.publishedAt,
             }));
           },
         ],

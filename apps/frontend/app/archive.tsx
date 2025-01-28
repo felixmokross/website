@@ -1,8 +1,6 @@
 import type { ArchiveBlock } from "@fxmk/shared";
 import { Card, Container } from "./components";
 import { formatDate } from "./formatDate";
-import type { RichTextObject } from "./rich-text.model";
-import { RichText } from "./rich-text";
 
 export type ArchiveProps = ArchiveBlock;
 
@@ -25,7 +23,7 @@ export function Archive({ populateBy, posts }: ArchiveProps) {
 type Post = {
   slug: string;
   title: string;
-  content: RichTextObject;
+  content_summary: string;
   publishedAt: string;
 };
 
@@ -44,9 +42,7 @@ function Article({ article }: { article: Post }) {
         >
           {formatDate(article.publishedAt)}
         </Card.Eyebrow>
-        <Card.Description>
-          <RichText content={article.content} />
-        </Card.Description>
+        <Card.Description>{article.content_summary}</Card.Description>
         <Card.Cta>Read article</Card.Cta>
       </Card>
       <Card.Eyebrow
