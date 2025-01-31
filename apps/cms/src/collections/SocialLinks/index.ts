@@ -1,5 +1,4 @@
 import { authenticated } from "@/access/authenticated";
-import { auth } from "node_modules/payload/dist/auth/operations/auth";
 import { CollectionConfig } from "payload";
 
 export const SocialLinks: CollectionConfig<"social-links"> = {
