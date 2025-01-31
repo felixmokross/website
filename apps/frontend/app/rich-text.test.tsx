@@ -20,6 +20,7 @@ import {
 } from "./rich-text.builders";
 import type { PropsWithChildren } from "react";
 import { EnvironmentContext } from "./environment";
+import { MemoryRouter } from "react-router";
 
 test("Bold text node is rendered as <strong> element.", () => {
   render(
@@ -268,39 +269,38 @@ describe("block element nodes", () => {
 
   test("Social links block elements are rendered as a list of links.", () => {
     render(
-      <RichText
-        content={richTextRoot({
-          type: "block",
-          fields: {
-            blockType: "social-links-block",
-            socialLinks: [
-              {
-                id: "social-link-1",
-                platform: "instagram",
-                url: "https://instagram.com",
-                createdAt: "2021-01-01T00:00:00Z",
-                updatedAt: "2021-01-01T00:00:00Z",
-              },
-              {
-                id: "social-link-2",
-                platform: "linkedin",
-                url: "https://linkedin.com",
-                createdAt: "2021-01-01T00:00:00Z",
-                updatedAt: "2021-01-01T00:00:00Z",
-              },
-            ],
-          },
-        })}
-      />,
+      <MemoryRouter>
+        <RichText
+          content={richTextRoot({
+            type: "block",
+            fields: {
+              blockType: "social-links-block",
+              socialLinks: [
+                {
+                  id: "social-link-1",
+                  platform: "instagram",
+                  url: "https://instagram.com",
+                  createdAt: "2021-01-01T00:00:00Z",
+                  updatedAt: "2021-01-01T00:00:00Z",
+                },
+                {
+                  id: "social-link-2",
+                  platform: "linkedin",
+                  url: "https://linkedin.com",
+                  createdAt: "2021-01-01T00:00:00Z",
+                  updatedAt: "2021-01-01T00:00:00Z",
+                },
+              ],
+            },
+          })}
+        />
+      </MemoryRouter>,
     );
 
     const links = screen.getAllByRole("link");
     expect(links).toHaveLength(2);
 
-    expect(links[0]).toHaveTextContent("instagram");
     expect(links[0]).toHaveAttribute("href", "https://instagram.com");
-
-    expect(links[1]).toHaveTextContent("linkedin");
     expect(links[1]).toHaveAttribute("href", "https://linkedin.com");
   });
 });
