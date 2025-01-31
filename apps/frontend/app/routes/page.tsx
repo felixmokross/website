@@ -1,7 +1,9 @@
 import type { PropsWithChildren } from "react";
 import { useLoaderData, type LoaderFunctionArgs } from "react-router";
+import { About } from "~/about";
 import { Archive } from "~/archive";
 import { tryGetPage } from "~/cms-data.server";
+import { Columns } from "~/columns";
 import { Container, Photos } from "~/components";
 import { RichText } from "~/rich-text";
 import type { RichTextObject } from "~/rich-text.model";
@@ -38,51 +40,39 @@ export default function Page() {
   const { content } = useLoaderData<typeof loader>();
   return (
     <>
-      <Container className="mt-9">
-        <div className="max-w-2xl">
-          {content.hero?.richText && (
-            <RichText
-              content={content.hero.richText as unknown as RichTextObject}
-              elements={{
-                h1: ({ children }: PropsWithChildren) => (
-                  <h1 className="text-4xl font-bold tracking-tight text-zinc-800 sm:text-5xl dark:text-zinc-100">
-                    {children}
-                  </h1>
-                ),
-                paragraph: ({ children }: PropsWithChildren) => (
-                  <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-                    {children}
-                  </p>
-                ),
-              }}
-            />
-          )}
-          {/* <div className="mt-6 flex gap-6">
-            <SocialLink to="#" aria-label="Follow on X" icon={XIcon} />
-            <SocialLink
-              to="#"
-              aria-label="Follow on Instagram"
-              icon={InstagramIcon}
-            />
-            <SocialLink
-              to="#"
-              aria-label="Follow on GitHub"
-              icon={GitHubIcon}
-            />
-            <SocialLink
-              to="#"
-              aria-label="Follow on LinkedIn"
-              icon={LinkedInIcon}
-            />
-          </div> */}
-        </div>
-      </Container>
+      {content.hero?.richText && (
+        <Container className="mt-9">
+          <div className="max-w-2xl">
+            {content.hero.richText && (
+              <RichText
+                content={content.hero.richText as unknown as RichTextObject}
+                elements={{
+                  h1: ({ children }: PropsWithChildren) => (
+                    <h1 className="text-4xl font-bold tracking-tight text-zinc-800 sm:text-5xl dark:text-zinc-100">
+                      {children}
+                    </h1>
+                  ),
+                  paragraph: ({ children }: PropsWithChildren) => (
+                    <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
+                      {children}
+                    </p>
+                  ),
+                }}
+              />
+            )}
+          </div>
+        </Container>
+      )}
       {content.layout?.map((block) => {
         switch (block.blockType) {
           case "photos":
             return <Photos key={block.id} {...block} />;
           case "archive":
-            return <Archive key={block.id} {...block} />;
+            return <Archive key={block.id} {...block} size="full" />;
+          case "columns":
+            return <Columns key={block.id} {...block} />;
+          case "about":
+            return <About key={block.id} {...block} />;
           default:
             return null;
         }

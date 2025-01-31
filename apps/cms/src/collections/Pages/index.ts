@@ -22,6 +22,8 @@ import {
 import { PhotosBlock } from "@/blocks/Photos/config";
 import { refreshCacheHook } from "@/hooks/refresh-cache-hook";
 import { getPageCacheKey } from "@/utilities/frontend-cache";
+import { Columns } from "@/blocks/Columns/config";
+import { AboutBlock } from "@/blocks/AboutBlock/config";
 
 export const Pages: CollectionConfig<"pages"> = {
   slug: "pages",
@@ -85,6 +87,8 @@ export const Pages: CollectionConfig<"pages"> = {
                 Archive,
                 FormBlock,
                 PhotosBlock,
+                Columns,
+                AboutBlock,
               ],
               required: true,
               admin: {

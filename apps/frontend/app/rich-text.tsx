@@ -21,6 +21,7 @@ import {
 } from "./rich-text.model";
 import { MediaImage } from "./media-image";
 import { Code } from "./code";
+import { SocialLinksBlock } from "./social-links-block";
 
 export type RichTextProps = {
   content?: RichTextObject;
@@ -160,6 +161,9 @@ function RenderedElementNode({
         }
         case "code": {
           return <Code data={node.fields} />;
+        }
+        case "social-links-block": {
+          return <SocialLinksBlock socialLinks={node.fields.socialLinks} />;
         }
         default:
           throw new Error(

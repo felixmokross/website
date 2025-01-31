@@ -16,6 +16,7 @@ import { Header } from "./Header/config";
 import { plugins } from "./plugins";
 import { defaultLexical } from "@/fields/defaultLexical";
 import { Config } from "./payload-types";
+import { SocialLinks } from "./collections/SocialLinks";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -59,7 +60,7 @@ export default buildConfig({
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || "",
   }),
-  collections: [Pages, Posts, Media, Categories, Users],
+  collections: [Pages, Posts, Media, Categories, Users, SocialLinks],
   globals: [Header, Footer],
   plugins,
   secret: process.env.PAYLOAD_SECRET!,
