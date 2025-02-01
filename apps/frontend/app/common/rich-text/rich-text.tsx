@@ -19,9 +19,9 @@ import {
   IS_CODE,
   type Node,
 } from "./rich-text.model";
-import { MediaImage } from "./media-image";
-import { Code } from "./code";
-import { SocialLinksBlock } from "./social-links-block";
+import { MediaImage } from "../media-image";
+import { Code } from "../../blocks/code";
+import { SocialLinksBlock } from "../../blocks/social-links-block";
 
 export type RichTextProps = {
   content?: RichTextObject;

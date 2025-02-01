@@ -7,7 +7,7 @@ import type {
 } from "react";
 import { Link } from "react-router";
 
-import { Header } from "./header";
+import { Header } from "../layout/header";
 import type {
   Header as HeaderType,
   Footer as FooterType,

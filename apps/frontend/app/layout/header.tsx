@@ -8,12 +8,12 @@ import {
 import clsx from "clsx";
 
 import { Link, NavLink, useLocation } from "react-router";
-import { ChevronDownIcon, CloseIcon } from "./icons";
-import { Container } from "./components";
+import { ChevronDownIcon, CloseIcon } from "../common/icons";
+import { Container } from "../common/components";
 
 import { type Header, type Header as HeaderType } from "@fxmk/shared";
-import { useEnvironment } from "./environment";
-import { getLinkHref } from "./links";
+import { useEnvironment } from "../common/environment";
+import { getLinkHref } from "../common/links";
 
 function MobileNavItem({
   to,

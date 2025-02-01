@@ -19,7 +19,7 @@ import {
   listitem,
 } from "./rich-text.builders";
 import type { PropsWithChildren } from "react";
-import { EnvironmentContext } from "./environment";
+import { EnvironmentContext } from "../../common/environment";
 import { MemoryRouter } from "react-router";
 
 test("Bold text node is rendered as <strong> element.", () => {

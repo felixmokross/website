@@ -1,6 +1,6 @@
 import { type ActionFunctionArgs } from "react-router";
-import { purgeCacheFor } from "~/cms-data.server";
-import { isAuthenticated } from "~/auth";
+import { purgeCacheFor } from "~/common/cms-data.server";
+import { isAuthenticated } from "~/common/auth";
 
 export async function action({ request }: ActionFunctionArgs) {
   if (!(await isAuthenticated(request))) {
