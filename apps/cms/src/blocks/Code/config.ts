@@ -6,32 +6,16 @@ export const Code: Block = {
   fields: [
     {
       name: "language",
-      type: "select",
-      defaultValue: "typescript",
-      options: [
-        {
-          label: "Typescript",
-          value: "typescript",
-        },
-        {
-          label: "Javascript",
-          value: "javascript",
-        },
-        {
-          label: "CSS",
-          value: "css",
-        },
-        {
-          label: "C-Like",
-          value: "clike",
-        },
-      ],
+      type: "text",
     },
     {
       name: "code",
       type: "code",
       label: false,
       required: true,
+      admin: {
+        language: "", // The Monaco editor defaults to TypeScript
+      },
     },
   ],
 };

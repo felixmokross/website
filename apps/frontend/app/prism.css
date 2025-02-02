@@ -45,3 +45,13 @@ pre[class*="language-"] {
 .token.combinator {
   color: theme("colors.zinc.400");
 }
+
+.token.prefix.inserted {
+  visibility: hidden;
+}
+
+.token.inserted {
+  background-color: theme("colors.teal.800");
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}

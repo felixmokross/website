@@ -19,6 +19,8 @@ export default defineConfig({
     tsconfigPaths(),
     prismjs({
       languages: [
+        "shell",
+        "json",
         "typescript",
         "clike",
         "javascript",
@@ -27,7 +29,9 @@ export default defineConfig({
         "tsx",
         "jsx",
         "yaml",
+        "diff",
       ],
+      plugins: ["diff-highlight"],
     }),
   ],
   test: {
