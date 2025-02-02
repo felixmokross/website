@@ -6,6 +6,8 @@ import {
   getEnabledNodes,
   HeadingFeature,
   HorizontalRuleFeature,
+  IndentFeature,
+  InlineCodeFeature,
   InlineToolbarFeature,
   lexicalEditor,
   OrderedListFeature,
@@ -70,12 +72,14 @@ const additionalFeatures = [
   HeadingFeature({
     enabledHeadingSizes: ["h1", "h2", "h3", "h4"],
   }),
+  IndentFeature(),
   BlocksFeature({ blocks: [Banner, Code, MediaBlock] }),
   FixedToolbarFeature(),
   InlineToolbarFeature(),
   HorizontalRuleFeature(),
   UnorderedListFeature(),
   OrderedListFeature(),
+  InlineCodeFeature(),
 ];
 
 async function createEditor() {

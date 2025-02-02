@@ -9,7 +9,9 @@ export const Code = ({ language, code }: CodeProps) => {
   const languageOrPlaintext = language ?? "plaintext";
   const html = Prism.highlight(
     code,
-    Prism.languages[languageOrPlaintext],
+    Prism.languages[
+      languageOrPlaintext.startsWith("diff-") ? "diff" : languageOrPlaintext
+    ],
     languageOrPlaintext,
   );
   return (
