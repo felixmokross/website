@@ -106,3 +106,96 @@ export function LinkIcon(props: React.ComponentPropsWithoutRef<"svg">) {
     </svg>
   );
 }
+
+export function MailIcon(props: React.ComponentPropsWithoutRef<"svg">) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>
+      <path
+        fillRule="evenodd"
+        d="M6 5a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3H6Zm.245 2.187a.75.75 0 0 0-.99 1.126l6.25 5.5a.75.75 0 0 0 .99 0l6.25-5.5a.75.75 0 0 0-.99-1.126L12 12.251 6.245 7.187Z"
+      />
+    </svg>
+  );
+}
+
+export function OutlineMailIcon(props: React.ComponentPropsWithoutRef<"svg">) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      {...props}
+    >
+      <path
+        d="M2.75 7.75a3 3 0 0 1 3-3h12.5a3 3 0 0 1 3 3v8.5a3 3 0 0 1-3 3H5.75a3 3 0 0 1-3-3v-8.5Z"
+        className="fill-zinc-100 stroke-zinc-400 dark:fill-zinc-100/10 dark:stroke-zinc-500"
+      />
+      <path
+        d="m4 6 6.024 5.479a2.915 2.915 0 0 0 3.952 0L20 6"
+        className="stroke-zinc-400 dark:stroke-zinc-500"
+      />
+    </svg>
+  );
+}
+
+export function ArrowLeftIcon(props: React.ComponentPropsWithoutRef<"svg">) {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" {...props}>
+      <path
+        d="M7.25 11.25 3.75 8m0 0 3.5-3.25M3.75 8h8.5"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function ChevronRightIcon(props: React.ComponentPropsWithoutRef<"svg">) {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" {...props}>
+      <path
+        d="M6.75 5.75 9.25 8l-2.5 2.25"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function OutlineBriefcaseIcon(
+  props: React.ComponentPropsWithoutRef<"svg">,
+) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      {...props}
+    >
+      <path
+        d="M2.75 9.75a3 3 0 0 1 3-3h12.5a3 3 0 0 1 3 3v8.5a3 3 0 0 1-3 3H5.75a3 3 0 0 1-3-3v-8.5Z"
+        className="fill-zinc-100 stroke-zinc-400 dark:fill-zinc-100/10 dark:stroke-zinc-500"
+      />
+      <path
+        d="M3 14.25h6.249c.484 0 .952-.002 1.316.319l.777.682a.996.996 0 0 0 1.316 0l.777-.682c.364-.32.832-.319 1.316-.319H21M8.75 6.5V4.75a2 2 0 0 1 2-2h2.5a2 2 0 0 1 2 2V6.5"
+        className="stroke-zinc-400 dark:stroke-zinc-500"
+      />
+    </svg>
+  );
+}
+
+export function BlueskyIcon(props: React.ComponentPropsWithoutRef<"svg">) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>
+      <path d="M12 11.1C11.1847 9.5145 8.9655 6.56025 6.9015 5.10375C4.9245 3.708 4.17075 3.9495 3.6765 4.17375C3.10425 4.431 3 5.31 3 5.826C3 6.3435 3.2835 10.0635 3.468 10.6852C4.07925 12.7372 6.25275 13.4302 8.25525 13.2082C8.35725 13.1932 8.4615 13.179 8.5665 13.1662C8.463 13.1827 8.3595 13.1962 8.25525 13.2082C5.32125 13.6432 2.715 14.712 6.13275 18.5167C9.8925 22.4092 11.2852 17.682 12 15.2857C12.7148 17.682 13.5375 22.239 17.7997 18.5167C21 15.2857 18.6787 13.6432 15.7448 13.2082C15.6407 13.1967 15.5369 13.1827 15.4335 13.1662C15.5385 13.179 15.6428 13.1932 15.7448 13.2082C17.7473 13.431 19.9207 12.7372 20.532 10.6852C20.7165 10.0642 21 6.34275 21 5.82675C21 5.30925 20.8957 4.431 20.3235 4.17225C19.8292 3.94875 19.0755 3.70725 17.0985 5.10225C15.0345 6.561 12.8153 9.51525 12 11.1Z" />
+    </svg>
+  );
+}
