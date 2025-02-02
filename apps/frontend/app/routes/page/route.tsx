@@ -7,6 +7,7 @@ import { Photos } from "./photos";
 import { getCanonicalRequestUrl, getRequestUrl, toUrl } from "~/utils/routing";
 import { handleIncomingRequest } from "~/utils/routing.server";
 import { Hero } from "./hero";
+import { Projects } from "./projects";
 
 export function meta() {
   return [
@@ -49,6 +50,8 @@ export default function Route() {
             return <Columns key={block.id} {...block} />;
           case "about":
             return <About key={block.id} {...block} />;
+          case "projects":
+            return <Projects key={block.id} {...block} />;
           default:
             console.warn(`Unknown block type: ${block.blockType}`);
             return null;
