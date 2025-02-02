@@ -3,7 +3,7 @@ import {
   toRelativeUrl,
   getRequestUrl,
   getCanonicalRequestUrl,
-} from "./routing";
+} from "../utils/routing";
 
 export async function handleIncomingRequest(request: Request) {
   const url = getRequestUrl(request);

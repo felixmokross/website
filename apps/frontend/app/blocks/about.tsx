@@ -1,9 +1,9 @@
 import type { AboutBlock } from "@fxmk/shared";
-import { Container } from "../common/components";
-import { RichText } from "../common/rich-text/rich-text";
-import type { RichTextObject } from "../common/rich-text/rich-text.model";
+import { Container } from "../components/container";
+import { RichText } from "../components/rich-text/rich-text";
+import type { RichTextObject } from "../components/rich-text/rich-text.model";
 import type { PropsWithChildren } from "react";
-import { MediaImage } from "../common/media-image";
+import { MediaImage } from "../components/media-image";
 import clsx from "clsx";
 import { Link } from "react-router";
 import { getSocialIcon } from "./social-links-block";

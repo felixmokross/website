@@ -1,5 +1,5 @@
 import type { Media, Work } from "@fxmk/shared";
-import { MediaImage } from "../common/media-image";
+import { MediaImage } from "../components/media-image";
 
 export function Work({ title, items }: Work) {
   return (

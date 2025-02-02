@@ -2,13 +2,14 @@ import type { PropsWithChildren } from "react";
 import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 import { About } from "~/blocks/about";
 import { Archive } from "~/blocks/archive";
-import { tryGetPage } from "~/common/cms-data.server";
+import { tryGetPage } from "~/utils/cms-data.server";
 import { Columns } from "~/blocks/columns";
-import { Container, Photos } from "~/common/components";
-import { RichText } from "~/common/rich-text/rich-text";
-import type { RichTextObject } from "~/common/rich-text/rich-text.model";
-import { getCanonicalRequestUrl, getRequestUrl, toUrl } from "~/common/routing";
-import { handleIncomingRequest } from "~/common/routing.server";
+import { Container } from "~/components/container";
+import { Photos } from "~/blocks/photos";
+import { RichText } from "~/components/rich-text/rich-text";
+import type { RichTextObject } from "~/components/rich-text/rich-text.model";
+import { getCanonicalRequestUrl, getRequestUrl, toUrl } from "~/utils/routing";
+import { handleIncomingRequest } from "~/utils/routing.server";
 
 export function meta() {
   return [

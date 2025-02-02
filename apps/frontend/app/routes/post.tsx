@@ -1,12 +1,12 @@
 import { Link, useLoaderData, type LoaderFunctionArgs } from "react-router";
-import { tryGetPost } from "~/common/cms-data.server";
-import { Container } from "~/common/components";
-import { formatDate } from "~/common/formatDate";
-import { Prose } from "~/common/prose";
-import { RichText } from "~/common/rich-text/rich-text";
-import type { RichTextObject } from "~/common/rich-text/rich-text.model";
-import { getCanonicalRequestUrl, getRequestUrl } from "~/common/routing";
-import { handleIncomingRequest } from "~/common/routing.server";
+import { tryGetPost } from "~/utils/cms-data.server";
+import { Container } from "~/components/container";
+import { formatDate } from "~/components/format-date";
+import { Prose } from "~/components/prose";
+import { RichText } from "~/components/rich-text/rich-text";
+import type { RichTextObject } from "~/components/rich-text/rich-text.model";
+import { getCanonicalRequestUrl, getRequestUrl } from "~/utils/routing";
+import { handleIncomingRequest } from "~/utils/routing.server";
 
 export function meta() {
   return [

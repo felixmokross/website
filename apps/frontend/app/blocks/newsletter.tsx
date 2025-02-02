@@ -1,7 +1,7 @@
 import type { Newsletter } from "@fxmk/shared";
-import { Button } from "../common/button";
-import { RichText } from "../common/rich-text/rich-text";
-import type { RichTextObject } from "../common/rich-text/rich-text.model";
+import { Button } from "../components/button";
+import { RichText } from "../components/rich-text/rich-text";
+import type { RichTextObject } from "../components/rich-text/rich-text.model";
 
 function MailIcon(props: React.ComponentPropsWithoutRef<"svg">) {
   return (
