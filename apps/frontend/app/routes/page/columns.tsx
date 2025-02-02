@@ -1,5 +1,5 @@
 import { type ColumnsBlock } from "@fxmk/shared";
-import { Container } from "../components/container";
+import { Container } from "~/components/container";
 import { Archive } from "./archive";
 import { Newsletter } from "./newsletter";
 import { Work } from "./work";

@@ -1,15 +1,12 @@
-import type { PropsWithChildren } from "react";
 import { useLoaderData, type LoaderFunctionArgs } from "react-router";
-import { About } from "~/blocks/about";
-import { Archive } from "~/blocks/archive";
+import { About } from "./about";
+import { Archive } from "./archive";
 import { tryGetPage } from "~/utils/cms-data.server";
-import { Columns } from "~/blocks/columns";
-import { Container } from "~/components/container";
-import { Photos } from "~/blocks/photos";
-import { RichText } from "~/components/rich-text/rich-text";
-import type { RichTextObject } from "~/components/rich-text/rich-text.model";
+import { Columns } from "./columns";
+import { Photos } from "./photos";
 import { getCanonicalRequestUrl, getRequestUrl, toUrl } from "~/utils/routing";
 import { handleIncomingRequest } from "~/utils/routing.server";
+import { Hero } from "./hero";
 
 export function meta() {
   return [
@@ -37,33 +34,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
   };
 }
 
-export default function Page() {
+export default function Route() {
   const { content } = useLoaderData<typeof loader>();
   return (
     <>
-      {content.hero?.richText && (
-        <Container className="mt-9">
-          <div className="max-w-2xl">
-            {content.hero.richText && (
-              <RichText
-                content={content.hero.richText as unknown as RichTextObject}
-                elements={{
-                  h1: ({ children }: PropsWithChildren) => (
-                    <h1 className="text-4xl font-bold tracking-tight text-zinc-800 sm:text-5xl dark:text-zinc-100">
-                      {children}
-                    </h1>
-                  ),
-                  paragraph: ({ children }: PropsWithChildren) => (
-                    <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-                      {children}
-                    </p>
-                  ),
-                }}
-              />
-            )}
-          </div>
-        </Container>
-      )}
+      {content.hero && <Hero {...content.hero} />}
       {content.layout?.map((block) => {
         switch (block.blockType) {
           case "photos":
@@ -75,6 +50,7 @@ export default function Page() {
           case "about":
             return <About key={block.id} {...block} />;
           default:
+            console.warn(`Unknown block type: ${block.blockType}`);
             return null;
         }
       })}

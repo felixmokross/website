@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useEnvironment } from "../utils/environment";
+import { useEnvironment } from "~/utils/environment";
 import type { PhotosBlock } from "@fxmk/shared";
 
 export function Photos({ photos }: PhotosProps) {
