@@ -19,8 +19,6 @@ import {
   listitem,
 } from "./rich-text.builders";
 import type { PropsWithChildren } from "react";
-import { EnvironmentContext } from "./environment";
-import { MemoryRouter } from "react-router";
 
 test("Bold text node is rendered as <strong> element.", () => {
   render(
@@ -233,75 +231,38 @@ test("link element nodes are rendered as <a> elements with the correct href attr
 });
 
 describe("block element nodes", () => {
-  test("Media block elements are rendered as <img> element with the correct src attribute.", () => {
+  test("Block elements are rendered as the specified component with the fields passed through.", () => {
     render(
-      <EnvironmentContext.Provider
-        value={{ payloadCmsBaseUrl: "https://example.com" }}
-      >
-        <RichText
-          content={richTextRoot({
-            type: "block",
-            fields: {
-              blockType: "mediaBlock",
-              media: {
-                id: "image-1",
-                createdAt: "2021-01-01T00:00:00Z",
-                updatedAt: "2021-01-01T00:00:00Z",
-                sizes: {
-                  large: {
-                    url: "/image.jpg",
-                  },
-                },
-                alt: "Alternative Text",
-              },
-            },
-          })}
-        />
-      </EnvironmentContext.Provider>,
+      <RichText
+        content={richTextRoot({
+          type: "block",
+          fields: {
+            blockType: "testBlock",
+            testField: "Test Field Value",
+          },
+        })}
+        blocks={{ testBlock: TestBlockComponent }}
+      />,
     );
 
-    expect(screen.getByRole("img")).toHaveAttribute(
-      "src",
-      "https://example.com/image.jpg",
-    );
-    expect(screen.getByRole("img")).toHaveAttribute("alt", "Alternative Text");
+    expect(screen.getByRole("paragraph")).toHaveTextContent("Test Field Value");
+
+    function TestBlockComponent({ testField }: { testField: string }) {
+      return <p>{testField}</p>;
+    }
   });
 
-  test("Social links block elements are rendered as a list of links.", () => {
-    render(
-      <MemoryRouter>
+  test("An error is thrown if the block type is unknown.", () => {
+    expect(() =>
+      render(
         <RichText
           content={richTextRoot({
             type: "block",
-            fields: {
-              blockType: "social-links-block",
-              socialLinks: [
-                {
-                  id: "social-link-1",
-                  platform: "instagram",
-                  url: "https://instagram.com",
-                  createdAt: "2021-01-01T00:00:00Z",
-                  updatedAt: "2021-01-01T00:00:00Z",
-                },
-                {
-                  id: "social-link-2",
-                  platform: "linkedin",
-                  url: "https://linkedin.com",
-                  createdAt: "2021-01-01T00:00:00Z",
-                  updatedAt: "2021-01-01T00:00:00Z",
-                },
-              ],
-            },
+            fields: { blockType: "unknownBlock" },
           })}
-        />
-      </MemoryRouter>,
-    );
-
-    const links = screen.getAllByRole("link");
-    expect(links).toHaveLength(2);
-
-    expect(links[0]).toHaveAttribute("href", "https://instagram.com");
-    expect(links[1]).toHaveAttribute("href", "https://linkedin.com");
+        />,
+      ),
+    ).toThrowError(/unsupported block type 'unknownBlock'/i);
   });
 });
 

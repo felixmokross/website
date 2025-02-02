@@ -19,15 +19,16 @@ import {
   IS_CODE,
   type Node,
 } from "./rich-text.model";
-import { MediaImage } from "./media-image";
-import { Code } from "./code";
-import { SocialLinksBlock } from "./social-links-block";
 
 export type RichTextProps = {
   content?: RichTextObject;
   lineBreakHandling?: LineBreakHandling;
   elements?: Partial<CustomElementConfig>;
+  blocks?: BlockConfig;
 };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type BlockConfig = Record<string, ComponentType<any>>;
 
 type CustomElementConfig = {
   bold: ElementType;
@@ -52,6 +53,7 @@ type CustomElementConfig = {
 type RichTextContextValue = {
   content: RichTextObject;
   elements: CustomElementConfig;
+  blocks?: BlockConfig;
   lineBreakHandling: LineBreakHandling;
 };
 
@@ -88,6 +90,7 @@ function useRichTextContext() {
 export function RichText({
   content,
   elements,
+  blocks,
   lineBreakHandling = "paragraph",
 }: RichTextProps) {
   if (!content) return null;
@@ -96,6 +99,7 @@ export function RichText({
       value={{
         content,
         elements: { ...defaultElements, ...elements },
+        blocks,
         lineBreakHandling,
       }}
     >
@@ -117,7 +121,7 @@ function RenderedElementNode({
   node: ElementNode;
   isLast: boolean;
 }) {
-  const { elements, content } = useRichTextContext();
+  const { elements, content, blocks } = useRichTextContext();
 
   const renderedChildren =
     "children" in node &&
@@ -155,21 +159,13 @@ function RenderedElementNode({
       );
     }
     case "block": {
-      switch (node.fields.blockType) {
-        case "mediaBlock": {
-          return <MediaImage media={node.fields.media} />;
-        }
-        case "code": {
-          return <Code data={node.fields} />;
-        }
-        case "social-links-block": {
-          return <SocialLinksBlock socialLinks={node.fields.socialLinks} />;
-        }
-        default:
-          throw new Error(
-            `Unsupported block type '${node.fields["blockType"]}': ${JSON.stringify(node.fields, null, 2)}`,
-          );
+      const BlockComponent = blocks && blocks[node.fields.blockType];
+      if (!BlockComponent) {
+        throw new Error(
+          `Unsupported block type '${node.fields["blockType"]}': ${JSON.stringify(node.fields, null, 2)}`,
+        );
       }
+      return <BlockComponent {...node.fields} />;
     }
     default:
       throw new Error(

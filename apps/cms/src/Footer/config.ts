@@ -31,6 +31,6 @@ export const Footer: GlobalConfig = {
     },
   ],
   hooks: {
-    afterChange: [({ req }) => refreshCacheForGlobals(["header"], req)],
+    afterChange: [({ req }) => refreshCacheForGlobals(["footer"], req)],
   },
 };

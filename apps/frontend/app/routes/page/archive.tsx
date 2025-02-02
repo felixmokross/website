@@ -1,6 +1,7 @@
 import type { ArchiveBlock } from "@fxmk/shared";
-import { Card, Container } from "./components";
-import { formatDate } from "./formatDate";
+import { Container } from "~/components/container";
+import { formatDate } from "~/utils/format-date";
+import { Card } from "~/components/card";
 
 export type ArchiveProps = ArchiveBlock & {
   size: "full" | "small";

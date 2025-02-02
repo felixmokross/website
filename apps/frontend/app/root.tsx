@@ -11,9 +11,9 @@ import {
 import type { Route } from "./+types/root";
 import appStylesheet from "./app.css?url";
 import prismStylesheet from "./prism.css?url";
-import { LayoutContainer } from "./components";
-import { getFooter, getHeader } from "./cms-data.server";
-import { EnvironmentContext } from "./environment";
+import { LayoutContainer } from "./layout/layout-container";
+import { getFooter, getHeader } from "./utils/cms-data.server";
+import { EnvironmentContext } from "./utils/environment";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },

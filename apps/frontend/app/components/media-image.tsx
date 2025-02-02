@@ -1,5 +1,5 @@
 import type { Media } from "@fxmk/shared";
-import { useEnvironment } from "./environment";
+import { useEnvironment } from "../utils/environment";
 
 type ImageProps = { media: Media | string } & React.DetailedHTMLProps<
   React.ImgHTMLAttributes<HTMLImageElement>,

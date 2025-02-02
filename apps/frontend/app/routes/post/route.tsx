@@ -1,12 +1,14 @@
 import { Link, useLoaderData, type LoaderFunctionArgs } from "react-router";
-import { tryGetPost } from "~/cms-data.server";
-import { Container } from "~/components";
-import { formatDate } from "~/formatDate";
-import { Prose } from "~/prose";
-import { RichText } from "~/rich-text";
-import type { RichTextObject } from "~/rich-text.model";
-import { getCanonicalRequestUrl, getRequestUrl } from "~/routing";
-import { handleIncomingRequest } from "~/routing.server";
+import { tryGetPost } from "~/utils/cms-data.server";
+import { Container } from "~/components/container";
+import { formatDate } from "~/utils/format-date";
+import { Prose } from "~/components/prose";
+import { RichText } from "~/components/rich-text/rich-text";
+import type { RichTextObject } from "~/components/rich-text/rich-text.model";
+import { getCanonicalRequestUrl, getRequestUrl } from "~/utils/routing";
+import { handleIncomingRequest } from "~/utils/routing.server";
+import { Code } from "./code";
+import { MediaImage } from "~/components/media-image";
 
 export function meta() {
   return [
@@ -34,7 +36,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   };
 }
 
-export default function Page() {
+export default function Route() {
   const { content } = useLoaderData<typeof loader>();
   return (
     <Container className="mt-16 lg:mt-32">
@@ -70,6 +72,10 @@ export default function Page() {
                   h4: "h5",
                   h5: "h6",
                   h6: "h6",
+                }}
+                blocks={{
+                  code: Code,
+                  mediaBlock: MediaImage,
                 }}
               />
             </Prose>
