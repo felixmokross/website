@@ -14,16 +14,16 @@ RUN npm install -g corepack@latest
 RUN corepack enable pnpm
 
 # Install dependencies
-COPY --link pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+COPY --link package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY --link apps/cms apps/cms
-RUN pnpm --filter cms deploy cms.deployed
+RUN pnpm --filter cms install --frozen-lockfile
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN pnpm --dir cms.deployed build
+RUN pnpm --dir apps/cms build
 
 # Production image, copy all the files and run next
 FROM base AS runner
@@ -38,13 +38,13 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copy source files so that we can run scripts like 'payload migrate'
-COPY --from=builder /app/cms.deployed .
+COPY --from=builder /app/apps/cms .
 
-RUN mv .next/static .next/standalone/cms.deployed/.next/static
-RUN cp public .next/standalone/cms.deployed/public -r
+RUN mv .next/static .next/standalone/apps/cms/.next/static
+RUN cp public .next/standalone/apps/cms/public -r
 
 # Set the correct permission for prerender cache
-RUN chown nextjs:nodejs .next/standalone/cms.deployed/.next
+RUN chown nextjs:nodejs .next/standalone/apps/cms/.next
 
 USER nextjs
 
@@ -54,4 +54,4 @@ ENV PORT=3000
 
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
-CMD HOSTNAME="0.0.0.0" node .next/standalone/cms.deployed/server.js
+CMD HOSTNAME="0.0.0.0" node .next/standalone/apps/cms/server.js
