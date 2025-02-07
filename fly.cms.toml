@@ -22,4 +22,4 @@ primary_region = 'cdg'
   cpus = 1
   
 [deploy]
-  release_command = "pnpm payload migrate"
+  release_command = "pnpm --filter cms payload migrate"
