@@ -14,7 +14,7 @@ RUN npm install -g corepack@latest
 RUN corepack enable pnpm
 
 # Install dependencies
-COPY --link pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY --link pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY --link apps/cms apps/cms
 RUN pnpm --filter cms deploy cms.deployed
 
