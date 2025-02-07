@@ -12,6 +12,9 @@ WORKDIR /app
 # Set production environment
 ENV NODE_ENV="production"
 
+# Install latest corepack to work around this issue: https://github.com/nodejs/corepack/issues/612
+RUN npm install -g corepack@latest
+
 RUN corepack enable pnpm
 
 # Throw-away build stage to reduce size of final image

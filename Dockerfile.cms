@@ -8,6 +8,9 @@ FROM base AS builder
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
+# Install latest corepack to work around this issue: https://github.com/nodejs/corepack/issues/612
+RUN npm install -g corepack@latest
+
 RUN corepack enable pnpm
 
 # Install dependencies
