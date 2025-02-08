@@ -41,6 +41,7 @@ export type ParagraphElementNode = ElementNodeWithChildren & {
 export type HeadingElementNode = ElementNodeWithChildren & {
   type: "heading";
   tag: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+  anchorId?: string;
 };
 
 export type LinkElementNode = ElementNodeWithChildren & {
