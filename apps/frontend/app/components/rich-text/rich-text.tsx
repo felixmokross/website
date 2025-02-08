@@ -5,6 +5,7 @@ import {
   Fragment,
   type PropsWithChildren,
   useContext,
+  useMemo,
 } from "react";
 import {
   type RichTextObject,
@@ -19,6 +20,7 @@ import {
   IS_CODE,
   type Node,
 } from "./rich-text.model";
+import { slugify } from "~/utils/slugify";
 
 export type RichTextProps = {
   content?: RichTextObject;
@@ -94,6 +96,11 @@ export function RichText({
   lineBreakHandling = "paragraph",
 }: RichTextProps) {
   if (!content) return null;
+
+  const enrichedRootNode = useMemo(
+    () => enrichHeadingsWithAnchorIds(content.root),
+    [content.root],
+  );
   return (
     <RichTextContext.Provider
       value={{
@@ -103,7 +110,7 @@ export function RichText({
         lineBreakHandling,
       }}
     >
-      {content.root.children.map((elementNode, i) => (
+      {enrichedRootNode.children.map((elementNode, i) => (
         <RenderedElementNode
           key={i}
           node={elementNode}
@@ -112,6 +119,44 @@ export function RichText({
       ))}
     </RichTextContext.Provider>
   );
+}
+
+function enrichHeadingsWithAnchorIds<
+  TNode extends Node | RichTextObject["root"],
+>(node: TNode, headingSlugCounts: Map<string, number> = new Map()) {
+  const workNode = { ...node };
+
+  if (workNode.type === "heading") {
+    const slug = slugify(toPlainText(workNode));
+    const count = headingSlugCounts.get(slug) ?? 0;
+    headingSlugCounts.set(slug, count + 1);
+
+    workNode.anchorId = count === 0 ? slug : `${slug}-${count + 1}`;
+  }
+
+  if ("children" in workNode) {
+    workNode.children = workNode.children.map((child) =>
+      enrichHeadingsWithAnchorIds(child, headingSlugCounts),
+    );
+  }
+
+  return workNode;
+}
+
+function toPlainText(node: Node): string {
+  if (node.type === "text") {
+    return node.text ?? "";
+  }
+
+  if (node.type === "linebreak") {
+    return "\n";
+  }
+
+  if ("children" in node) {
+    return node.children.map(toPlainText).join("");
+  }
+
+  return "";
 }
 
 function RenderedElementNode({
@@ -182,7 +227,8 @@ function Heading({
 }: PropsWithChildren<{ node: HeadingElementNode }>) {
   const { elements } = useRichTextContext();
   const HeadingElement = elements[node.tag];
-  return <HeadingElement>{children}</HeadingElement>;
+
+  return <HeadingElement id={node.anchorId}>{children}</HeadingElement>;
 }
 
 function List({

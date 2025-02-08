@@ -140,7 +140,7 @@ test("Paragraph element nodes are rendered as paragraphs.", () => {
   expect(paragraphs[2]).toHaveTextContent("This is the last line");
 });
 
-test("h4 element nodes are rendered as <h4> elements.", () => {
+test("heading element nodes are rendered as heading elements with the correct level.", () => {
   render(
     <RichText content={richTextRoot(heading("h4", text("Hello, world!")))} />,
   );
@@ -150,14 +150,33 @@ test("h4 element nodes are rendered as <h4> elements.", () => {
   );
 });
 
-test("h5 element nodes are rendered as <h5> elements.", () => {
+test("heading elements have an anchor ID with the slugified text content", () => {
   render(
-    <RichText content={richTextRoot(heading("h5", text("Hello, world!")))} />,
+    <RichText
+      content={richTextRoot(
+        heading("h4", text("Hello, "), lineBreak(), bold("world!")),
+      )}
+    />,
   );
 
-  expect(screen.getByRole("heading", { level: 5 })).toHaveTextContent(
-    "Hello, world!",
+  expect(screen.getByRole("heading")).toHaveAttribute("id", "hello-world");
+});
+
+test("heading anchor IDs prevents duplicate IDs by appending a counter", () => {
+  render(
+    <RichText
+      content={richTextRoot(
+        heading("h4", text("Hello, world!")),
+        heading("h4", text("Hello, world!")),
+        heading("h4", text("Hello, world!")),
+      )}
+    />,
   );
+
+  const headingElements = screen.getAllByRole("heading");
+  expect(headingElements[0]).toHaveAttribute("id", "hello-world");
+  expect(headingElements[1]).toHaveAttribute("id", "hello-world-2");
+  expect(headingElements[2]).toHaveAttribute("id", "hello-world-3");
 });
 
 test("ul element nodes with li as children are rendered as <ul> and <li> elements.", () => {
