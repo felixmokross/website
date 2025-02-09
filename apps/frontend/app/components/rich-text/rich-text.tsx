@@ -195,7 +195,9 @@ function RenderedElementNode({
       const href =
         node.fields.linkType === "custom"
           ? node.fields.url
-          : node.fields.doc.value.pathname;
+          : node.fields.doc.relationTo === "pages"
+            ? node.fields.doc.value.pathname
+            : `/articles/${node.fields.doc.value.slug}`;
 
       return elements.link === "a" ? (
         <a href={href}>{renderedChildren}</a>

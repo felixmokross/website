@@ -4,13 +4,19 @@ import { Container } from "~/components/container";
 import { RichText } from "~/components/rich-text/rich-text";
 import type { RichTextObject } from "~/components/rich-text/rich-text.model";
 import { SocialLinksBlock } from "./social-links-block";
+import { Prose } from "~/components/prose";
+import { useLocation } from "react-router";
+import clsx from "clsx";
 
 export function Hero({ richText }: NonNullable<Page["hero"]>) {
+  const location = useLocation();
+  const isHomePage = location.pathname === "/";
+
   if (!richText) return null;
   return (
     <>
-      <Container className="mt-9">
-        <div className="max-w-2xl">
+      <Container className={clsx(isHomePage ? "mt-9" : "mt-16 sm:mt-32")}>
+        <Prose className="max-w-2xl">
           <RichText
             content={richText as unknown as RichTextObject}
             elements={{
@@ -27,7 +33,7 @@ export function Hero({ richText }: NonNullable<Page["hero"]>) {
             }}
             blocks={{ "social-links-block": SocialLinksBlock }}
           />
-        </div>
+        </Prose>
       </Container>
     </>
   );

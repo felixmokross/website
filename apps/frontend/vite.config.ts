@@ -30,6 +30,7 @@ export default defineConfig({
         "jsx",
         "yaml",
         "diff",
+        "markdown",
       ],
       plugins: ["diff-highlight"],
     }),
