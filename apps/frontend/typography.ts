@@ -80,6 +80,10 @@ export default function typographyStyles({ theme }: PluginUtils) {
         },
 
         // Headings
+        h1: {
+          marginTop: 0,
+        },
+
         "h2, h3": {
           color: "var(--tw-prose-headings)",
           fontWeight: theme("fontWeight.semibold"),

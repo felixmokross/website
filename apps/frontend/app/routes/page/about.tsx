@@ -7,6 +7,7 @@ import { MediaImage } from "~/components/media-image";
 import clsx from "clsx";
 import { Link } from "react-router";
 import { getSocialIcon } from "./social-links-block";
+import { Prose } from "~/components/prose";
 
 export function About({ richText, portraitImage, links }: AboutBlock) {
   return (
@@ -23,7 +24,7 @@ export function About({ richText, portraitImage, links }: AboutBlock) {
             </div>
           </div>
         )}
-        <div className="lg:order-first lg:row-span-2">
+        <Prose className="lg:order-first lg:row-span-2">
           <RichText
             content={richText as unknown as RichTextObject}
             elements={{
@@ -39,7 +40,7 @@ export function About({ richText, portraitImage, links }: AboutBlock) {
               ),
             }}
           />
-        </div>
+        </Prose>
         {links && links.length > 0 && (
           <div className="lg:pl-20">
             <ul role="list" className="space-y-4">
