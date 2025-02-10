@@ -24,6 +24,11 @@ export function meta({ data, matches }: Route.MetaArgs) {
   const title = content.meta?.title ?? "";
   const description = content.meta?.description ?? "";
   return [
+    {
+      tagName: "link",
+      rel: "canonical",
+      href: data?.canonicalUrl,
+    },
     { title },
     { name: "description", content: description },
     {
