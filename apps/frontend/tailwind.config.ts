@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 import typographyPlugin from "@tailwindcss/typography";
 import typographyStyles from "./typography";
+import defaultTheme from "tailwindcss/defaultTheme";
 
 export default {
   content: ["./app/**/{**,.client,.server}/**/*.{js,jsx,ts,tsx}"],
@@ -21,6 +22,11 @@ export default {
       "9xl": ["8rem", { lineHeight: "1" }],
     },
     typography: typographyStyles,
+    extend: {
+      fontFamily: {
+        sans: ["Inter", ...defaultTheme.fontFamily.sans],
+      },
+    },
   },
   plugins: [typographyPlugin],
 } satisfies Config;
