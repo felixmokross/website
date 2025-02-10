@@ -12,8 +12,8 @@ import { ChevronDownIcon, CloseIcon } from "../components/icons";
 import { Container } from "../components/container";
 
 import { type Header, type Header as HeaderType } from "@fxmk/shared";
-import { useEnvironment } from "../utils/environment";
 import { getLinkHref } from "../utils/links";
+import { MediaImage } from "~/components/media-image";
 
 function MobileNavItem({
   to,
@@ -168,8 +168,6 @@ function Avatar({
   large?: boolean;
   avatar: HeaderType["avatar"];
 }) {
-  const { payloadCmsBaseUrl } = useEnvironment();
-
   if (typeof avatar !== "object" || !avatar.sizes?.thumbnail?.url) return null;
   return (
     <Link
@@ -178,9 +176,9 @@ function Avatar({
       className={clsx(className, "pointer-events-auto")}
       {...props}
     >
-      <img
-        src={new URL(avatar.sizes.thumbnail.url, payloadCmsBaseUrl).toString()}
-        alt=""
+      <MediaImage
+        media={avatar}
+        preferredSize="thumbnail"
         sizes={large ? "4rem" : "2.25rem"}
         className={clsx(
           "rounded-full bg-zinc-100 object-cover dark:bg-zinc-800",
