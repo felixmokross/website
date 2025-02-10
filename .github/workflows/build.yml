@@ -154,6 +154,7 @@ jobs:
             --image ${{ needs.frontend-build-push.outputs.image }} \
             --env CANONICAL_HOSTNAME=${{ needs.define-env.outputs.canonical_hostname_frontend }} \
             --env PAYLOAD_CMS_BASE_URL=https://${{ needs.define-env.outputs.canonical_hostname_cms }} \
+            --env IMAGEKIT_BASE_URL=${{ needs.define-env.outputs.imagekit_base_url }} \
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
@@ -420,6 +421,7 @@ jobs:
       canonical_hostname_frontend: ${{ steps.define-env.outputs.canonical_hostname_frontend }}
       canonical_hostname_cms: ${{ steps.define-env.outputs.canonical_hostname_cms }}
       s3_bucket: ${{ steps.define-env.outputs.s3_bucket }}
+      imagekit_base_url: ${{ steps.define-env.outputs.imagekit_base_url }}
     steps:
       - name: Define environment
         run: |
@@ -433,6 +435,7 @@ jobs:
               echo "canonical_hostname_frontend=www.fxmk.dev" >> "$GITHUB_OUTPUT"
               echo "canonical_hostname_cms=admin.fxmk.dev" >> "$GITHUB_OUTPUT"
               echo "s3_bucket=fxmk-media" >> "$GITHUB_OUTPUT"
+              echo "imagekit_base_url=https://ik.imagekit.io/92jpwaahykk/staging" >> "$GITHUB_OUTPUT"
               ;;
             staging)
               echo "fly_app_frontend=fxmk-frontend-staging" >> "$GITHUB_OUTPUT"
@@ -440,6 +443,7 @@ jobs:
               echo "canonical_hostname_frontend=www.staging.fxmk.dev" >> "$GITHUB_OUTPUT"
               echo "canonical_hostname_cms=admin.staging.fxmk.dev" >> "$GITHUB_OUTPUT"
               echo "s3_bucket=fxmk-media-staging" >> "$GITHUB_OUTPUT"
+              echo "imagekit_base_url=https://ik.imagekit.io/92jpwaahykk" >> "$GITHUB_OUTPUT"
               ;;
           esac
         id: define-env
