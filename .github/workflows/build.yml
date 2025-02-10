@@ -113,7 +113,7 @@ jobs:
         run: |
           flyctl deploy \
             --app ${{ steps.image-name.outputs.image_name }} \
-            --config fly.frontend.toml \
+            --config fly.frontend.staging.toml \
             --build-only \
             --image-label ${{ steps.image-name.outputs.image_tag }} \
             --label org.opencontainers.image.version=${{ steps.image-name.outputs.image_tag }} \
@@ -150,7 +150,7 @@ jobs:
         run: |
           flyctl deploy \
             --app ${{ needs.define-env.outputs.fly_app_frontend }} \
-            --config fly.frontend.toml \
+            --config ${{ needs.define-env.outputs.fly_frontend_config }} \
             --image ${{ needs.frontend-build-push.outputs.image }} \
             --env CANONICAL_HOSTNAME=${{ needs.define-env.outputs.canonical_hostname_frontend }} \
             --env PAYLOAD_CMS_BASE_URL=https://${{ needs.define-env.outputs.canonical_hostname_cms }} \
@@ -415,6 +415,7 @@ jobs:
     if: github.event_name != 'pull_request'
     outputs:
       environment: ${{ steps.define-env.outputs.environment }}
+      fly_frontend_config: ${{ steps.define-env.outputs.fly_frontend_config }}
       fly_app_frontend: ${{ steps.define-env.outputs.fly_app_frontend }}
       fly_app_cms: ${{ steps.define-env.outputs.fly_app_cms }}
       # analytics_domain_cms: ${{ steps.define-env.outputs.analytics_domain_cms }}
@@ -430,6 +431,7 @@ jobs:
 
           case $environment in
             production)
+              echo "fly_frontend_config=fly.frontend.toml" >> "$GITHUB_OUTPUT"
               echo "fly_app_frontend=fxmk-frontend" >> "$GITHUB_OUTPUT"
               echo "fly_app_cms=fxmk-cms" >> "$GITHUB_OUTPUT"
               echo "canonical_hostname_frontend=www.fxmk.dev" >> "$GITHUB_OUTPUT"
@@ -438,6 +440,7 @@ jobs:
               echo "imagekit_base_url=https://ik.imagekit.io/92jpwaahykk/staging" >> "$GITHUB_OUTPUT"
               ;;
             staging)
+              echo "fly_frontend_config=fly.frontend.staging.toml" >> "$GITHUB_OUTPUT"
               echo "fly_app_frontend=fxmk-frontend-staging" >> "$GITHUB_OUTPUT"
               echo "fly_app_cms=fxmk-cms-staging" >> "$GITHUB_OUTPUT"
               echo "canonical_hostname_frontend=www.staging.fxmk.dev" >> "$GITHUB_OUTPUT"
