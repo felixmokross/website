@@ -1,7 +1,7 @@
 import type { Media } from "@fxmk/shared";
 import { useEnvironment } from "../utils/environment";
-import ImageKit from "imagekit-javascript";
 import React, { useMemo } from "react";
+import { imagekitUrl } from "~/utils/imagekit";
 
 type ImageProps = {
   media: Media | string;
@@ -36,12 +36,7 @@ export function MediaImage({
 function useImageSrc(filename: string | undefined | null) {
   const { imagekitBaseUrl } = useEnvironment();
   const url = useMemo(
-    () =>
-      filename
-        ? new ImageKit({
-            urlEndpoint: imagekitBaseUrl,
-          }).url({ path: filename })
-        : null,
+    () => (filename ? imagekitUrl(imagekitBaseUrl, filename) : null),
     [filename, imagekitBaseUrl],
   );
 
