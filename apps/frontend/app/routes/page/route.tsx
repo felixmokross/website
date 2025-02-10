@@ -10,7 +10,7 @@ import { Hero } from "./hero";
 import { Projects } from "./projects";
 import type { Route } from "./+types/route";
 import type { SerializeFromLoader } from "~/utils/types";
-import { loader as rootLoader } from "~/root";
+import { type loader as rootLoader } from "~/root";
 import { getAltFromMedia } from "~/utils/media";
 import { imagekitUrl } from "~/utils/imagekit";
 
