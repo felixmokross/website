@@ -1,10 +1,8 @@
 import clsx from "clsx";
-import { useEnvironment } from "~/utils/environment";
 import type { PhotosBlock } from "@fxmk/shared";
+import { MediaImage } from "~/components/media-image";
 
 export function Photos({ photos }: PhotosProps) {
-  const { payloadCmsBaseUrl } = useEnvironment();
-
   if (!photos) return;
 
   const rotations = [
@@ -26,18 +24,12 @@ export function Photos({ photos }: PhotosProps) {
               rotations[photoIndex % rotations.length],
             )}
           >
-            {typeof photo.image === "object" &&
-              photo.image.sizes?.small?.url && (
-                <img
-                  src={new URL(
-                    photo.image.sizes.small.url,
-                    payloadCmsBaseUrl,
-                  ).toString()}
-                  alt=""
-                  sizes="(min-width: 640px) 18rem, 11rem"
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-              )}
+            <MediaImage
+              media={photo.image}
+              preferredSize="small"
+              sizes="(min-width: 640px) 18rem, 11rem"
+              className="absolute inset-0 h-full w-full object-cover"
+            />
           </div>
         ))}
       </div>

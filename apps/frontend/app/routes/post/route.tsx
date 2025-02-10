@@ -76,7 +76,7 @@ export default function Route() {
                 }}
                 blocks={{
                   code: Code,
-                  mediaBlock: MediaImage,
+                  mediaBlock: ({ media }) => <MediaImage media={media} />,
                 }}
               />
             </Prose>

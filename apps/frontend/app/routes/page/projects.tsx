@@ -16,17 +16,27 @@ export function Projects({ items }: ProjectsBlock) {
           <Card as="li" key={item.id}>
             {item.logo && (
               <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-md shadow-zinc-800/5 ring-1 ring-zinc-900/5 dark:border dark:border-zinc-700/50 dark:bg-zinc-800 dark:ring-0">
-                <MediaImage media={item.logo} alt="" className="h-8 w-8" />
+                <MediaImage
+                  preferredSize="thumbnail"
+                  media={item.logo}
+                  className="h-8 w-8"
+                />
               </div>
             )}
             <h2 className="mt-6 text-base font-semibold text-zinc-800 dark:text-zinc-100">
-              <Card.Link to={item.url ?? "#"}>{item.title}</Card.Link>
+              {item.url ? (
+                <Card.Link to={item.url}>{item.title}</Card.Link>
+              ) : (
+                item.title
+              )}
             </h2>
             <Card.Description>{item.description}</Card.Description>
-            <p className="relative z-10 mt-6 flex text-sm font-medium text-zinc-400 transition group-hover:text-teal-500 dark:text-zinc-200">
-              <LinkIcon className="h-6 w-6 flex-none" />
-              <span className="ml-2">{item.linkText}</span>
-            </p>
+            {item.linkText && (
+              <p className="relative z-10 mt-6 flex text-sm font-medium text-zinc-400 transition group-hover:text-teal-500 dark:text-zinc-200">
+                <LinkIcon className="h-6 w-6 flex-none" />
+                <span className="ml-2">{item.linkText}</span>
+              </p>
+            )}
           </Card>
         ))}
       </ul>
