@@ -437,7 +437,7 @@ jobs:
               echo "canonical_hostname_frontend=www.fxmk.dev" >> "$GITHUB_OUTPUT"
               echo "canonical_hostname_cms=admin.fxmk.dev" >> "$GITHUB_OUTPUT"
               echo "s3_bucket=fxmk-media" >> "$GITHUB_OUTPUT"
-              echo "imagekit_base_url=https://ik.imagekit.io/92jpwaahykk/staging" >> "$GITHUB_OUTPUT"
+              echo "imagekit_base_url=https://ik.imagekit.io/92jpwaahykk" >> "$GITHUB_OUTPUT"
               ;;
             staging)
               echo "fly_frontend_config=fly.frontend.staging.toml" >> "$GITHUB_OUTPUT"
@@ -446,7 +446,7 @@ jobs:
               echo "canonical_hostname_frontend=www.staging.fxmk.dev" >> "$GITHUB_OUTPUT"
               echo "canonical_hostname_cms=admin.staging.fxmk.dev" >> "$GITHUB_OUTPUT"
               echo "s3_bucket=fxmk-media-staging" >> "$GITHUB_OUTPUT"
-              echo "imagekit_base_url=https://ik.imagekit.io/92jpwaahykk" >> "$GITHUB_OUTPUT"
+              echo "imagekit_base_url=https://ik.imagekit.io/92jpwaahykk/staging" >> "$GITHUB_OUTPUT"
               ;;
           esac
         id: define-env
