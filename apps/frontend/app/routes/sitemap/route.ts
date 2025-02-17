@@ -16,8 +16,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // }
 
   const [pages, posts] = await Promise.all([
-    (async () => (await loadData(`pages`, 0, {})).docs as Page[])(),
-    (async () => (await loadData(`posts`, 0, {})).docs as Post[])(),
+    (async () =>
+      (await loadData(`pages`, 0, { "where[_status][equals]": "published" }))
+        .docs as Page[])(),
+    (async () =>
+      (await loadData(`posts`, 0, { "where[_status][equals]": "published" }))
+        .docs as Post[])(),
   ]);
 
   const content = `<?xml version="1.0" encoding="UTF-8"?>
