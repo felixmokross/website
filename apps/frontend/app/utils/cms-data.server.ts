@@ -113,7 +113,6 @@ export async function loadData(
   url.searchParams.set("depth", depth.toString());
   url.searchParams.set("draft", "false");
   url.searchParams.set("pagination", "false");
-  url.searchParams.set("where[_status][equals]", "published");
   Object.entries(queryParams).forEach(([key, value]) => {
     url.searchParams.set(key, value);
   });
@@ -163,6 +162,7 @@ export async function tryGetPage(pathname: string) {
     PAGE_DEPTH,
     {
       "where[pathname][equals]": pathname,
+      "where[_status][equals]": "published",
       limit: 1,
     },
     (data) => (data && data.docs.length > 0 ? data.docs[0] : null),
@@ -189,6 +189,7 @@ export async function tryGetPost(slug: string) {
     1,
     {
       "where[slug][equals]": slug,
+      "where[_status][equals]": "published",
       limit: 1,
     },
     (data) => (data && data.docs.length > 0 ? data.docs[0] : null),
