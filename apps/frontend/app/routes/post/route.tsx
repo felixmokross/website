@@ -10,11 +10,12 @@ import { handleIncomingRequest } from "~/utils/routing.server";
 import { Code } from "./code";
 import { MediaImage } from "~/components/media-image";
 import { ArrowLeftIcon } from "~/components/icons";
+import type { Route } from "./+types/route";
 
-export function meta() {
+export function meta({ data }: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: data.content.title },
+    { name: "description", content: data.content.content_summary },
   ];
 }
 
