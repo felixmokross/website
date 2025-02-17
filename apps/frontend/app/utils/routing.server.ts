@@ -4,6 +4,8 @@ import {
   getRequestUrl,
   getCanonicalRequestUrl,
 } from "../utils/routing";
+import { tryGetPage, tryGetRedirect } from "./cms-data.server";
+import { getLinkHref } from "./links";
 
 export async function handleIncomingRequest(request: Request) {
   const url = getRequestUrl(request);
@@ -42,4 +44,16 @@ function redirectIfPathnameEndsWithSlash(url: URL) {
     url.pathname = url.pathname.slice(0, -1);
     throw redirect(toRelativeUrl(url), { status: 301 });
   }
+}
+
+export async function handlePathname(pathname: string) {
+  const content = await tryGetPage(pathname);
+  if (content) return content;
+
+  const redirectObj = await tryGetRedirect(pathname);
+  if (redirectObj && redirectObj.to) {
+    throw redirect(getLinkHref(redirectObj.to), { status: 301 });
+  }
+
+  throw new Response(null, { status: 404, statusText: "Not Found" });
 }
