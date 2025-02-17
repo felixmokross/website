@@ -16,6 +16,8 @@ export const Archive: Block = {
               await req.payload.find({
                 collection: "posts",
                 pagination: false,
+                where: { _status: { equals: "published" } },
+                draft: false,
                 sort: "-publishedAt",
                 limit: siblingData.limit,
               })

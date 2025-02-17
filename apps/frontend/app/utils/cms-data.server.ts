@@ -113,6 +113,7 @@ export async function loadData(
   url.searchParams.set("depth", depth.toString());
   url.searchParams.set("draft", "false");
   url.searchParams.set("pagination", "false");
+  url.searchParams.set("where[_status][equals]", "published");
   Object.entries(queryParams).forEach(([key, value]) => {
     url.searchParams.set(key, value);
   });

@@ -1,7 +1,6 @@
 import type { CollectionConfig } from "payload";
 
 import { authenticated } from "../../access/authenticated";
-import { authenticatedOrPublished } from "../../access/authenticatedOrPublished";
 import { generatePreviewPath } from "../../utilities/generatePreviewPath";
 
 import {
@@ -21,7 +20,7 @@ export const Posts: CollectionConfig<"posts"> = {
   access: {
     create: authenticated,
     delete: authenticated,
-    read: authenticatedOrPublished,
+    read: authenticated,
     update: authenticated,
   },
   // This config controls what's populated by default when a post is referenced
