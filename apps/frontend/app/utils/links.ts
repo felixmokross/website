@@ -1,6 +1,9 @@
-import type { Header } from "@fxmk/shared";
+import type { Redirect } from "@fxmk/shared";
 
-export type Link = NonNullable<Header["navItems"]>[number]["link"];
+export type Link = Pick<
+  NonNullable<Redirect["to"]>,
+  "type" | "reference" | "url"
+>;
 
 export function getLinkHref(link: Link): string {
   switch (link.type) {

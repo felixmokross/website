@@ -1,11 +1,10 @@
 import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 import { About } from "./about";
 import { Archive } from "./archive";
-import { tryGetPage } from "~/utils/cms-data.server";
 import { Columns } from "./columns";
 import { Photos } from "./photos";
 import { getCanonicalRequestUrl, getRequestUrl, toUrl } from "~/utils/routing";
-import { handleIncomingRequest } from "~/utils/routing.server";
+import { handleIncomingRequest, handlePathname } from "~/utils/routing.server";
 import { Hero } from "./hero";
 import { Projects } from "./projects";
 import type { Route } from "./+types/route";
@@ -157,10 +156,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const { pageUrl } = await handleIncomingRequest(request);
 
   const requestUrl = getRequestUrl(request);
-  const content = await tryGetPage(toUrl(pageUrl).pathname);
-  if (!content) {
-    throw new Response(null, { status: 404, statusText: "Not Found" });
-  }
+  const content = await handlePathname(toUrl(pageUrl).pathname);
+
   const dataPath = `pages/${content.id}`;
 
   return {
