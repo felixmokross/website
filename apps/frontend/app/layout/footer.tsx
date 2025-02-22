@@ -1,7 +1,7 @@
 import type { Footer as FooterType } from "@fxmk/shared";
 import { ContainerOuter, ContainerInner } from "../components/container";
 import { getLinkHref } from "../utils/links";
-import { Link } from "react-router";
+import { Link } from "~/components/link";
 
 type FooterProps = FooterType;
 

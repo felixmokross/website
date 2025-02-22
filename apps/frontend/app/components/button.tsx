@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { Link } from "react-router";
+import { Link } from "./link";
 
 const variantStyles = {
   primary:

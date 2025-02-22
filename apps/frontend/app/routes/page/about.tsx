@@ -4,9 +4,9 @@ import { RichText } from "~/components/rich-text/rich-text";
 import type { RichTextObject } from "~/components/rich-text/rich-text.model";
 import type { PropsWithChildren } from "react";
 import { MediaImage } from "~/components/media-image";
-import { Link } from "react-router";
 import { getSocialIcon } from "./social-links-block";
 import { Prose } from "~/components/prose";
+import { Link } from "~/components/link";
 
 export function About({ richText, portraitImage, links }: AboutBlock) {
   return (

@@ -1,4 +1,4 @@
-import { Link, useLoaderData, type LoaderFunctionArgs } from "react-router";
+import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 import { tryGetPost } from "~/utils/cms-data.server";
 import { Container } from "~/components/container";
 import { formatDate } from "~/utils/format-date";
@@ -14,6 +14,7 @@ import type { Route } from "./+types/route";
 import type { SerializeFromLoader } from "~/utils/types";
 import { type loader as rootLoader } from "~/root";
 import { getMeta } from "~/utils/meta";
+import { Link } from "~/components/link";
 
 export function meta({ data, matches }: Route.MetaArgs) {
   const { content, canonicalUrl } = data;

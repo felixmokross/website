@@ -7,13 +7,14 @@ import {
 } from "@headlessui/react";
 import clsx from "clsx";
 
-import { Link, NavLink, useLocation } from "react-router";
+import { NavLink, useLocation } from "react-router";
 import { ChevronDownIcon, CloseIcon } from "../components/icons";
 import { Container } from "../components/container";
 
 import { type Header, type Header as HeaderType } from "@fxmk/shared";
 import { getLinkHref } from "../utils/links";
 import { MediaImage } from "~/components/media-image";
+import { Link } from "~/components/link";
 
 function MobileNavItem({
   to,

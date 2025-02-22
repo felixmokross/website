@@ -1,6 +1,6 @@
 import clsx from "clsx";
-import { Link } from "react-router";
 import { ChevronRightIcon } from "./icons";
+import { Link } from "./link";
 
 export function Card<T extends React.ElementType = "div">({
   as,
