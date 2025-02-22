@@ -6,6 +6,7 @@ import {
   LinkedInIcon,
   MailIcon,
   BlueskyIcon,
+  RssIcon,
 } from "~/components/icons";
 
 export function SocialLinksBlock({
@@ -40,6 +41,8 @@ export function getSocialIcon(platform: SocialLink["platform"]) {
       return MailIcon;
     case "bluesky":
       return BlueskyIcon;
+    case "rss":
+      return RssIcon;
     default:
       throw new Error(`Unsupported social platform: ${platform}`);
   }
