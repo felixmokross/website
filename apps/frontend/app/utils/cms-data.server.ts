@@ -169,6 +169,16 @@ export async function tryGetPage(pathname: string) {
   );
 }
 
+export async function getPages() {
+  return (await loadData(`pages`, 0, { "where[_status][equals]": "published" }))
+    .docs as Page[];
+}
+
+export async function getPosts() {
+  return (await loadData(`posts`, 0, { "where[_status][equals]": "published" }))
+    .docs as Post[];
+}
+
 export async function tryGetRedirect(pathname: string) {
   return await getData<{ docs: Redirect[] }, Redirect>(
     `redirects`,

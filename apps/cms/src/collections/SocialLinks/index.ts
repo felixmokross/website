@@ -34,6 +34,10 @@ export const SocialLinks: CollectionConfig<"social-links"> = {
           value: "github",
         },
         {
+          label: "RSS",
+          value: "rss",
+        },
+        {
           label: "Email",
           value: "email",
         },
