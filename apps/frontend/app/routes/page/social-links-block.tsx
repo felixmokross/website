@@ -1,5 +1,4 @@
 import type { SocialLink, SocialLinksBlock } from "@fxmk/shared";
-import { Link } from "react-router";
 import {
   InstagramIcon,
   GitHubIcon,
@@ -8,6 +7,7 @@ import {
   BlueskyIcon,
   RssIcon,
 } from "~/components/icons";
+import { Link } from "~/components/link";
 
 export function SocialLinksBlock({
   socialLinks,
