@@ -11,12 +11,18 @@ import { Code } from "./code";
 import { MediaImage } from "~/components/media-image";
 import { ArrowLeftIcon } from "~/components/icons";
 import type { Route } from "./+types/route";
+import type { SerializeFromLoader } from "~/utils/types";
+import { type loader as rootLoader } from "~/root";
+import { getMeta } from "~/utils/meta";
 
-export function meta({ data }: Route.MetaArgs) {
-  return [
-    { title: data.content.title },
-    { name: "description", content: data.content.content_summary },
-  ];
+export function meta({ data, matches }: Route.MetaArgs) {
+  const { content, canonicalUrl } = data;
+
+  const rootLoaderData = matches.find((m) => m?.id === "root")
+    ?.data as SerializeFromLoader<typeof rootLoader>;
+  if (!rootLoaderData) throw new Error("No root loader data");
+
+  return getMeta(canonicalUrl, content.meta, rootLoaderData);
 }
 
 export async function loader({ request, params }: LoaderFunctionArgs) {

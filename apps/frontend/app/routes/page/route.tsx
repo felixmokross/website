@@ -10,146 +10,16 @@ import { Projects } from "./projects";
 import type { Route } from "./+types/route";
 import type { SerializeFromLoader } from "~/utils/types";
 import { type loader as rootLoader } from "~/root";
-import { getAltFromMedia } from "~/utils/media";
-import { imagekitUrl } from "~/utils/imagekit";
+import { getMeta } from "~/utils/meta";
 
 export function meta({ data, matches }: Route.MetaArgs) {
-  const { content } = data;
+  const { content, canonicalUrl } = data;
 
   const rootLoaderData = matches.find((m) => m?.id === "root")
     ?.data as SerializeFromLoader<typeof rootLoader>;
   if (!rootLoaderData) throw new Error("No root loader data");
 
-  const title = content.meta?.title ?? "";
-  const description = content.meta?.description ?? "";
-  return [
-    {
-      tagName: "link",
-      rel: "canonical",
-      href: data?.canonicalUrl,
-    },
-    { title },
-    { name: "description", content: description },
-    {
-      name: "og:title",
-      content: title,
-    },
-    {
-      name: "og:description",
-      content: description,
-    },
-    {
-      name: "og:locale",
-      content: "en",
-    },
-    {
-      name: "og:type",
-      content: "website",
-    },
-    {
-      name: "og:site_name",
-      content: "fxmk.dev",
-    },
-    {
-      name: "og:url",
-      content: data.canonicalUrl,
-    },
-    ...getOpenGraphImageMeta(data, rootLoaderData),
-    {
-      name: "twitter:card",
-      content: "summary_large_image",
-    },
-    {
-      name: "twitter:title",
-      content: title,
-    },
-    {
-      name: "twitter:description",
-      content: description,
-    },
-    ...getTwitterCardImageMeta(data, rootLoaderData),
-  ];
-}
-
-function getTwitterCardImageMeta(
-  data: SerializeFromLoader<typeof loader>,
-  rootLoaderData: SerializeFromLoader<typeof rootLoader>,
-): { name: string; content: string }[] {
-  const image = data.content.meta?.image;
-  if (!image) {
-    return [];
-  }
-
-  if (typeof image !== "object") {
-    throw new Error("Invalid image");
-  }
-
-  return [
-    {
-      name: "twitter:image",
-      content: getSocialImageUrl(data, rootLoaderData, 2400, 1200),
-    },
-    {
-      name: "twitter:image:alt",
-      content: getAltFromMedia(image) ?? "",
-    },
-  ];
-}
-
-function getOpenGraphImageMeta(
-  data: SerializeFromLoader<typeof loader>,
-  rootLoaderData: SerializeFromLoader<typeof rootLoader>,
-): { name: string; content: string }[] {
-  const image = data.content.meta?.image;
-  if (!image) {
-    return [];
-  }
-
-  if (typeof image !== "object") {
-    throw new Error("Invalid image");
-  }
-
-  const width = 1200;
-  const height = 630;
-
-  return [
-    {
-      name: "og:image",
-      content: getSocialImageUrl(data, rootLoaderData, width, height),
-    },
-    {
-      name: "og:image:alt",
-      content: getAltFromMedia(image) ?? "",
-    },
-    { name: "og:image:type", content: image.mimeType ?? "" },
-    { name: "og:image:width", content: width.toString() },
-    { name: "og:image:height", content: height.toString() },
-  ];
-}
-
-function getSocialImageUrl(
-  data: SerializeFromLoader<typeof loader>,
-  rootLoaderData: SerializeFromLoader<typeof rootLoader>,
-  width: number,
-  height: number,
-) {
-  const image = data.content.meta?.image;
-  if (typeof image !== "object") {
-    throw new Error("Invalid image");
-  }
-
-  if (!image?.filename) return "";
-
-  return imagekitUrl(
-    rootLoaderData.environment.imagekitBaseUrl,
-    image.filename,
-    [
-      {
-        width: width.toString(),
-        height: height.toString(),
-      },
-    ],
-  );
+  return getMeta(canonicalUrl, content.meta, rootLoaderData);
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
