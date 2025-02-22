@@ -419,9 +419,12 @@ jobs:
       fly_frontend_config: ${{ steps.define-env.outputs.fly_frontend_config }}
       fly_app_frontend: ${{ steps.define-env.outputs.fly_app_frontend }}
       fly_app_cms: ${{ steps.define-env.outputs.fly_app_cms }}
-      analytics_domain_frontend: ${{ steps.define-env.outputs.analytics_domain_frontend }}
-      canonical_hostname_frontend: ${{ steps.define-env.outputs.canonical_hostname_frontend }}
-      canonical_hostname_cms: ${{ steps.define-env.outputs.canonical_hostname_cms }}
+      analytics_domain_frontend:
+        ${{ steps.define-env.outputs.analytics_domain_frontend }}
+      canonical_hostname_frontend:
+        ${{ steps.define-env.outputs.canonical_hostname_frontend }}
+      canonical_hostname_cms:
+        ${{ steps.define-env.outputs.canonical_hostname_cms }}
       s3_bucket: ${{ steps.define-env.outputs.s3_bucket }}
       imagekit_base_url: ${{ steps.define-env.outputs.imagekit_base_url }}
     steps:
