@@ -1,8 +1,10 @@
 import type { Media } from "@fxmk/shared";
-import type { SerializeFromLoader } from "./types";
-import { type loader as rootLoader } from "~/root";
 import { getAltFromMedia } from "./media";
 import { imagekitUrl } from "./imagekit";
+
+type Environment = {
+  imagekitBaseUrl: string;
+};
 
 type Meta = {
   title?: string | null;
@@ -13,7 +15,7 @@ type Meta = {
 export function getMeta(
   canonicalUrl: string | undefined,
   meta: Meta | undefined,
-  rootLoaderData: SerializeFromLoader<typeof rootLoader>,
+  environment: Environment,
 ) {
   const title = meta?.title ?? "";
   const description = meta?.description ?? "";
@@ -49,7 +51,7 @@ export function getMeta(
       name: "og:url",
       content: canonicalUrl,
     },
-    ...getOpenGraphImageMeta(meta, rootLoaderData),
+    ...getOpenGraphImageMeta(meta, environment),
     {
       name: "twitter:card",
       content: "summary_large_image",
@@ -62,13 +64,13 @@ export function getMeta(
       name: "twitter:description",
       content: description,
     },
-    ...getTwitterCardImageMeta(meta, rootLoaderData),
+    ...getTwitterCardImageMeta(meta, environment),
   ];
 }
 
 function getTwitterCardImageMeta(
   meta: Meta | undefined,
-  rootLoaderData: SerializeFromLoader<typeof rootLoader>,
+  environment: Environment,
 ): { name: string; content: string }[] {
   const image = meta?.image;
   if (!image) {
@@ -82,7 +84,7 @@ function getTwitterCardImageMeta(
   return [
     {
       name: "twitter:image",
-      content: getSocialImageUrl(meta, rootLoaderData, 2400, 1200),
+      content: getSocialImageUrl(meta, 2400, 1200, environment),
     },
     {
       name: "twitter:image:alt",
@@ -93,7 +95,7 @@ function getTwitterCardImageMeta(
 
 function getOpenGraphImageMeta(
   meta: Meta | undefined,
-  rootLoaderData: SerializeFromLoader<typeof rootLoader>,
+  environment: Environment,
 ): { name: string; content: string }[] {
   const image = meta?.image;
   if (!image) {
@@ -110,7 +112,7 @@ function getOpenGraphImageMeta(
   return [
     {
       name: "og:image",
-      content: getSocialImageUrl(meta, rootLoaderData, width, height),
+      content: getSocialImageUrl(meta, width, height, environment),
     },
     {
       name: "og:image:alt",
@@ -122,11 +124,11 @@ function getOpenGraphImageMeta(
   ];
 }
 
-function getSocialImageUrl(
+export function getSocialImageUrl(
   meta: Meta | undefined,
-  rootLoaderData: SerializeFromLoader<typeof rootLoader>,
   width: number,
   height: number,
+  environment: Environment,
 ) {
   const image = meta?.image;
   if (typeof image !== "object") {
@@ -135,14 +137,10 @@ function getSocialImageUrl(
 
   if (!image?.filename) return "";
 
-  return imagekitUrl(
-    rootLoaderData.environment.imagekitBaseUrl,
-    image.filename,
-    [
-      {
-        width: width.toString(),
-        height: height.toString(),
-      },
-    ],
-  );
+  return imagekitUrl(environment.imagekitBaseUrl, image.filename, [
+    {
+      width: width.toString(),
+      height: height.toString(),
+    },
+  ]);
 }

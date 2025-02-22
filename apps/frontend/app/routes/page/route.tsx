@@ -19,7 +19,7 @@ export function meta({ data, matches }: Route.MetaArgs) {
     ?.data as SerializeFromLoader<typeof rootLoader>;
   if (!rootLoaderData) throw new Error("No root loader data");
 
-  return getMeta(canonicalUrl, content.meta, rootLoaderData);
+  return getMeta(canonicalUrl, content.meta, rootLoaderData.environment);
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {

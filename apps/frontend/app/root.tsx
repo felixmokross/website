@@ -15,6 +15,7 @@ import { LayoutContainer } from "./layout/layout-container";
 import { getFooter, getHeader } from "./utils/cms-data.server";
 import { EnvironmentContext } from "./utils/environment";
 import { AnalyticsScript } from "./components/analytics-script";
+import { getEnvironment } from "./utils/environment.server";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -65,11 +66,7 @@ export async function loader() {
   return {
     header,
     footer,
-    environment: {
-      payloadCmsBaseUrl: process.env.PAYLOAD_CMS_BASE_URL as string,
-      imagekitBaseUrl: process.env.IMAGEKIT_BASE_URL as string,
-      analyticsDomain: process.env.ANALYTICS_DOMAIN as string | undefined,
-    },
+    environment: getEnvironment(),
   };
 }
 
