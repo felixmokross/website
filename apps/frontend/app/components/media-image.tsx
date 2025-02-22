@@ -21,24 +21,50 @@ export function MediaImage({
 }: ImageProps) {
   if (typeof media !== "object") return null;
 
-  const src = useImageSrc(
+  const imageMeta =
     media.sizes &&
-      media.sizes[preferredSize] &&
-      media.sizes[preferredSize].filename
-      ? media.sizes[preferredSize].filename
-      : media.filename,
-  );
+    media.sizes[preferredSize] &&
+    media?.sizes[preferredSize].filename
+      ? media.sizes[preferredSize]
+      : media;
+
+  const src = useImageSrc(imageMeta);
   if (!src) return null;
 
-  return <img src={src} alt={media.alt ?? ""} {...props} />;
+  return (
+    <img
+      src={src}
+      alt={media.alt ?? ""}
+      width={imageMeta.width ?? undefined}
+      height={imageMeta.height ?? undefined}
+      {...props}
+    />
+  );
 }
 
-function useImageSrc(filename: string | undefined | null) {
+function useImageSrc(
+  imageMeta:
+    | {
+        filename?: string | null;
+        width?: number | null;
+        height?: number | null;
+      }
+    | undefined
+    | null,
+) {
   const { imagekitBaseUrl } = useEnvironment();
-  const url = useMemo(
-    () => (filename ? imagekitUrl(imagekitBaseUrl, filename) : null),
-    [filename, imagekitBaseUrl],
+  const src = useMemo(
+    () =>
+      imageMeta?.filename
+        ? imagekitUrl(imagekitBaseUrl, imageMeta.filename, [
+            {
+              width: imageMeta.width?.toString(),
+              height: imageMeta.height?.toString(),
+            },
+          ])
+        : null,
+    [imageMeta?.filename, imageMeta?.width, imageMeta?.height, imagekitBaseUrl],
   );
 
-  return url;
+  return src;
 }
