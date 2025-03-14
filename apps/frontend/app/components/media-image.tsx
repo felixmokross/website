@@ -1,6 +1,6 @@
 import type { Media } from "@fxmk/shared";
 import { useEnvironment } from "../utils/environment";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { imagekitUrl } from "~/utils/imagekit";
 
 type ImageProps = {
