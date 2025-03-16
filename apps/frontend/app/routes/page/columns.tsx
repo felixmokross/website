@@ -1,4 +1,4 @@
-import { type ColumnsBlock } from "@fxmk/shared";
+import { type ColumnsBlock } from "@fxmk/payload-types";
 import { Container } from "~/components/container";
 import { Archive } from "./archive";
 import { Newsletter } from "./newsletter";

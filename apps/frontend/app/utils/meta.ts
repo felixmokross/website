@@ -1,4 +1,4 @@
-import type { Media } from "@fxmk/shared";
+import type { Media } from "@fxmk/payload-types";
 import { getAltFromMedia } from "./media";
 import { imagekitUrl } from "./imagekit";
 

@@ -1,4 +1,4 @@
-import type { Redirect } from "@fxmk/shared";
+import type { Redirect } from "@fxmk/payload-types";
 
 export type Link = Pick<
   NonNullable<Redirect["to"]>,

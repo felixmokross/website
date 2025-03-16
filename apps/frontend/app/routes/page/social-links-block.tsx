@@ -1,4 +1,4 @@
-import type { SocialLink, SocialLinksBlock } from "@fxmk/shared";
+import type { SocialLink, SocialLinksBlock } from "@fxmk/payload-types";
 import {
   InstagramIcon,
   GitHubIcon,

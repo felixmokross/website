@@ -1,4 +1,4 @@
-import type { AboutBlock } from "@fxmk/shared";
+import type { AboutBlock } from "@fxmk/payload-types";
 import { Container } from "~/components/container";
 import { RichText } from "~/components/rich-text/rich-text";
 import type { RichTextObject } from "~/components/rich-text/rich-text.model";

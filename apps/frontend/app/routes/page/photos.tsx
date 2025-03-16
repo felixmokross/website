@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import type { PhotosBlock } from "@fxmk/shared";
+import type { PhotosBlock } from "@fxmk/payload-types";
 import { MediaImage } from "~/components/media-image";
 
 export function Photos({ photos }: PhotosProps) {

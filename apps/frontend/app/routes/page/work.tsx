@@ -1,4 +1,4 @@
-import type { Media, Work } from "@fxmk/shared";
+import type { Media, Work } from "@fxmk/payload-types";
 import { OutlineBriefcaseIcon } from "~/components/icons";
 import { MediaImage } from "~/components/media-image";
 

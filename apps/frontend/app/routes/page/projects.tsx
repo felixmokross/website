@@ -1,4 +1,4 @@
-import type { ProjectsBlock } from "@fxmk/shared";
+import type { ProjectsBlock } from "@fxmk/payload-types";
 import { Card } from "~/components/card";
 import { Container } from "~/components/container";
 import { LinkIcon } from "~/components/icons";

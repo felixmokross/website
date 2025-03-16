@@ -1,6 +1,9 @@
 import { Header } from "~/layout/header";
 import { Footer } from "./footer";
-import type { Header as HeaderType, Footer as FooterType } from "@fxmk/shared";
+import type {
+  Header as HeaderType,
+  Footer as FooterType,
+} from "@fxmk/payload-types";
 import type { PropsWithChildren } from "react";
 
 export function LayoutContainer({

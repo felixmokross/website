@@ -1,4 +1,4 @@
-import type { Page } from "@fxmk/shared";
+import type { Page } from "@fxmk/payload-types";
 import {
   type TextNode,
   type ElementNode,

@@ -1,4 +1,5 @@
-import { mediaImageSizes, type Media } from "@fxmk/shared";
+import { mediaImageSizes } from "@fxmk/shared";
+import { type Media } from "@fxmk/payload-types";
 import { useEnvironment } from "../utils/environment";
 import { useMemo } from "react";
 import { imagekitUrl } from "~/utils/imagekit";

@@ -1,4 +1,4 @@
-import type { Newsletter } from "@fxmk/shared";
+import type { Newsletter } from "@fxmk/payload-types";
 import { Button } from "~/components/button";
 import { OutlineMailIcon } from "~/components/icons";
 import { RichText } from "~/components/rich-text/rich-text";

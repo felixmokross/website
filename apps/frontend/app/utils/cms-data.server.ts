@@ -5,7 +5,7 @@ import {
   type Page,
   type Post,
   type Redirect,
-} from "@fxmk/shared";
+} from "@fxmk/payload-types";
 import path from "path";
 import { PAGE_DEPTH } from "./cms-data";
 
