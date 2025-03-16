@@ -4,7 +4,8 @@ import type {
   Header as HeaderType,
   Footer as FooterType,
 } from "@fxmk/payload-types";
-import type { PropsWithChildren } from "react";
+import { type PropsWithChildren } from "react";
+import { NavigationBar } from "./navigation-bar";
 
 export function LayoutContainer({
   children,
@@ -22,6 +23,7 @@ export function LayoutContainer({
         <Header {...header} />
         <main className="flex-auto">{children}</main>
         <Footer {...footer} />
+        <NavigationBar />
       </div>
     </>
   );

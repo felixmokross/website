@@ -12,8 +12,8 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@fxmk/shared": "workspace:../../libs/shared",
     "@fxmk/payload-types": "workspace:../../libs/payload-types",
+    "@fxmk/shared": "workspace:../../libs/shared",
     "@headlessui/react": "^2.2.0",
     "@react-router/node": "^7.3.0",
     "@react-router/serve": "^7.3.0",
@@ -23,6 +23,7 @@
     "date-fns": "^4.1.0",
     "imagekit-javascript": "^3.0.2",
     "isbot": "^5.1.23",
+    "motion": "^12.5.0",
     "prismjs": "^1.30.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
