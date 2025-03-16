@@ -12,7 +12,7 @@ export function NavigationBar() {
     <AnimatePresence>
       {isDelayedNavigating && (
         <motion.div
-          className="fixed top-0 right-0 left-0 z-50 h-0.5 animate-pulse rounded-r-full bg-teal-400 dark:bg-white"
+          className="fixed top-0 right-0 left-0 z-50 h-0.5 animate-pulse rounded-r-full bg-zinc-600 dark:bg-white"
           initial={{ width: "0%" }}
           animate={{ width: "80%" }}
           exit={{
