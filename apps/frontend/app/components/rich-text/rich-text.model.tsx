@@ -1,4 +1,4 @@
-import type { Page } from "@fxmk/shared";
+import type { Page } from "@fxmk/payload-types";
 
 export const IS_BOLD = 1;
 export const IS_ITALIC = 1 << 1;

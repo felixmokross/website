@@ -1,4 +1,4 @@
-import type { ArchiveBlock } from "@fxmk/shared";
+import type { ArchiveBlock } from "@fxmk/payload-types";
 import { Container } from "~/components/container";
 import { formatDate } from "~/utils/format-date";
 import { Card } from "~/components/card";

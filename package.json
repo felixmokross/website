@@ -8,5 +8,8 @@
   "version": "0.0.0-unknown",
   "devDependencies": {
     "prettier": "^3.4.2"
+  },
+  "dependencies": {
+    "payload": "^3.28.1"
   }
 }

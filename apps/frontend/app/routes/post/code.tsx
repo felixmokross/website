@@ -1,4 +1,4 @@
-import type { CodeBlock } from "@fxmk/shared";
+import type { CodeBlock } from "@fxmk/payload-types";
 import Prism from "prismjs";
 
 Prism.manual = true;

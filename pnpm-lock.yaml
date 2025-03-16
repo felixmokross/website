@@ -8,6 +8,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      payload:
+        specifier: ^3.28.1
+        version: 3.28.1(graphql@16.10.0)(typescript@5.8.2)
     devDependencies:
       prettier:
         specifier: ^3.4.2
@@ -15,6 +19,9 @@ importers:
 
   apps/cms:
     dependencies:
+      '@fxmk/shared':
+        specifier: workspace:../../libs/shared
+        version: link:../../libs/shared
       '@payloadcms/db-mongodb':
         specifier: ^3.28.1
         version: 3.28.1(payload@3.28.1(graphql@16.10.0)(typescript@5.8.2))
@@ -94,6 +101,9 @@ importers:
 
   apps/frontend:
     dependencies:
+      '@fxmk/payload-types':
+        specifier: workspace:../../libs/payload-types
+        version: link:../../libs/payload-types
       '@fxmk/shared':
         specifier: workspace:../../libs/shared
         version: link:../../libs/shared
@@ -207,7 +217,17 @@ importers:
         specifier: ^3.0.8
         version: 3.0.8(@types/debug@4.1.12)(@types/node@22.13.10)(jiti@2.4.2)(jsdom@26.0.0)(lightningcss@1.29.2)(sass@1.77.4)(tsx@4.19.2)
 
+  libs/payload-types:
+    devDependencies:
+      typescript:
+        specifier: ^5.7.3
+        version: 5.8.2
+
   libs/shared:
+    dependencies:
+      payload:
+        specifier: ^3.28.1
+        version: 3.28.1(graphql@16.10.0)(typescript@5.8.2)
     devDependencies:
       typescript:
         specifier: ^5.7.3

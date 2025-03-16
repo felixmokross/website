@@ -3,16 +3,17 @@
     { "name": "<root>", "path": "." },
     { "name": "apps/frontend", "path": "./apps/frontend" },
     { "name": "apps/cms", "path": "./apps/cms" },
-    { "name": "libs/shared", "path": "./libs/shared" }
+    { "name": "libs/shared", "path": "./libs/shared" },
+    { "name": "libs/payload-types", "path": "./libs/payload-types" },
   ],
   "settings": {
     "github.copilot.enable": {
       "*": true,
       "plaintext": false,
       "markdown": false,
-      "scminput": false
+      "scminput": false,
     },
     "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+  },
 }

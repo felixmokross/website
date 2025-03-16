@@ -16,6 +16,7 @@ RUN corepack enable pnpm
 # Install dependencies
 COPY --link package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY --link apps/cms apps/cms
+COPY --link libs/shared libs/shared
 RUN pnpm --filter cms install --frozen-lockfile
 
 # Next.js collects completely anonymous telemetry data about general usage.

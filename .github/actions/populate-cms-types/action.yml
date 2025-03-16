@@ -1,5 +1,5 @@
 name: "Populate CMS Types"
-description: "Generates the CMS types into the `shared` package"
+description: "Generates the CMS types into the `payload-types` package"
 runs:
   using: "composite"
   steps:
@@ -8,4 +8,4 @@ runs:
       shell: bash
     - run: pnpm pull-payload-types
       shell: bash
-      working-directory: libs/shared
+      working-directory: libs/payload-types

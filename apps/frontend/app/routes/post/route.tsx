@@ -84,7 +84,9 @@ export default function Route() {
                 }}
                 blocks={{
                   code: Code,
-                  mediaBlock: ({ media }) => <MediaImage media={media} />,
+                  mediaBlock: ({ media }) => (
+                    <MediaImage media={media} preferredSize="large" />
+                  ),
                 }}
               />
             </Prose>

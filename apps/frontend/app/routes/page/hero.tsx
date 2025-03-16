@@ -1,4 +1,4 @@
-import type { Page } from "@fxmk/shared";
+import type { Page } from "@fxmk/payload-types";
 import type { PropsWithChildren } from "react";
 import { Container } from "~/components/container";
 import { RichText } from "~/components/rich-text/rich-text";

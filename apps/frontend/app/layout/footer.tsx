@@ -1,4 +1,4 @@
-import type { Footer as FooterType } from "@fxmk/shared";
+import type { Footer as FooterType } from "@fxmk/payload-types";
 import { ContainerOuter, ContainerInner } from "../components/container";
 import { getLinkHref } from "../utils/links";
 import { Link } from "~/components/link";

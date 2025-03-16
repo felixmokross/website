@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@fxmk/shared": "workspace:../../libs/shared",
+    "@fxmk/payload-types": "workspace:../../libs/payload-types",
     "@headlessui/react": "^2.2.0",
     "@react-router/node": "^7.3.0",
     "@react-router/serve": "^7.3.0",
