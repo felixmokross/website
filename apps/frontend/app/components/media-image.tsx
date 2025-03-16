@@ -5,7 +5,7 @@ import { imagekitUrl } from "~/utils/imagekit";
 
 type ImageProps = {
   media: Media | string;
-  preferredSize?: keyof NonNullable<Media["sizes"]>;
+  preferredSize: keyof NonNullable<Media["sizes"]>;
 } & Omit<
   React.DetailedHTMLProps<
     React.ImgHTMLAttributes<HTMLImageElement>,

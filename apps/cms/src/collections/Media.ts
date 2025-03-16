@@ -45,6 +45,10 @@ export const Media: CollectionConfig = {
     focalPoint: true,
     imageSizes: [
       {
+        name: "mini",
+        width: 100,
+      },
+      {
         name: "thumbnail",
         width: 300,
       },
