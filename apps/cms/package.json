@@ -18,6 +18,7 @@
     "check-format": "prettier --check ."
   },
   "dependencies": {
+    "@fxmk/shared": "workspace:../../libs/shared",
     "@payloadcms/db-mongodb": "^3.28.1",
     "@payloadcms/next": "^3.28.1",
     "@payloadcms/plugin-form-builder": "^3.28.1",
