@@ -9,6 +9,7 @@ import {
 
 import { anyone } from "../access/anyone";
 import { authenticated } from "../access/authenticated";
+import { generateAltTextEndpoint } from "./generate-alt-text-endpoint";
 
 export const Media: CollectionConfig = {
   slug: "media",
@@ -18,24 +19,49 @@ export const Media: CollectionConfig = {
     read: anyone,
     update: authenticated,
   },
+  endpoints: [generateAltTextEndpoint],
   fields: [
     {
-      name: "alt",
-      type: "text",
-      //required: true,
-    },
-    {
-      name: "caption",
-      type: "richText",
-      editor: lexicalEditor({
-        features: ({ rootFeatures }) => {
-          return [
-            ...rootFeatures,
-            FixedToolbarFeature(),
-            InlineToolbarFeature(),
-          ];
+      type: "tabs",
+      tabs: [
+        {
+          label: "Alternative Text",
+          fields: [
+            {
+              name: "alt",
+              label: "Alternative Text",
+              type: "text",
+              admin: {
+                description:
+                  "A brief description of the media for screen readers and search engines. It is not displayed on the page but is important for accessibility. For images an alt text can be generated automatically using OpenAI.",
+                components: {
+                  afterInput: [
+                    "@/collections/generate-alt-text-button#GenerateAltTextButton",
+                  ],
+                },
+              },
+            },
+          ],
         },
-      }),
+        {
+          label: "Caption",
+          fields: [
+            {
+              name: "caption",
+              type: "richText",
+              editor: lexicalEditor({
+                features: ({ rootFeatures }) => {
+                  return [
+                    ...rootFeatures,
+                    FixedToolbarFeature(),
+                    InlineToolbarFeature(),
+                  ];
+                },
+              }),
+            },
+          ],
+        },
+      ],
     },
   ],
   upload: {
