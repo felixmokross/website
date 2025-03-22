@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useState, useEffect } from "react";
 import { useNavigation } from "react-router";
 
-export function NavigationBar() {
+export function LoadingBar() {
   const navigation = useNavigation();
   const isDelayedNavigating = useDelayedTrigger(
     navigation.state !== "idle",
@@ -12,7 +12,7 @@ export function NavigationBar() {
     <AnimatePresence>
       {isDelayedNavigating && (
         <motion.div
-          className="fixed top-0 right-0 left-0 z-50 h-0.5 animate-pulse rounded-r-full bg-teal-500 dark:bg-teal-400"
+          className="fixed top-0 right-0 left-0 z-50 h-[3px] animate-pulse rounded-r-full bg-teal-500 dark:bg-teal-400"
           initial={{ width: "0%" }}
           animate={{ width: "80%" }}
           exit={{
