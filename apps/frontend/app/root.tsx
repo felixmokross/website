@@ -58,6 +58,11 @@ export const links: Route.LinksFunction = () => [
 
 export const meta: Route.MetaFunction = () => [
   { name: "apple-mobile-web-app-title", content: "fxmk.dev" },
+  {
+    name: "theme-color",
+    content: "oklch(0.21 0.006 285.885)",
+    media: "(prefers-color-scheme: dark)",
+  },
 ];
 
 export async function loader() {
