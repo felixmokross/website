@@ -38,22 +38,9 @@ export const Posts: CollectionConfig<"posts"> = {
   admin: {
     defaultColumns: ["title", "slug", "updatedAt"],
     livePreview: {
-      url: ({ data, req }) => {
-        const path = generatePreviewPath({
-          slug: typeof data?.slug === "string" ? data.slug : "",
-          collection: "posts",
-          req,
-        });
-
-        return path;
-      },
+      url: ({ data }) => getPreviewUrl(data),
     },
-    preview: (data, { req }) =>
-      generatePreviewPath({
-        slug: typeof data?.slug === "string" ? data.slug : "",
-        collection: "posts",
-        req,
-      }),
+    preview: (data) => getPreviewUrl(data),
     useAsTitle: "title",
   },
   fields: [
@@ -162,7 +149,7 @@ export const Posts: CollectionConfig<"posts"> = {
       ({ doc, req }) =>
         refreshCacheHook({
           cacheKey: getCollectionItemCacheKey("posts", doc.slug),
-          pageUrl: `/articles/${doc.slug}`,
+          pageUrl: getPagePathname(doc.slug),
         })({ req }),
     ],
   },
@@ -176,3 +163,11 @@ export const Posts: CollectionConfig<"posts"> = {
     maxPerDoc: 50,
   },
 };
+
+function getPreviewUrl(data: Record<string, unknown>) {
+  return `${process.env.FRONTEND_BASE_URL}${getPagePathname(data.slug as string)}?previewKey=${process.env.PREVIEW_KEY}`;
+}
+
+function getPagePathname(slug: string) {
+  return `/articles/${slug}`;
+}

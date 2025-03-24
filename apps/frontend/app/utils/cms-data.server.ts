@@ -49,7 +49,13 @@ async function getData<TData, TResult>(
   queryParams = {},
   getResultFn: (data: TData | null) => TResult | null = (data: TData | null) =>
     data as TResult,
+  isPreviewMode: boolean = false,
 ) {
+  if (isPreviewMode) {
+    // skip the cache for preview mode
+    return getResultFn(await loadData(pathname, depth, queryParams, true));
+  }
+
   const cacheFilePath = getCacheFilePath(cacheKey);
   try {
     const cache = await fs.readFile(cacheFilePath, "utf8");
@@ -102,6 +108,7 @@ export async function loadData(
   pathname: string,
   depth: number,
   queryParams: Record<string, string>,
+  isPreviewMode: boolean = false,
 ) {
   if (!process.env.PAYLOAD_CMS_BASE_URL) {
     throw new Error("PAYLOAD_CMS_BASE_URL is not set");
@@ -111,7 +118,7 @@ export async function loadData(
   }
   const url = new URL(`/api/${pathname}`, process.env.PAYLOAD_CMS_BASE_URL);
   url.searchParams.set("depth", depth.toString());
-  url.searchParams.set("draft", "false");
+  url.searchParams.set("draft", isPreviewMode ? "true" : "false");
   url.searchParams.set("pagination", "false");
   Object.entries(queryParams).forEach(([key, value]) => {
     url.searchParams.set(key, value);
@@ -192,17 +199,23 @@ export async function tryGetRedirect(pathname: string) {
   );
 }
 
-export async function tryGetPost(slug: string) {
+export async function tryGetPost(slug: string, isPreviewMode: boolean = false) {
+  const queryParams: Record<string, unknown> = {
+    "where[slug][equals]": slug,
+    limit: 1,
+  };
+
+  if (!isPreviewMode) {
+    queryParams["where[_status][equals]"] = "published";
+  }
+
   return await getData<{ docs: Post[] }, Post>(
     `posts`,
     `posts_${slug}`,
     1,
-    {
-      "where[slug][equals]": slug,
-      "where[_status][equals]": "published",
-      limit: 1,
-    },
+    queryParams,
     (data) => (data && data.docs.length > 0 ? data.docs[0] : null),
+    isPreviewMode,
   );
 }
 

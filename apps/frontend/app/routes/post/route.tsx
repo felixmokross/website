@@ -35,7 +35,13 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   if (!params.slug) throw new Error("Missing slug");
 
   const requestUrl = getRequestUrl(request);
-  const content = await tryGetPost(params.slug);
+
+  const previewKey = requestUrl.searchParams.get("previewKey");
+  if (previewKey && previewKey !== process.env.PREVIEW_KEY) {
+    throw new Response(null, { status: 401, statusText: "Unauthorized" });
+  }
+
+  const content = await tryGetPost(params.slug, !!previewKey);
   if (!content) {
     throw new Response(null, { status: 404, statusText: "Not Found" });
   }
