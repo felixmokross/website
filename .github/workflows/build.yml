@@ -113,12 +113,11 @@ jobs:
         run: |
           flyctl deploy \
             --app ${{ steps.image-name.outputs.image_name }} \
-            --config fly.staging.toml \
+            --config apps/frontend/fly.staging.toml \
             --build-only \
             --image-label ${{ steps.image-name.outputs.image_tag }} \
             --label org.opencontainers.image.version=${{ steps.image-name.outputs.image_tag }} \
             --push \
-            apps/frontend
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
@@ -151,7 +150,7 @@ jobs:
         run: |
           flyctl deploy \
             --app ${{ needs.define-env.outputs.fly_app_frontend }} \
-            --config ${{ needs.define-env.outputs.fly_config }} \
+            --config apps/frontend/${{ needs.define-env.outputs.fly_config }} \
             --image ${{ needs.frontend-build-push.outputs.image }} \
             --env CANONICAL_HOSTNAME=${{ needs.define-env.outputs.canonical_hostname_frontend }} \
             --env PAYLOAD_CMS_BASE_URL=https://${{ needs.define-env.outputs.canonical_hostname_cms }} \
@@ -215,12 +214,11 @@ jobs:
         run: |
           flyctl deploy \
             --app ${{ steps.image-name.outputs.image_name }} \
-            --config fly.toml \
+            --config apps/cms/fly.staging.toml \
             --build-only \
             --image-label ${{ steps.image-name.outputs.image_tag }} \
             --label org.opencontainers.image.version=${{ steps.image-name.outputs.image_tag }} \
             --push \
-            apps/cms
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
@@ -333,14 +331,13 @@ jobs:
         run: |
           flyctl deploy \
             --app ${{ needs.define-env.outputs.fly_app_cms }} \
-            --config fly.toml \
+            --config apps/cms/${{ needs.define-env.outputs.fly_config }} \
             --image ${{ needs.cms-build-push.outputs.image }} \
             --env MEDIA_S3_REGION=${{ env.MEDIA_S3_REGION }} \
             --env MEDIA_S3_BUCKET=${{ needs.define-env.outputs.s3_bucket }} \
             --env CACHE_REFRESH_TARGET_TYPE=fly \
             --env CACHE_REFRESH_TARGET_ARG=${{ needs.define-env.outputs.fly_app_frontend }},${{ env.FRONTEND_INTERNAL_PORT }} \
             --env IMAGEKIT_BASE_URL=${{ needs.define-env.outputs.imagekit_base_url }} \
-            apps/cms
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
