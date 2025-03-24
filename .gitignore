@@ -3,7 +3,3 @@
 /.backup
 /.s3-backup
 /.env
-
-/apps/cms/.next
-/apps/cms/src/app/(payload)/admin/importMap.js
-/apps/cms/src/payload-types.ts

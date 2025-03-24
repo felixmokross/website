@@ -113,7 +113,7 @@ jobs:
         run: |
           flyctl deploy \
             --app ${{ steps.image-name.outputs.image_name }} \
-            --config fly.frontend.staging.toml \
+            --config apps/frontend/fly.staging.toml \
             --build-only \
             --image-label ${{ steps.image-name.outputs.image_tag }} \
             --label org.opencontainers.image.version=${{ steps.image-name.outputs.image_tag }} \
@@ -150,7 +150,7 @@ jobs:
         run: |
           flyctl deploy \
             --app ${{ needs.define-env.outputs.fly_app_frontend }} \
-            --config ${{ needs.define-env.outputs.fly_frontend_config }} \
+            --config apps/frontend/${{ needs.define-env.outputs.fly_config }} \
             --image ${{ needs.frontend-build-push.outputs.image }} \
             --env CANONICAL_HOSTNAME=${{ needs.define-env.outputs.canonical_hostname_frontend }} \
             --env PAYLOAD_CMS_BASE_URL=https://${{ needs.define-env.outputs.canonical_hostname_cms }} \
@@ -214,7 +214,7 @@ jobs:
         run: |
           flyctl deploy \
             --app ${{ steps.image-name.outputs.image_name }} \
-            --config fly.cms.toml \
+            --config apps/cms/fly.staging.toml \
             --build-only \
             --image-label ${{ steps.image-name.outputs.image_tag }} \
             --label org.opencontainers.image.version=${{ steps.image-name.outputs.image_tag }} \
@@ -331,7 +331,7 @@ jobs:
         run: |
           flyctl deploy \
             --app ${{ needs.define-env.outputs.fly_app_cms }} \
-            --config fly.cms.toml \
+            --config apps/cms/${{ needs.define-env.outputs.fly_config }} \
             --image ${{ needs.cms-build-push.outputs.image }} \
             --env MEDIA_S3_REGION=${{ env.MEDIA_S3_REGION }} \
             --env MEDIA_S3_BUCKET=${{ needs.define-env.outputs.s3_bucket }} \
@@ -417,7 +417,7 @@ jobs:
     if: github.event_name != 'pull_request'
     outputs:
       environment: ${{ steps.define-env.outputs.environment }}
-      fly_frontend_config: ${{ steps.define-env.outputs.fly_frontend_config }}
+      fly_config: ${{ steps.define-env.outputs.fly_config }}
       fly_app_frontend: ${{ steps.define-env.outputs.fly_app_frontend }}
       fly_app_cms: ${{ steps.define-env.outputs.fly_app_cms }}
       analytics_domain_frontend:
@@ -436,7 +436,7 @@ jobs:
 
           case $environment in
             production)
-              echo "fly_frontend_config=fly.frontend.toml" >> "$GITHUB_OUTPUT"
+              echo "fly_config=fly.toml" >> "$GITHUB_OUTPUT"
               echo "fly_app_frontend=fxmk-frontend" >> "$GITHUB_OUTPUT"
               echo "fly_app_cms=fxmk-cms" >> "$GITHUB_OUTPUT"
               echo "canonical_hostname_frontend=www.fxmk.dev" >> "$GITHUB_OUTPUT"
@@ -446,7 +446,7 @@ jobs:
               echo "analytics_domain_frontend=fxmk.dev" >> "$GITHUB_OUTPUT"
               ;;
             staging)
-              echo "fly_frontend_config=fly.frontend.staging.toml" >> "$GITHUB_OUTPUT"
+              echo "fly_config=fly.staging.toml" >> "$GITHUB_OUTPUT"
               echo "fly_app_frontend=fxmk-frontend-staging" >> "$GITHUB_OUTPUT"
               echo "fly_app_cms=fxmk-cms-staging" >> "$GITHUB_OUTPUT"
               echo "canonical_hostname_frontend=www.staging.fxmk.dev" >> "$GITHUB_OUTPUT"

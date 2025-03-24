@@ -2,11 +2,11 @@
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'fxmk-staging'
+app = 'fxmk-frontend-staging'
 primary_region = 'cdg'
 
 [build]
-  dockerfile = 'Dockerfile.cms'
+  dockerfile = 'Dockerfile'
 
 [http_service]
   internal_port = 3000
@@ -20,6 +20,3 @@ primary_region = 'cdg'
   memory = 1024
   cpu_kind = 'shared'
   cpus = 1
-  
-[deploy]
-  release_command = "pnpm --filter cms payload migrate"

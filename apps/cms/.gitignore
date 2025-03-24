@@ -6,10 +6,13 @@ node_modules
 .next
 .vercel
 
-/src/payload-types.ts
 
 # Payload default media upload directory
 public/media/
 
 public/robots.txt
 public/sitemap*.xml
+
+/.next
+/src/app/(payload)/admin/importMap.js
+/src/payload-types.ts
