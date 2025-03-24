@@ -1,5 +1,6 @@
 import { authenticated } from "@/access/authenticated";
 import { CollectionConfig } from "payload";
+import { socialPlatformOptions } from "@fxmk/shared";
 
 export const SocialLinks: CollectionConfig<"social-links"> = {
   slug: "social-links",
@@ -16,32 +17,7 @@ export const SocialLinks: CollectionConfig<"social-links"> = {
     {
       name: "platform",
       type: "select",
-      options: [
-        {
-          label: "Instagram",
-          value: "instagram",
-        },
-        {
-          label: "LinkedIn",
-          value: "linkedin",
-        },
-        {
-          label: "Bluesky",
-          value: "bluesky",
-        },
-        {
-          label: "GitHub",
-          value: "github",
-        },
-        {
-          label: "RSS",
-          value: "rss",
-        },
-        {
-          label: "Email",
-          value: "email",
-        },
-      ],
+      options: socialPlatformOptions,
       required: true,
     },
     {

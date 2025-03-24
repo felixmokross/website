@@ -30,7 +30,7 @@ export function MediaImage({
   return (
     <img
       src={src}
-      alt={media.alt ?? ""}
+      alt={media.alt ?? undefined}
       width={imageMeta.width ?? undefined}
       height={imageMeta.height ?? undefined}
       {...props}

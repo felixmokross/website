@@ -1,4 +1,5 @@
 import type { SocialLink, SocialLinksBlock } from "@fxmk/payload-types";
+import { socialPlatformOptions } from "@fxmk/shared";
 import {
   InstagramIcon,
   GitHubIcon,
@@ -22,7 +23,7 @@ export function SocialLinksBlock({
           <SocialLink
             key={socialLink.id}
             to={socialLink.url}
-            icon={getSocialIcon(socialLink.platform)}
+            platform={socialLink.platform}
           />
         ))}
     </div>
@@ -49,13 +50,17 @@ export function getSocialIcon(platform: SocialLink["platform"]) {
 }
 
 function SocialLink({
-  icon: Icon,
+  platform,
   ...props
 }: React.ComponentPropsWithoutRef<typeof Link> & {
-  icon: React.ComponentType<{ className?: string }>;
+  platform: SocialLink["platform"];
 }) {
+  const Icon = getSocialIcon(platform);
   return (
     <Link className="group -m-1 p-1" {...props}>
+      <span className="sr-only">
+        {socialPlatformOptions.find((sp) => sp.value === platform)!.label}
+      </span>
       <Icon className="h-6 w-6 fill-zinc-500 transition group-hover:fill-zinc-600 dark:fill-zinc-400 dark:group-hover:fill-zinc-300" />
     </Link>
   );
