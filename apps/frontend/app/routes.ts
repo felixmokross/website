@@ -8,4 +8,5 @@ export default [
   route("/articles/rss.xml", "routes/rss/route.ts"),
   route("/sitemap.xml", "routes/sitemap/route.ts"),
   route("/robots.txt", "routes/robots/route.ts"),
+  route("/version", "routes/version/route.ts"),
 ] satisfies RouteConfig;

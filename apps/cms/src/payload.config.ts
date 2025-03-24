@@ -32,6 +32,9 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     user: Users.slug,
+    components: {
+      beforeNavLinks: ["@/common/version-info#VersionInfo"],
+    },
     livePreview: {
       breakpoints: [
         {
