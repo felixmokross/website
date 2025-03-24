@@ -7,7 +7,7 @@ import {
   type Redirect,
 } from "@fxmk/payload-types";
 import path from "path";
-import { PAGE_DEPTH } from "./cms-data";
+import { PAGE_DEPTH, POST_DEPTH } from "./cms-data";
 
 const CACHE_DIR = "./.cms-cache";
 const CACHE_EXPIRY_IN_MS = 1000 * 60; // 1 min
@@ -212,7 +212,7 @@ export async function tryGetPost(slug: string, isPreviewMode: boolean = false) {
   return await getData<{ docs: Post[] }, Post>(
     `posts`,
     `posts_${slug}`,
-    1,
+    POST_DEPTH,
     queryParams,
     (data) => (data && data.docs.length > 0 ? data.docs[0] : null),
     isPreviewMode,

@@ -65,13 +65,13 @@ export const meta: Route.MetaFunction = () => [
   },
 ];
 
-export async function loader() {
+export async function loader({ request }: Route.LoaderArgs) {
   const [header, footer] = await Promise.all([getHeader(), getFooter()]);
 
   return {
     header,
     footer,
-    environment: getEnvironment(),
+    environment: getEnvironment(request),
   };
 }
 

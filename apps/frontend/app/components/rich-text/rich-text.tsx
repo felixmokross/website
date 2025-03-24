@@ -97,10 +97,7 @@ export function RichText({
 }: RichTextProps) {
   if (!content) return null;
 
-  const enrichedRootNode = useMemo(
-    () => enrichHeadingsWithAnchorIds(content.root),
-    [content.root],
-  );
+  const enrichedRootNode = enrichHeadingsWithAnchorIds(content.root);
   return (
     <RichTextContext.Provider
       value={{

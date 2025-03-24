@@ -37,7 +37,11 @@ export const Posts: CollectionConfig<"posts"> = {
   admin: {
     defaultColumns: ["title", "slug", "updatedAt"],
     livePreview: {
-      url: ({ data }) => getPreviewUrl(data),
+      url: ({ data }) => {
+        const livePreviewUrl = new URL(getPreviewUrl(data));
+        livePreviewUrl.searchParams.set("livePreviewDocument", "post");
+        return livePreviewUrl.toString();
+      },
     },
     preview: (data) => getPreviewUrl(data),
     useAsTitle: "title",
@@ -154,9 +158,7 @@ export const Posts: CollectionConfig<"posts"> = {
   },
   versions: {
     drafts: {
-      autosave: {
-        interval: 100, // We set this interval for optimal live preview
-      },
+      autosave: true,
       schedulePublish: true,
     },
     maxPerDoc: 50,
