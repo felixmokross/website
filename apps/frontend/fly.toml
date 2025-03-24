@@ -6,7 +6,7 @@ app = 'fxmk-frontend-staging'
 primary_region = 'cdg'
 
 [build]
-  dockerfile = 'apps/frontend/Dockerfile'
+  dockerfile = 'Dockerfile'
 
 [http_service]
   internal_port = 3000
