@@ -1,7 +1,6 @@
 import type { CollectionConfig } from "payload";
 
 import { authenticated } from "../../access/authenticated";
-import { generatePreviewPath } from "../../utilities/generatePreviewPath";
 
 import {
   MetaDescriptionField,
@@ -38,22 +37,13 @@ export const Posts: CollectionConfig<"posts"> = {
   admin: {
     defaultColumns: ["title", "slug", "updatedAt"],
     livePreview: {
-      url: ({ data, req }) => {
-        const path = generatePreviewPath({
-          slug: typeof data?.slug === "string" ? data.slug : "",
-          collection: "posts",
-          req,
-        });
-
-        return path;
+      url: ({ data }) => {
+        const livePreviewUrl = new URL(getPreviewUrl(data));
+        livePreviewUrl.searchParams.set("livePreviewDocument", "post");
+        return livePreviewUrl.toString();
       },
     },
-    preview: (data, { req }) =>
-      generatePreviewPath({
-        slug: typeof data?.slug === "string" ? data.slug : "",
-        collection: "posts",
-        req,
-      }),
+    preview: (data) => getPreviewUrl(data),
     useAsTitle: "title",
   },
   fields: [
@@ -162,17 +152,23 @@ export const Posts: CollectionConfig<"posts"> = {
       ({ doc, req }) =>
         refreshCacheHook({
           cacheKey: getCollectionItemCacheKey("posts", doc.slug),
-          pageUrl: `/articles/${doc.slug}`,
+          pageUrl: getPagePathname(doc.slug),
         })({ req }),
     ],
   },
   versions: {
     drafts: {
-      autosave: {
-        interval: 100, // We set this interval for optimal live preview
-      },
+      autosave: true,
       schedulePublish: true,
     },
     maxPerDoc: 50,
   },
 };
+
+function getPreviewUrl(data: Record<string, unknown>) {
+  return `${process.env.FRONTEND_BASE_URL}${getPagePathname(data.slug as string)}?previewKey=${process.env.PREVIEW_KEY}`;
+}
+
+function getPagePathname(slug: string) {
+  return `/articles/${slug}`;
+}

@@ -338,6 +338,7 @@ jobs:
             --env CACHE_REFRESH_TARGET_TYPE=fly \
             --env CACHE_REFRESH_TARGET_ARG=${{ needs.define-env.outputs.fly_app_frontend }},${{ env.FRONTEND_INTERNAL_PORT }} \
             --env IMAGEKIT_BASE_URL=${{ needs.define-env.outputs.imagekit_base_url }} \
+            --env FRONTEND_BASE_URL=https://${{ needs.define-env.outputs.canonical_hostname_frontend }}
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 

@@ -30,7 +30,7 @@ export async function loader({ request }: Route.LoaderArgs) {
          <ttl>60</ttl>
          <lastBuildDate>${channelLastChanged}</lastBuildDate>
          <atom:link href="${getCanonicalRequestUrl(request)}" rel="self" type="application/rss+xml" />
-         <webfeeds:cover image="${getSocialImageUrl(page.meta!, 2400, 1260, getEnvironment())}" />
+         <webfeeds:cover image="${getSocialImageUrl(page.meta!, 2400, 1260, getEnvironment(request))}" />
          <webfeeds:icon>${getCanonicalUrl(request, "/favicon-96x96.png")}</webfeeds:icon>
          <webfeeds:logo>${getCanonicalUrl(request, "/favicon.svg")}</webfeeds:logo>
          <webfeeds:accentColor>#2dd4bf</webfeeds:accentColor>
