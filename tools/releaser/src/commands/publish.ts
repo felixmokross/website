@@ -11,11 +11,6 @@ program
     const lastVersionTag = getLastVersionTag();
     const newVersionTag = `v${newVersion}`;
 
-    if (lastVersionTag === newVersionTag) {
-      console.info(`Tag ${newVersionTag} already exists.`);
-      return;
-    }
-
     console.log(`Creating and pushing tag…`);
     execSync(`git tag ${newVersionTag}`);
     execSync(`git push origin ${newVersionTag}`);
