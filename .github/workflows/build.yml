@@ -47,12 +47,20 @@ jobs:
         id: get-version
         run: |
           COMMIT_MSG=$(git log -1 --pretty=%B)
-          if echo "$COMMIT_MSG" | grep -q '!release'; then
-            echo "🔔 Found !release"
+          CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          IS_MANUAL_RELEASE=${{ github.event.inputs.release }} 
+
+          IS_DEFAULT_BRANCH=false
+          if [[ "$CURRENT_BRANCH" == "main" ]]; then
+            IS_DEFAULT_BRANCH=true
+          fi
+
+          if [[ "$IS_DEFAULT_BRANCH" == "true" ]] && { [ echo "$COMMIT_MSG" | grep -q '!release' ] || [[ $IS_MANUAL_RELEASE == "true" ]] }; then
             echo "SHOULD_RELEASE=true" >> "$GITHUB_OUTPUT"
           else
             echo "SHOULD_RELEASE=false" >> "$GITHUB_OUTPUT"
           fi
+
           VERSION=$(pnpm --filter releaser start get-version $([[ $SHOULD_RELEASE == 'true' ]] && echo '--release') | tail -n1)
           SHA=$(git rev-parse --short HEAD)
           VERSION_WITH_SHA="$VERSION-$SHA"
@@ -60,6 +68,7 @@ jobs:
           echo "Version (incl. SHA) is: $VERSION_WITH_SHA"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "version_with_sha=$VERSION_WITH_SHA" >> "$GITHUB_OUTPUT"
+          echo "Should release: $SHOULD_RELEASE"
           echo "should_release=$SHOULD_RELEASE" >> "$GITHUB_OUTPUT"
 
   frontend-lint:
@@ -346,7 +355,8 @@ jobs:
     name: Create release
     runs-on: ubuntu-latest
     if:
-      github.event_name != 'pull_request' && (github.event.inputs.release == 'true' || needs.version.outputs.should_release == 'true')
+      github.event_name != 'pull_request' && (github.event.inputs.release ==
+      'true' || needs.version.outputs.should_release == 'true')
     needs: [frontend-deploy, cms-deploy, version]
     permissions:
       contents: write
