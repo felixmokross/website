@@ -456,29 +456,3 @@ jobs:
               ;;
           esac
         id: define-env
-
-  # create-release:
-  #   name: Create Release
-  #   runs-on: ubuntu-latest
-  #   if: startsWith(github.ref, 'refs/tags/')
-  #   needs:
-  #     - frontend-build-push
-  #     - frontend-publish-chromatic
-  #     - frontend-check-format
-  #     - frontend-lint
-  #     - frontend-typecheck
-  #     - frontend-unit-tests
-  #     - cms-build-push
-  #     - cms-check-format
-  #     - e2e-tests
-  #   steps:
-  #     - name: Checkout with full history
-  #       uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 0
-  #     - name: Generate version
-  #       uses: ./.github/actions/version
-  #     - name: Create release
-  #       uses: softprops/action-gh-release@v1
-  #   permissions:
-  #     contents: write
