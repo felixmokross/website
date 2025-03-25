@@ -33,6 +33,7 @@ jobs:
     outputs:
       version: ${{ steps.get-version.outputs.version }}
       version_with_sha: ${{ steps.get-version.outputs.version_with_sha }}
+      should_release: ${{ steps.get-version.outputs.should_release }}
     steps:
       - name: Checkout with full history
         uses: actions/checkout@v4
@@ -45,13 +46,29 @@ jobs:
       - name: Get version
         id: get-version
         run: |
-          VERSION=$(pnpm --filter releaser start get-version $([[ "${{ inputs.release }}" == 'true' ]] && echo '--release') | tail -n1)
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          IS_MANUAL_RELEASE=${{ github.event.inputs.release }} 
+
+          IS_DEFAULT_BRANCH=false
+          if [[ "$CURRENT_BRANCH" == "main" ]]; then
+            IS_DEFAULT_BRANCH=true
+          fi
+
+          SHOULD_RELEASE=false
+          if [[ "$IS_DEFAULT_BRANCH" == "true" ]] && { [ echo "$COMMIT_MSG" | grep -q '!release' ] || [[ $IS_MANUAL_RELEASE == "true" ]] }; then
+            SHOULD_RELEASE=true
+          fi
+
+          VERSION=$(pnpm --filter releaser start get-version $([[ $SHOULD_RELEASE == 'true' ]] && echo '--release') | tail -n1)
           SHA=$(git rev-parse --short HEAD)
           VERSION_WITH_SHA="$VERSION-$SHA"
           echo "Version is: $VERSION"
           echo "Version (incl. SHA) is: $VERSION_WITH_SHA"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "version_with_sha=$VERSION_WITH_SHA" >> "$GITHUB_OUTPUT"
+          echo "Should release: $SHOULD_RELEASE"
+          echo "should_release=$SHOULD_RELEASE" >> "$GITHUB_OUTPUT"
 
   frontend-lint:
     name: "Frontend: Lint"
@@ -337,8 +354,8 @@ jobs:
     name: Create release
     runs-on: ubuntu-latest
     if:
-      github.event.inputs.release == 'true' && github.event_name !=
-      'pull_request'
+      github.event_name != 'pull_request' && (github.event.inputs.release ==
+      'true' || needs.version.outputs.should_release == 'true')
     needs: [frontend-deploy, cms-deploy, version]
     permissions:
       contents: write
