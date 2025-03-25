@@ -56,7 +56,7 @@ jobs:
           fi
 
           SHOULD_RELEASE=false
-          if [[ "$IS_DEFAULT_BRANCH" == "true" ]] && { [ echo "$COMMIT_MSG" | grep -q '!release' ] || [[ $IS_MANUAL_RELEASE == "true" ]] }; then
+          if [[ "$IS_DEFAULT_BRANCH" == "true" ]] && { echo "$COMMIT_MSG" | grep -q '!release' || [[ "$IS_MANUAL_RELEASE" == "true" ]] }; then
             SHOULD_RELEASE=true
           fi
 
