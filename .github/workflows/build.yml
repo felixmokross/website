@@ -30,6 +30,8 @@ jobs:
   version:
     name: "Generate version"
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}
     steps:
       - name: Checkout with full history
         uses: actions/checkout@v4
@@ -40,8 +42,11 @@ jobs:
       - name: Install dependencies
         run: pnpm --filter releaser install
       - name: Get version
+        id: get-version
         run: |
-          pnpm --filter releaser start get-version $([[ "${{ inputs.release }}" == 'true' ]] && echo '--release')
+          VERSION=$(pnpm --filter releaser start get-version $([[ "${{ inputs.release }}" == 'true' ]] && echo '--release') | tail -n1)
+          echo "Version is: $VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
   frontend-lint:
     name: "Frontend: Lint"
@@ -104,27 +109,28 @@ jobs:
   frontend-build-push:
     name: "Frontend: Build and Push"
     runs-on: ubuntu-latest
+    needs: [version]
     outputs:
       image: ${{ steps.image-name.outputs.image }}
     steps:
-      - name: Checkout with full history
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - name: Set up flyctl
         uses: superfly/flyctl-actions/setup-flyctl@master
         with:
           version: ${{ env.FLYCTL_VERSION }}
-      - name: Generate version
-        uses: ./.github/actions/version
-        id: version
+      - name: Set version on frontend
+        run: |
+          pnpm version ${{ needs.version.outputs.version }}
+            --no-git-tag-version
+        working-directory: apps/frontend
       - name: Populate CMS types
         uses: ./.github/actions/populate-cms-types
       - name: Get frontend image name
         id: image-name
         run: |
           IMAGE_NAME=fxmk-frontend-staging
-          IMAGE_TAG=v${{ steps.version.outputs.version }}
+          IMAGE_TAG=v${{ needs.version.outputs.version }}
           echo "image_name=$IMAGE_NAME" >> "$GITHUB_OUTPUT"
           echo "image_tag=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
           echo "image=registry.fly.io/$IMAGE_NAME:$IMAGE_TAG" >> "$GITHUB_OUTPUT"
@@ -207,25 +213,26 @@ jobs:
   cms-build-push:
     name: "CMS: Build and Push"
     runs-on: ubuntu-latest
+    needs: [version]
     outputs:
       image: ${{ steps.image-name.outputs.image }}
     steps:
-      - name: Checkout with full history
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - name: Set up flyctl
         uses: superfly/flyctl-actions/setup-flyctl@master
         with:
           version: ${{ env.FLYCTL_VERSION }}
-      - name: Generate version
-        uses: ./.github/actions/version
-        id: version
+      - name: Set version on CMS
+        run: |
+          pnpm version ${{ needs.version.outputs.version }}
+            --no-git-tag-version
+        working-directory: apps/cms
       - name: Get CMS image name
         id: image-name
         run: |
           IMAGE_NAME=fxmk-cms-staging
-          IMAGE_TAG=v${{ steps.version.outputs.version }}
+          IMAGE_TAG=v${{ needs.version.outputs.version }}
           echo "image_name=$IMAGE_NAME" >> "$GITHUB_OUTPUT"
           echo "image_tag=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
           echo "image=registry.fly.io/$IMAGE_NAME:$IMAGE_TAG" >> "$GITHUB_OUTPUT"
