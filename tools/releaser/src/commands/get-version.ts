@@ -7,28 +7,20 @@ import {
 import { execSync } from "child_process";
 import { program } from "commander";
 import semver from "semver";
+import { getConfig, getGitCommits, getLastVersionTag } from "src/common";
 
 program
   .command("get-version")
   .option("-r, --release", "Create a release version")
   .action(async (options) => {
-    function getLatestGitTag(): string {
-      const tag = execSync("git describe --tags --abbrev=0").toString().trim();
-      return tag;
-    }
-
-    const lastVersionTag = getLatestGitTag();
-    const lastVersion = lastVersionTag.substring(1);
-
-    const config = await loadChangelogConfig(process.cwd(), {
-      from: lastVersionTag,
-    });
-
-    const gitCommits = parseCommits(await getGitDiff(lastVersionTag), config);
+    const lastVersionTag = getLastVersionTag();
+    const config = await getConfig(lastVersionTag);
+    const gitCommits = await getGitCommits(lastVersionTag, config);
 
     // At least the patch version will increase
     const bumpType = determineSemverChange(gitCommits, config) ?? "patch";
 
+    const lastVersion = lastVersionTag.substring(1);
     const newVersion = semver.inc(lastVersion, bumpType);
     if (!newVersion) throw new Error("New version could not be determined");
 
