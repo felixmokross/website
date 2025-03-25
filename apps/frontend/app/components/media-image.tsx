@@ -4,7 +4,7 @@ import { useEnvironment } from "../utils/environment";
 import { useMemo } from "react";
 import { imagekitUrl } from "~/utils/imagekit";
 
-type ImageProps = {
+type MediaImageProps = {
   media: Media | string;
   preferredSize: ImageSize;
 } & Omit<
@@ -19,7 +19,7 @@ export function MediaImage({
   media,
   preferredSize = "large",
   ...props
-}: ImageProps) {
+}: MediaImageProps) {
   if (typeof media !== "object") return null;
 
   const imageMeta = selectImageFromMedia(media, preferredSize);
@@ -94,7 +94,7 @@ function selectImageFromMedia(media: Media, preferredSize: ImageSize) {
   return media;
 }
 
-type ImageSize = keyof NonNullable<Media["sizes"]>;
+export type ImageSize = keyof NonNullable<Media["sizes"]>;
 
 type ImageMeta = {
   filename?: string | null;
