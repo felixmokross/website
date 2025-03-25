@@ -119,6 +119,8 @@ jobs:
         uses: superfly/flyctl-actions/setup-flyctl@master
         with:
           version: ${{ env.FLYCTL_VERSION }}
+      - name: Setup
+        uses: ./.github/actions/setup
       - name: Set version on frontend
         run: |
           pnpm version ${{ needs.version.outputs.version }}
@@ -223,6 +225,8 @@ jobs:
         uses: superfly/flyctl-actions/setup-flyctl@master
         with:
           version: ${{ env.FLYCTL_VERSION }}
+      - name: Setup
+        uses: ./.github/actions/setup
       - name: Set version on CMS
         run: |
           pnpm version ${{ needs.version.outputs.version }}
