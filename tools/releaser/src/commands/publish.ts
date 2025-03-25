@@ -8,19 +8,25 @@ program
   .command("publish")
   .argument("<newVersion>")
   .action(async (newVersion) => {
-    console.log(`Creating tag and pushing…`);
     const lastVersionTag = getLastVersionTag();
     const newVersionTag = `v${newVersion}`;
 
+    if (lastVersionTag === newVersionTag) {
+      console.info(`Tag ${newVersionTag} already exists.`);
+      return;
+    }
+
+    console.log(`Creating and pushing tag…`);
     execSync(`git tag ${newVersionTag}`);
     execSync(`git push origin ${newVersionTag}`);
 
     const config = await getConfig(lastVersionTag);
     const gitCommits = await getGitCommits(lastVersionTag, config);
 
-    console.log(`Creating release…`);
     const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
-    const release = await octokit.repos.createRelease({
+
+    console.log(`Creating release…`);
+    const createReleaseResponse = await octokit.repos.createRelease({
       owner: "felixmokross",
       repo: "website",
       tag_name: newVersionTag,
@@ -29,6 +35,5 @@ program
       draft: false,
       prerelease: false,
     });
-
-    console.log("Release created:", release.data.html_url);
+    console.log("Release created:", createReleaseResponse.data.html_url);
   });
