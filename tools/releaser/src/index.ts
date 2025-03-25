@@ -47,9 +47,12 @@ program
       .toString()
       .trim();
 
-    const sanitizedBranchName = execSync(`git rev-parse --abbrev-ref HEAD`)
-      .toString()
-      .trim()
+    const githubHeadRef = process.env.GITHUB_HEAD_REF;
+
+    const sanitizedBranchName = (
+      githubHeadRef ||
+      execSync(`git rev-parse --abbrev-ref HEAD`).toString().trim()
+    )
       .replace("/", "-")
       .replace("_", "-")
       .replace(/[^a-zA-Z0-9.-]/g, "");
