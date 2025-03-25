@@ -489,7 +489,9 @@ jobs:
   create-release:
     name: Create release
     runs-on: ubuntu-latest
-    if: inputs.release == 'true' && github.event_name != 'pull_request'
+    if:
+      github.event.inputs.release == 'true' && github.event_name !=
+      'pull_request'
     needs: [frontend-deploy, cms-deploy, version]
     permissions:
       contents: write
