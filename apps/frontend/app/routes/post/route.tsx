@@ -8,7 +8,6 @@ import type { RichTextObject } from "~/components/rich-text/rich-text.model";
 import { getCanonicalRequestUrl, getRequestUrl } from "~/utils/routing";
 import { handleIncomingRequest } from "~/utils/routing.server";
 import { Code } from "./code";
-import { MediaImage } from "~/components/media-image";
 import { ArrowLeftIcon } from "~/components/icons";
 import type { Route } from "./+types/route";
 import type { SerializeFromLoader } from "~/utils/types";
@@ -17,6 +16,8 @@ import { getMeta } from "~/utils/meta";
 import { Link } from "~/components/link";
 import { OptInLivePreview } from "~/components/live-preview";
 import { POST_DEPTH } from "~/utils/cms-data";
+import { Media } from "~/components/media";
+import type { Media as MediaType } from "@fxmk/payload-types";
 
 export function meta({ data, matches }: Route.MetaArgs) {
   const { content, canonicalUrl } = data;
@@ -100,9 +101,7 @@ export default function Route() {
                     }}
                     blocks={{
                       code: Code,
-                      mediaBlock: ({ media }) => (
-                        <MediaImage media={media} preferredSize="large" />
-                      ),
+                      mediaBlock: MediaBlock,
                     }}
                   />
                 </Prose>
@@ -113,4 +112,8 @@ export default function Route() {
       )}
     </OptInLivePreview>
   );
+}
+
+function MediaBlock({ media }: { media: MediaType | string }) {
+  return <Media media={media} preferredImageSize="large" />;
 }
