@@ -17,7 +17,6 @@ program
     const branchName = execSync(`git rev-parse --abbrev-ref HEAD`)
       .toString()
       .trim();
-    const isDefaultBranch = branchName === "main";
 
     const lastVersionTag = getLastVersionTag();
     const config = await getConfig(lastVersionTag);
@@ -39,7 +38,6 @@ program
 
     const sha = execSync(`git rev-parse --short HEAD`).toString().trim();
     const isRelease =
-      isDefaultBranch &&
       (commitMessage.includes("!release") || options.release);
 
     let completeNewVersion = newVersion;
