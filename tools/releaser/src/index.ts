@@ -27,10 +27,10 @@ program
 
     const gitCommits = parseCommits(await getGitDiff(lastVersionTag), config);
 
-    const bump = determineSemverChange(gitCommits, config);
-    if (!bump) throw new Error("Version bump could not be determined");
+    // At least the patch version will increase
+    const bumpType = determineSemverChange(gitCommits, config) ?? "patch";
 
-    const newVersion = semver.inc(lastVersion, bump);
+    const newVersion = semver.inc(lastVersion, bumpType);
     if (!newVersion) throw new Error("New version could not be determined");
 
     const newVersionTag = `v${newVersion}`;
