@@ -15,5 +15,7 @@ jobs:
           fetch-depth: 0
       - name: Setup
         uses: ./.github/actions/setup
+      - name: Install dependencies
+        run: pnpm --filter releaser install
       - name: Release
         run: pnpm --filter releaser start
