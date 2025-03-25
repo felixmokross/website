@@ -46,7 +46,7 @@ jobs:
       - name: Get version
         id: get-version
         run: |
-          RESULT=$(pnpm --filter releaser --silent start get-version $([[ ${{ inputs.release }} == 'true' ]] && echo '--release')
+          RESULT=$(pnpm --filter releaser --silent start get-version $([[ "${{ inputs.release }}" == 'true' ]] && echo '--release')
 
           VERSION=$(echo $RESULT | jq -r '.version')
           VERSION_WITH_SHA=$(echo $RESULT | jq -r '.versionWithSha')
