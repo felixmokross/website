@@ -1,16 +1,20 @@
 import { AnimatePresence, motion } from "motion/react";
-import { useState, useEffect } from "react";
 import { useNavigation } from "react-router";
+import { useDebouncedValue } from "~/utils/debounce";
+
+const ANIMATION_DEBOUNCE_IN_MS = 100;
 
 export function LoadingBar() {
   const navigation = useNavigation();
-  const isDelayedNavigating = useDelayedTrigger(
-    navigation.state !== "idle",
-    100,
+  const isNavigating = navigation.state !== "idle";
+  const isDebouncedNavigating = useDebouncedValue(
+    isNavigating,
+    ANIMATION_DEBOUNCE_IN_MS,
   );
+
   return (
     <AnimatePresence>
-      {isDelayedNavigating && (
+      {isNavigating && isDebouncedNavigating && (
         <motion.div
           className="fixed top-0 right-0 left-0 z-50 h-[3px] animate-pulse rounded-r-full bg-teal-500 dark:bg-teal-400"
           initial={{ width: "0%" }}
@@ -24,23 +28,4 @@ export function LoadingBar() {
       )}
     </AnimatePresence>
   );
-}
-
-function useDelayedTrigger(isTriggered: boolean, delayInMs: number) {
-  const [isDelayedTriggered, setIsDelayedTriggered] = useState(isTriggered);
-  useEffect(() => {
-    let timeout: number | undefined;
-
-    if (isTriggered) {
-      timeout = window.setTimeout(() => setIsDelayedTriggered(true), delayInMs);
-    } else {
-      setIsDelayedTriggered(false);
-    }
-
-    return () => {
-      if (timeout) window.clearTimeout(timeout);
-    };
-  }, [isTriggered, delayInMs]);
-
-  return isDelayedTriggered;
 }
