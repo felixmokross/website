@@ -9,11 +9,12 @@ program
   .argument("<newVersion>")
   .action(async (newVersion) => {
     console.log(`Creating tag and pushing…`);
+    const lastVersionTag = getLastVersionTag();
     const newVersionTag = `v${newVersion}`;
+
     execSync(`git tag ${newVersionTag}`);
     execSync(`git push origin ${newVersionTag}`);
 
-    const lastVersionTag = getLastVersionTag();
     const config = await getConfig(lastVersionTag);
     const gitCommits = await getGitCommits(lastVersionTag, config);
 
