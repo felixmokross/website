@@ -55,10 +55,9 @@ jobs:
             IS_DEFAULT_BRANCH=true
           fi
 
+          SHOULD_RELEASE=false
           if [[ "$IS_DEFAULT_BRANCH" == "true" ]] && { [ echo "$COMMIT_MSG" | grep -q '!release' ] || [[ $IS_MANUAL_RELEASE == "true" ]] }; then
-            echo "SHOULD_RELEASE=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "SHOULD_RELEASE=false" >> "$GITHUB_OUTPUT"
+            SHOULD_RELEASE=true
           fi
 
           VERSION=$(pnpm --filter releaser start get-version $([[ $SHOULD_RELEASE == 'true' ]] && echo '--release') | tail -n1)
