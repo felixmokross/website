@@ -123,8 +123,7 @@ jobs:
         uses: ./.github/actions/setup
       - name: Set version on frontend
         run: |
-          pnpm version ${{ needs.version.outputs.version }}
-            --no-git-tag-version
+          pnpm version ${{ needs.version.outputs.version }} --git-tag-version false
         working-directory: apps/frontend
       - name: Populate CMS types
         uses: ./.github/actions/populate-cms-types
@@ -229,8 +228,7 @@ jobs:
         uses: ./.github/actions/setup
       - name: Set version on CMS
         run: |
-          pnpm version ${{ needs.version.outputs.version }}
-            --no-git-tag-version
+          pnpm version ${{ needs.version.outputs.version }} --git-tag-version false
         working-directory: apps/cms
       - name: Get CMS image name
         id: image-name
