@@ -40,18 +40,17 @@ program
       return;
     }
 
-    const githubHeadRef = process.env.GITHUB_HEAD_REF;
-    const headRef =
-      githubHeadRef ||
-      execSync(`git rev-parse --abbrev-ref HEAD`).toString().trim();
-
     const commitsSinceLastVersion = execSync(
-      `git rev-list --count ${lastVersionTag}..${headRef}`,
+      `git rev-list --count ${lastVersionTag}..HEAD`,
     )
       .toString()
       .trim();
 
-    const sanitizedBranchName = headRef
+    const githubHeadRef = process.env.GITHUB_HEAD_REF;
+    const branchName =
+      githubHeadRef ||
+      execSync(`git rev-parse --abbrev-ref HEAD`).toString().trim();
+    const sanitizedBranchName = branchName
       .replace("/", "-")
       .replace("_", "-")
       .replace(/[^a-zA-Z0-9.-]/g, "");
