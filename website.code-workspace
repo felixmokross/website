@@ -5,6 +5,7 @@
     { "name": "apps/cms", "path": "./apps/cms" },
     { "name": "libs/shared", "path": "./libs/shared" },
     { "name": "libs/payload-types", "path": "./libs/payload-types" },
+    { "name": "tools/releaser", "path": "./tools/releaser" },
   ],
   "settings": {
     "editor.formatOnSave": true,
