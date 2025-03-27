@@ -33,7 +33,6 @@ jobs:
     outputs:
       version: ${{ steps.get-version.outputs.version }}
       version_with_sha: ${{ steps.get-version.outputs.version_with_sha }}
-      is_new_release: ${{ steps.get-version.outputs.is_new_release }}
     steps:
       - name: Checkout with full history
         uses: actions/checkout@v4
@@ -46,17 +45,15 @@ jobs:
       - name: Get version
         id: get-version
         run: |
-          RESULT=$(pnpm --filter releaser --silent start get-version $([[ "${{ inputs.release }}" == 'true' ]] && echo '--release'))
+          RESULT=$(pnpm --filter releaser --silent start get-version
 
           VERSION=$(echo $RESULT | jq -r '.version')
           VERSION_WITH_SHA=$(echo $RESULT | jq -r '.versionWithSha')
-          IS_NEW_RELEASE=$(echo $RESULT | jq -r '.isNewRelease')
           echo "Version is: $VERSION"
           echo "Version (incl. SHA) is: $VERSION_WITH_SHA"
-          echo "Is new release: $IS_NEW_RELEASE"
+
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "version_with_sha=$VERSION_WITH_SHA" >> "$GITHUB_OUTPUT"
-          echo "is_new_release=$IS_NEW_RELEASE" >> "$GITHUB_OUTPUT"
 
   frontend-lint:
     name: "Frontend: Lint"
@@ -407,7 +404,9 @@ jobs:
   create-release:
     name: Create release
     runs-on: ubuntu-latest
-    if: needs.version.outputs.is_new_release == 'true'
+    if:
+      contains(github.event.head_commit.message, '!release') || inputs.release
+      == 'true'
     needs: [frontend-deploy, cms-deploy, version]
     permissions:
       contents: write

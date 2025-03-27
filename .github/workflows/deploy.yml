@@ -1,0 +1,87 @@
+name: Deploy
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        required: true
+        default: "staging"
+        options:
+          - staging
+          - production
+
+env:
+  FLYCTL_VERSION: 0.3.55
+
+jobs:
+  define-env:
+    name: Define Environment
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.define-env.outputs.environment }}
+      fly_config: ${{ steps.define-env.outputs.fly_config }}
+      fly_app_frontend: ${{ steps.define-env.outputs.fly_app_frontend }}
+      fly_app_cms: ${{ steps.define-env.outputs.fly_app_cms }}
+      analytics_domain_frontend:
+        ${{ steps.define-env.outputs.analytics_domain_frontend }}
+      canonical_hostname_frontend:
+        ${{ steps.define-env.outputs.canonical_hostname_frontend }}
+      canonical_hostname_cms:
+        ${{ steps.define-env.outputs.canonical_hostname_cms }}
+      s3_bucket: ${{ steps.define-env.outputs.s3_bucket }}
+      imagekit_base_url: ${{ steps.define-env.outputs.imagekit_base_url }}
+    steps:
+      - name: Define environment
+        run: |
+          environment=${{ inputs.environment || 'staging' }}
+          echo "environment=$environment" >> "$GITHUB_OUTPUT"  
+          case $environment in
+          production)
+              echo "fly_config=fly.toml" >> "$GITHUB_OUTPUT"
+              echo "fly_app_frontend=fxmk-frontend" >> "$GITHUB_OUTPUT"
+              echo "fly_app_cms=fxmk-cms" >> "$GITHUB_OUTPUT"
+              echo "canonical_hostname_frontend=www.fxmk.dev" >> "$GITHUB_OUTPUT"
+              echo "canonical_hostname_cms=admin.fxmk.dev" >> "$GITHUB_OUTPUT"
+              echo "s3_bucket=fxmk-media" >> "$GITHUB_OUTPUT"
+              echo "imagekit_base_url=https://ik.imagekit.io/92jpwaahykk" >> "$GITHUB_OUTPUT"
+              echo "analytics_domain_frontend=fxmk.dev" >> "$GITHUB_OUTPUT"
+              ;;
+          staging)
+              echo "fly_config=fly.staging.toml" >> "$GITHUB_OUTPUT"
+              echo "fly_app_frontend=fxmk-frontend-staging" >> "$GITHUB_OUTPUT"
+              echo "fly_app_cms=fxmk-cms-staging" >> "$GITHUB_OUTPUT"
+              echo "canonical_hostname_frontend=www.staging.fxmk.dev" >> "$GITHUB_OUTPUT"
+              echo "canonical_hostname_cms=admin.staging.fxmk.dev" >> "$GITHUB_OUTPUT"
+              echo "s3_bucket=fxmk-media-staging" >> "$GITHUB_OUTPUT"
+              echo "imagekit_base_url=https://ik.imagekit.io/92jpwaahykk/staging" >> "$GITHUB_OUTPUT"
+              ;;
+          esac
+        id: define-env
+
+  frontend-deploy:
+    name: "Frontend: Deploy"
+    runs-on: ubuntu-latest
+    needs:
+      - define-env
+    environment:
+      name: ${{ needs.define-env.outputs.environment }}-frontend
+      url: https://${{ needs.define-env.outputs.canonical_hostname_frontend }}/
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+        with:
+          version: ${{ env.FLYCTL_VERSION }}
+      - name: Deploy frontend
+        run: |
+          flyctl deploy \
+          --app ${{ needs.define-env.outputs.fly_app_frontend }} \
+          --config apps/frontend/${{ needs.define-env.outputs.fly_config }} \
+          --image ${{ needs.frontend-build-push.outputs.image }} \
+          --env CANONICAL_HOSTNAME=${{ needs.define-env.outputs.canonical_hostname_frontend }} \
+          --env PAYLOAD_CMS_BASE_URL=https://${{ needs.define-env.outputs.canonical_hostname_cms }} \
+          --env IMAGEKIT_BASE_URL=${{ needs.define-env.outputs.imagekit_base_url }} \
+          --env ANALYTICS_DOMAIN=${{ needs.define-env.outputs.analytics_domain_frontend }} \
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
