@@ -15,6 +15,7 @@ services:
     ports:
       - "3001:3001"
     environment:
+      SERVER_URL: http://cms:3001
       DATABASE_URI: mongodb://mongo:27017/website-cms
       PAYLOAD_SECRET: ${PAYLOAD_SECRET}
       ENABLE_E2E_USER: true
