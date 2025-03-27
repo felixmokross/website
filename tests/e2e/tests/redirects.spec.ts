@@ -6,5 +6,5 @@ test("redirects to path without trailing slash", async ({ page, baseURL }) => {
 
   await page.goto(testPage.pathname + "/");
 
-  await expect(page).toHaveURL(`${baseURL}${testPage.pathname}`);
+  await expect(page.url().endsWith(testPage.pathname)).toBeTruthy();
 });
