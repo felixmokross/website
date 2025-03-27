@@ -64,7 +64,7 @@ git clone -n --depth=1 --filter=tree:0 https://github.com/payloadcms/payload my-
 1. `cd my-project && cp .env.example .env` to copy the example environment
    variables
 1. `pnpm install && pnpm dev` to install dependencies and start the dev server
-1. open `http://localhost:3000` to open the app in your browser
+1. open `http://localhost:3001` to open the app in your browser
 
 That's it! Changes made in `./src` will be reflected in your app. Follow the
 on-screen instructions to login and create your first admin user. Then check out
