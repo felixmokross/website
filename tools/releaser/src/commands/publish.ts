@@ -1,13 +1,13 @@
 import { execSync } from "child_process";
 import { program } from "commander";
 import { Octokit } from "@octokit/rest";
-import { generateMarkDown } from "changelogen";
-import { getConfig, getGitCommits, getLastVersionTag } from "src/common";
+import { getConfig, getLastVersionTag, getReleaseNotes } from "src/common";
 
 program
   .command("publish")
+  .option("-d, --draft", "Create a draft release")
   .argument("<newVersion>")
-  .action(async (newVersion) => {
+  .action(async (newVersion, options) => {
     const lastVersionTag = getLastVersionTag();
     const newVersionTag = `v${newVersion}`;
 
@@ -16,7 +16,6 @@ program
     execSync(`git push origin ${newVersionTag}`);
 
     const config = await getConfig(lastVersionTag);
-    const gitCommits = await getGitCommits(lastVersionTag, config);
 
     const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
@@ -26,8 +25,8 @@ program
       repo: "website",
       tag_name: newVersionTag,
       name: newVersionTag,
-      body: await generateMarkDown(gitCommits, config),
-      draft: false,
+      body: await getReleaseNotes(lastVersionTag, config),
+      draft: !!options.draft,
       prerelease: false,
     });
     console.log("Release created:", createReleaseResponse.data.html_url);
