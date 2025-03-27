@@ -16,6 +16,7 @@ import { getFooter, getHeader } from "./utils/cms-data.server";
 import { EnvironmentContext } from "./utils/environment";
 import { AnalyticsScript } from "./components/analytics-script";
 import { getEnvironment } from "./utils/environment.server";
+import { Toaster } from "./layout/toaster";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -93,6 +94,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               {children}
             </LayoutContainer>
           </div>
+          <Toaster />
         </EnvironmentContext.Provider>
         <ScrollRestoration />
         <Scripts />
