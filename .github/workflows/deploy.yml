@@ -1,6 +1,5 @@
 name: Deploy
 on:
-  workflow_call:
   workflow_dispatch:
     inputs:
       environment:
@@ -11,69 +10,15 @@ on:
           - staging
           - production
 
-env:
-  FLYCTL_VERSION: 0.3.55
-  MEDIA_S3_REGION: eu-west-3
-  FRONTEND_INTERNAL_PORT: 3000
-
 jobs:
   version:
     name: "Generate version"
     uses: ./.github/workflows/version.yml
 
-  frontend-deploy:
-    name: "Frontend: Deploy"
-    runs-on: ubuntu-latest
+  deploy-version:
+    name: "Deploy version"
     needs: version
-    environment:
-      name: ${{ inputs.environment || 'staging' }}-frontend
-      url: https://${{ vars.CANONICAL_HOSTNAME }}/
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up flyctl
-        uses: superfly/flyctl-actions/setup-flyctl@master
-        with:
-          version: ${{ env.FLYCTL_VERSION }}
-      - name: Deploy frontend
-        run: |
-          flyctl deploy \
-          --app ${{ vars.FLY_APP }} \
-          --config apps/frontend/${{ vars.FLY_CONFIG }} \
-          --image registry.fly.io/fxmk-frontend-staging:v${{ needs.version.outputs.version_with_sha }} \
-          --env CANONICAL_HOSTNAME=${{ vars.CANONICAL_HOSTNAME }} \
-          --env PAYLOAD_CMS_BASE_URL=${{ vars.PAYLOAD_CMS_BASE_URL }} \
-          --env IMAGEKIT_BASE_URL=${{ vars.IMAGEKIT_BASE_URL }} \
-          --env ANALYTICS_DOMAIN=${{ vars.ANALYTICS_DOMAIN }} \
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-
-  cms-deploy:
-    name: "CMS: Deploy"
-    runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
-    needs: version
-    environment:
-      name: ${{ inputs.environment || 'staging' }}-cms
-      url: https://${{ vars.CANONICAL_HOSTNAME }}/
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up flyctl
-        uses: superfly/flyctl-actions/setup-flyctl@master
-        with:
-          version: ${{ env.FLYCTL_VERSION }}
-      - name: Deploy CMS
-        run: |
-          flyctl deploy \
-            --app ${{ vars.FLY_APP }} \
-            --config apps/cms/${{ vars.FLY_CONFIG }} \
-            --image registry.fly.io/fxmk-cms-staging:v${{ needs.version.outputs.version_with_sha }} \
-            --env MEDIA_S3_REGION=${{ env.MEDIA_S3_REGION }} \
-            --env MEDIA_S3_BUCKET=${{ vars.MEDIA_S3_BUCKET }} \
-            --env CACHE_REFRESH_TARGET_TYPE=fly \
-            --env CACHE_REFRESH_TARGET_ARG=${{ vars.FRONTEND_FLY_APP }},${{ env.FRONTEND_INTERNAL_PORT }} \
-            --env FRONTEND_BASE_URL=${{ vars.FRONTEND_BASE_URL }} \
-            --env IMAGEKIT_BASE_URL=${{ vars.IMAGEKIT_BASE_URL }} \
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+    uses: ./.github/workflows/deploy-version.yml
+    with:
+      version_with_sha: ${{ needs.version.outputs.version_with_sha }}
+      environment: ${{ inputs.environment }}

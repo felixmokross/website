@@ -258,6 +258,7 @@ jobs:
   deploy:
     name: Deploy
     needs:
+      - version
       - frontend-lint
       - frontend-check-format
       - frontend-typecheck
@@ -267,9 +268,11 @@ jobs:
       - cms-check-format
       - cms-build-push
       - e2e-tests
-
     if: github.event_name != 'pull_request'
-    uses: ./.github/workflows/deploy.yml
+    uses: ./.github/workflows/deploy-version.yml
+    with:
+      version_with_sha: ${{ needs.version.outputs.version_with_sha }}
+      environment: staging
     secrets: inherit
 
   create-release:
