@@ -24,39 +24,11 @@ env:
   FLYCTL_VERSION: 0.3.55
   FRONTEND_INTERNAL_PORT: 3000
   CMS_INTERNAL_PORT: 3001
-  MEDIA_S3_REGION: eu-west-3
 
 jobs:
   version:
     name: "Generate version"
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.get-version.outputs.version }}
-      version_with_sha: ${{ steps.get-version.outputs.version_with_sha }}
-      is_new_release: ${{ steps.get-version.outputs.is_new_release }}
-    steps:
-      - name: Checkout with full history
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Setup
-        uses: ./.github/actions/setup
-      - name: Install dependencies
-        run: pnpm --filter releaser install
-      - name: Get version
-        id: get-version
-        run: |
-          RESULT=$(pnpm --filter releaser --silent start get-version $([[ "${{ inputs.release }}" == 'true' ]] && echo '--release'))
-
-          VERSION=$(echo $RESULT | jq -r '.version')
-          VERSION_WITH_SHA=$(echo $RESULT | jq -r '.versionWithSha')
-          IS_NEW_RELEASE=$(echo $RESULT | jq -r '.isNewRelease')
-          echo "Version is: $VERSION"
-          echo "Version (incl. SHA) is: $VERSION_WITH_SHA"
-          echo "Is new release: $IS_NEW_RELEASE"
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "version_with_sha=$VERSION_WITH_SHA" >> "$GITHUB_OUTPUT"
-          echo "is_new_release=$IS_NEW_RELEASE" >> "$GITHUB_OUTPUT"
+    uses: ./.github/workflows/version.yml
 
   frontend-lint:
     name: "Frontend: Lint"
@@ -155,41 +127,6 @@ jobs:
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
-  frontend-deploy:
-    name: "Frontend: Deploy"
-    runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
-    needs:
-      - frontend-build-push
-      - frontend-check-format
-      - frontend-lint
-      - frontend-typecheck
-      - frontend-unit-tests
-      - e2e-tests
-      - define-env
-    environment:
-      name: ${{ needs.define-env.outputs.environment }}-frontend
-      url: https://${{ needs.define-env.outputs.canonical_hostname_frontend }}/
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up flyctl
-        uses: superfly/flyctl-actions/setup-flyctl@master
-        with:
-          version: ${{ env.FLYCTL_VERSION }}
-      - name: Deploy frontend
-        run: |
-          flyctl deploy \
-            --app ${{ needs.define-env.outputs.fly_app_frontend }} \
-            --config apps/frontend/${{ needs.define-env.outputs.fly_config }} \
-            --image ${{ needs.frontend-build-push.outputs.image }} \
-            --env CANONICAL_HOSTNAME=${{ needs.define-env.outputs.canonical_hostname_frontend }} \
-            --env PAYLOAD_CMS_BASE_URL=https://${{ needs.define-env.outputs.canonical_hostname_cms }} \
-            --env IMAGEKIT_BASE_URL=${{ needs.define-env.outputs.imagekit_base_url }} \
-            --env ANALYTICS_DOMAIN=${{ needs.define-env.outputs.analytics_domain_frontend }} \
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-
   cms-lint:
     name: "CMS: Lint"
     runs-on: ubuntu-latest
@@ -252,41 +189,6 @@ jobs:
             --image-label ${{ steps.image-name.outputs.image_tag }} \
             --label org.opencontainers.image.version=${{ steps.image-name.outputs.image_tag }} \
             --push \
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-
-  cms-deploy:
-    name: "CMS: Deploy"
-    runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
-    needs:
-      - cms-build-push
-      - cms-check-format
-      - cms-lint
-      - e2e-tests
-      - define-env
-    environment:
-      name: ${{ needs.define-env.outputs.environment }}-cms
-      url: https://${{ needs.define-env.outputs.canonical_hostname_cms }}/
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up flyctl
-        uses: superfly/flyctl-actions/setup-flyctl@master
-        with:
-          version: ${{ env.FLYCTL_VERSION }}
-      - name: Deploy CMS
-        run: |
-          flyctl deploy \
-            --app ${{ needs.define-env.outputs.fly_app_cms }} \
-            --config apps/cms/${{ needs.define-env.outputs.fly_config }} \
-            --image ${{ needs.cms-build-push.outputs.image }} \
-            --env MEDIA_S3_REGION=${{ env.MEDIA_S3_REGION }} \
-            --env MEDIA_S3_BUCKET=${{ needs.define-env.outputs.s3_bucket }} \
-            --env CACHE_REFRESH_TARGET_TYPE=fly \
-            --env CACHE_REFRESH_TARGET_ARG=${{ needs.define-env.outputs.fly_app_frontend }},${{ env.FRONTEND_INTERNAL_PORT }} \
-            --env IMAGEKIT_BASE_URL=${{ needs.define-env.outputs.imagekit_base_url }} \
-            --env FRONTEND_BASE_URL=https://${{ needs.define-env.outputs.canonical_hostname_frontend }}
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
@@ -358,57 +260,29 @@ jobs:
           path: tests/e2e/playwright-report/
           retention-days: 30
 
-  define-env:
-    name: Define Environment
-    runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
-    outputs:
-      environment: ${{ steps.define-env.outputs.environment }}
-      fly_config: ${{ steps.define-env.outputs.fly_config }}
-      fly_app_frontend: ${{ steps.define-env.outputs.fly_app_frontend }}
-      fly_app_cms: ${{ steps.define-env.outputs.fly_app_cms }}
-      analytics_domain_frontend:
-        ${{ steps.define-env.outputs.analytics_domain_frontend }}
-      canonical_hostname_frontend:
-        ${{ steps.define-env.outputs.canonical_hostname_frontend }}
-      canonical_hostname_cms:
-        ${{ steps.define-env.outputs.canonical_hostname_cms }}
-      s3_bucket: ${{ steps.define-env.outputs.s3_bucket }}
-      imagekit_base_url: ${{ steps.define-env.outputs.imagekit_base_url }}
-    steps:
-      - name: Define environment
-        run: |
-          environment=${{ inputs.environment || 'staging' }}
-          echo "environment=$environment" >> "$GITHUB_OUTPUT"
+  deploy:
+    name: Deploy
+    needs:
+      - frontend-lint
+      - frontend-check-format
+      - frontend-typecheck
+      - frontend-unit-tests
+      - frontend-build-push
+      - cms-lint
+      - cms-check-format
+      - cms-build-push
 
-          case $environment in
-            production)
-              echo "fly_config=fly.toml" >> "$GITHUB_OUTPUT"
-              echo "fly_app_frontend=fxmk-frontend" >> "$GITHUB_OUTPUT"
-              echo "fly_app_cms=fxmk-cms" >> "$GITHUB_OUTPUT"
-              echo "canonical_hostname_frontend=www.fxmk.dev" >> "$GITHUB_OUTPUT"
-              echo "canonical_hostname_cms=admin.fxmk.dev" >> "$GITHUB_OUTPUT"
-              echo "s3_bucket=fxmk-media" >> "$GITHUB_OUTPUT"
-              echo "imagekit_base_url=https://ik.imagekit.io/92jpwaahykk" >> "$GITHUB_OUTPUT"
-              echo "analytics_domain_frontend=fxmk.dev" >> "$GITHUB_OUTPUT"
-              ;;
-            staging)
-              echo "fly_config=fly.staging.toml" >> "$GITHUB_OUTPUT"
-              echo "fly_app_frontend=fxmk-frontend-staging" >> "$GITHUB_OUTPUT"
-              echo "fly_app_cms=fxmk-cms-staging" >> "$GITHUB_OUTPUT"
-              echo "canonical_hostname_frontend=www.staging.fxmk.dev" >> "$GITHUB_OUTPUT"
-              echo "canonical_hostname_cms=admin.staging.fxmk.dev" >> "$GITHUB_OUTPUT"
-              echo "s3_bucket=fxmk-media-staging" >> "$GITHUB_OUTPUT"
-              echo "imagekit_base_url=https://ik.imagekit.io/92jpwaahykk/staging" >> "$GITHUB_OUTPUT"
-              ;;
-          esac
-        id: define-env
+    if: github.event_name != 'pull_request'
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit
 
   create-release:
     name: Create release
     runs-on: ubuntu-latest
-    if: needs.version.outputs.is_new_release == 'true'
-    needs: [frontend-deploy, cms-deploy, version]
+    if:
+      contains(github.event.head_commit.message, '!release') || inputs.release
+      == 'true'
+    needs: [deploy, version]
     permissions:
       contents: write
     steps:
