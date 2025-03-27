@@ -165,6 +165,7 @@ jobs:
       - frontend-lint
       - frontend-typecheck
       - frontend-unit-tests
+      - e2e-tests
       - define-env
     environment:
       name: ${{ needs.define-env.outputs.environment }}-frontend
@@ -264,6 +265,7 @@ jobs:
       - cms-build-push
       - cms-check-format
       - cms-lint
+      - e2e-tests
       - define-env
     environment:
       name: ${{ needs.define-env.outputs.environment }}-cms

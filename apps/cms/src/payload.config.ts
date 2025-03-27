@@ -72,4 +72,25 @@ export default buildConfig({
     outputFile: path.resolve(dirname, "payload-types.ts"),
     declare: false,
   },
+  async onInit(payload) {
+    if (process.env.ENABLE_E2E_USER === "true") {
+      const users = await payload.find({
+        collection: "users",
+        where: { email: { equals: "e2e@fxmk.dev" } },
+        pagination: false,
+      });
+
+      if (users.totalDocs === 0) {
+        await payload.create({
+          collection: "users",
+          data: {
+            email: "e2e@fxmk.dev",
+            password: "password",
+            enableAPIKey: true,
+            apiKey: "apikey",
+          },
+        });
+      }
+    }
+  },
 });
