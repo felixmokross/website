@@ -31,7 +31,7 @@ jobs:
       - name: Get version
         id: get-version
         run: |
-          RESULT=$(pnpm --filter releaser --silent start get-version
+          RESULT=$(pnpm --filter releaser --silent start get-version)
 
           VERSION=$(echo $RESULT | jq -r '.version')
           VERSION_WITH_SHA=$(echo $RESULT | jq -r '.versionWithSha')
