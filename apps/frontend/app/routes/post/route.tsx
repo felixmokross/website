@@ -18,6 +18,7 @@ import { OptInLivePreview } from "~/components/live-preview";
 import { POST_DEPTH } from "~/utils/cms-data";
 import { Media } from "~/components/media";
 import type { Media as MediaType } from "@fxmk/payload-types";
+import { PostH2, PostH3, PostH4, PostH5, PostH6 } from "./headings";
 
 export function meta({ data, matches }: Route.MetaArgs) {
   const { content, canonicalUrl } = data;
@@ -92,12 +93,13 @@ export default function Route() {
                   <RichText
                     content={content.content as unknown as RichTextObject}
                     elements={{
-                      h1: "h2",
-                      h2: "h3",
-                      h3: "h4",
-                      h4: "h5",
-                      h5: "h6",
-                      h6: "h6",
+                      // reduce by one heading level as the title is already an h1
+                      h1: PostH2,
+                      h2: PostH3,
+                      h3: PostH4,
+                      h4: PostH5,
+                      h5: PostH6,
+                      h6: PostH6,
                     }}
                     blocks={{
                       code: Code,
