@@ -23,7 +23,7 @@ jobs:
     name: "Generate version"
     uses: ./.github/workflows/version.yml
     with:
-      release: ${{ inputs.release || 'false' }}
+      release: ${{ github.event.inputs.release || 'false' }}
 
   frontend-lint:
     name: "Frontend: Lint"
