@@ -276,6 +276,7 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     secrets: inherit
 
+  # TODO this doesn't work as desired – version will be incorrect if we want a release
   create-release:
     name: Create release
     runs-on: ubuntu-latest

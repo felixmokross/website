@@ -73,7 +73,7 @@ jobs:
             --env MEDIA_S3_BUCKET=${{ vars.MEDIA_S3_BUCKET }} \
             --env CACHE_REFRESH_TARGET_TYPE=fly \
             --env CACHE_REFRESH_TARGET_ARG=${{ vars.FRONTEND_FLY_APP }},${{ env.FRONTEND_INTERNAL_PORT }} \
-            --env FRONTEND_BASE_URL=${{ vars.FRONTEND_BASE_URL }}
+            --env FRONTEND_BASE_URL=${{ vars.FRONTEND_BASE_URL }} \
             --env IMAGEKIT_BASE_URL=${{ vars.IMAGEKIT_BASE_URL }} \
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
