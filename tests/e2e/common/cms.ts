@@ -1,7 +1,8 @@
 import { createId } from "@paralleldrive/cuid2";
 import fs from "fs/promises";
 import path from "path";
-import { Page } from "@fxmk/payload-types";
+import { Page, Post } from "@fxmk/payload-types";
+import { paragraph, richTextRoot, text } from "@fxmk/shared";
 
 type CreatePageDto = Omit<Page, "id" | "updatedAt" | "createdAt">;
 
@@ -19,6 +20,25 @@ export async function createPage(data: Partial<CreatePageDto> = {}) {
   }
 
   return await create("pages", data);
+}
+
+type CreatePostDto = Omit<Post, "id" | "updatedAt" | "createdAt">;
+
+export async function createPost(data: Partial<CreatePostDto> = {}) {
+  const testPostSlug = `e2e-${createId()}`;
+
+  data = {
+    slug: testPostSlug,
+    _status: "published",
+    content: richTextRoot(paragraph(text("Default Content"))),
+    ...data,
+  };
+
+  if (!data.title) {
+    data.title = "Default Title";
+  }
+
+  return await create("posts", data);
 }
 
 export async function getMedia(filename: string) {

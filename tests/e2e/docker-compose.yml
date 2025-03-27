@@ -6,7 +6,7 @@ services:
     environment:
       PAYLOAD_CMS_API_KEY: apikey
       PAYLOAD_CMS_BASE_URL: http://cms:3001
-      CANONICAL_HOSTNAME: localhost
+      CANONICAL_HOSTNAME: canonical.localhost
       IMAGEKIT_BASE_URL: https://ik.imagekit.io/92jpwaahykk/local
       PREVIEW_KEY: preview-key
 
