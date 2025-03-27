@@ -2,7 +2,7 @@ import type { Page } from "@fxmk/payload-types";
 import type { PropsWithChildren } from "react";
 import { Container } from "~/components/container";
 import { RichText } from "~/components/rich-text/rich-text";
-import type { RichTextObject } from "~/components/rich-text/rich-text.model";
+import type { RichTextObject } from "@fxmk/shared";
 import { SocialLinksBlock } from "./social-links-block";
 import { Prose } from "~/components/prose";
 import { useLocation } from "react-router";

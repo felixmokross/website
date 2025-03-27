@@ -1,7 +1,7 @@
 import type { AboutBlock } from "@fxmk/payload-types";
 import { Container } from "~/components/container";
 import { RichText } from "~/components/rich-text/rich-text";
-import type { RichTextObject } from "~/components/rich-text/rich-text.model";
+import type { RichTextObject } from "@fxmk/shared";
 import type { PropsWithChildren } from "react";
 import { MediaImage } from "~/components/media-image";
 import { getSocialIcon } from "./social-links-block";

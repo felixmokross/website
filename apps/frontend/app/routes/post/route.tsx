@@ -4,7 +4,7 @@ import { Container } from "~/components/container";
 import { formatDate } from "~/utils/format-date";
 import { Prose } from "~/components/prose";
 import { RichText } from "~/components/rich-text/rich-text";
-import type { RichTextObject } from "~/components/rich-text/rich-text.model";
+import type { RichTextObject } from "@fxmk/shared";
 import { getCanonicalRequestUrl, getRequestUrl } from "~/utils/routing";
 import { handleIncomingRequest } from "~/utils/routing.server";
 import { Code } from "./code";

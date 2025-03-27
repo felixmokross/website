@@ -2,7 +2,7 @@ import type { Newsletter } from "@fxmk/payload-types";
 import { Button } from "~/components/button";
 import { OutlineMailIcon } from "~/components/icons";
 import { RichText } from "~/components/rich-text/rich-text";
-import type { RichTextObject } from "~/components/rich-text/rich-text.model";
+import type { RichTextObject } from "@fxmk/shared";
 
 export function Newsletter({
   title,

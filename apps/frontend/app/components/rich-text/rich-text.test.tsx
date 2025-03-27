@@ -17,7 +17,7 @@ import {
   unsupportedElementWithoutChildren,
   lineBreak,
   listitem,
-} from "./rich-text.builders";
+} from "@fxmk/shared";
 import type { PropsWithChildren } from "react";
 
 test("Bold text node is rendered as <strong> element.", () => {

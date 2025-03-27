@@ -1,5 +1,3 @@
-import type { Page } from "@fxmk/payload-types";
-
 export const IS_BOLD = 1;
 export const IS_ITALIC = 1 << 1;
 export const IS_STRIKETHROUGH = 1 << 2;
@@ -53,10 +51,15 @@ export type LinkElementNode = ElementNodeWithChildren & {
       }
     | {
         linkType: "internal";
-        doc: {
-          relationTo: "pages";
-          value: Page;
-        };
+        doc:
+          | {
+              relationTo: "pages";
+              value: { pathname: string };
+            }
+          | {
+              relationTo: "posts";
+              value: { slug: string };
+            };
       };
 };
 
