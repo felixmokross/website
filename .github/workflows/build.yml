@@ -262,8 +262,10 @@ jobs:
 
   deploy:
     name: Deploy
+    needs: [frontend-build-push, cms-build-push]
     if: github.event_name != 'pull_request'
     uses: ./.github/workflows/deploy.yml
+    secrets: inherit
 
   create-release:
     name: Create release
