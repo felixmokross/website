@@ -90,6 +90,7 @@ async function fetchCms(path: string, init?: RequestInit) {
     headers.set("Content-Type", "application/json");
   }
 
+  console.log(`fetching ${method} ${url}`);
   const result = await fetch(url, { ...init, method, headers });
 
   if (!result.ok) {
