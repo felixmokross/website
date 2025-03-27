@@ -11,13 +11,6 @@ on:
         required: false
         default: false
         type: boolean
-      environment:
-        type: choice
-        required: true
-        default: "staging"
-        options:
-          - staging
-          - production
 
 env:
   NODE_VERSION: 22
@@ -30,7 +23,7 @@ jobs:
     name: "Generate version"
     uses: ./.github/workflows/version.yml
     with:
-      release: ${{ inputs.release }}
+      release: ${{ inputs.release || 'false' }}
 
   frontend-lint:
     name: "Frontend: Lint"
