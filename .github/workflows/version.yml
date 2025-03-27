@@ -1,0 +1,42 @@
+name: Version
+on:
+  workflow_call:
+    outputs:
+      version:
+        value: ${{ jobs.version.outputs.version }}
+        description: "Version of the release"
+      version_with_sha:
+        value: ${{ jobs.version.outputs.version_with_sha }}
+        description: "Version of the release with SHA"
+
+env:
+  NODE_VERSION: 22
+
+jobs:
+  version:
+    name: "Generate version"
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}
+      version_with_sha: ${{ steps.get-version.outputs.version_with_sha }}
+    steps:
+      - name: Checkout with full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup
+        uses: ./.github/actions/setup
+      - name: Install dependencies
+        run: pnpm --filter releaser install
+      - name: Get version
+        id: get-version
+        run: |
+          RESULT=$(pnpm --filter releaser --silent start get-version
+
+          VERSION=$(echo $RESULT | jq -r '.version')
+          VERSION_WITH_SHA=$(echo $RESULT | jq -r '.versionWithSha')
+          echo "Version is: $VERSION"
+          echo "Version (incl. SHA) is: $VERSION_WITH_SHA"
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "version_with_sha=$VERSION_WITH_SHA" >> "$GITHUB_OUTPUT"
