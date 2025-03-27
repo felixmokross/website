@@ -18,7 +18,7 @@ import {
   IS_STRIKETHROUGH,
   IS_CODE,
   type Node,
-} from "./rich-text.model";
+} from "@fxmk/shared";
 import { slugify } from "~/utils/slugify";
 
 export type RichTextProps = {
@@ -193,7 +193,9 @@ function RenderedElementNode({
           ? node.fields.url
           : node.fields.doc.relationTo === "pages"
             ? node.fields.doc.value.pathname
-            : `/articles/${node.fields.doc.value.slug}`;
+            : node.fields.doc.relationTo === "posts"
+              ? `/articles/${node.fields.doc.value.slug}`
+              : "#";
 
       return elements.link === "a" ? (
         <a href={href}>{renderedChildren}</a>

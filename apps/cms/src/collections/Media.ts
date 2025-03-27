@@ -7,7 +7,6 @@ import {
   lexicalEditor,
 } from "@payloadcms/richtext-lexical";
 
-import { anyone } from "../access/anyone";
 import { authenticated } from "../access/authenticated";
 import { generateAltTextEndpoint } from "./generate-alt-text-endpoint";
 
@@ -16,7 +15,7 @@ export const Media: CollectionConfig = {
   access: {
     create: authenticated,
     delete: authenticated,
-    read: anyone,
+    read: authenticated,
     update: authenticated,
   },
   endpoints: [generateAltTextEndpoint],

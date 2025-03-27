@@ -1,0 +1,45 @@
+services:
+  frontend:
+    image: ${FRONTEND_IMAGE}
+    ports:
+      - "3000:3000"
+    environment:
+      PAYLOAD_CMS_API_KEY: apikey
+      PAYLOAD_CMS_BASE_URL: http://cms:3001
+      CANONICAL_HOSTNAME: canonical.localhost
+      IMAGEKIT_BASE_URL: https://ik.imagekit.io/92jpwaahykk/local
+      PREVIEW_KEY: preview-key
+
+  cms:
+    image: ${CMS_IMAGE}
+    ports:
+      - "3001:3001"
+    environment:
+      SERVER_URL: http://cms:3001
+      DATABASE_URI: mongodb://mongo:27017/website-cms
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET}
+      ENABLE_E2E_USER: true
+      MEDIA_S3_BUCKET: fxmk-media-local
+      MEDIA_S3_REGION: eu-west-3
+      MEDIA_S3_ACCESS_KEY_ID: ${PREVIEW_MEDIA_S3_ACCESS_KEY_ID}
+      MEDIA_S3_SECRET_ACCESS_KEY: ${PREVIEW_MEDIA_S3_SECRET_ACCESS_KEY}
+      CACHE_REFRESH_TARGET_TYPE: single
+      CACHE_REFRESH_TARGET: http://frontend:3000
+      FRONTEND_BASE_URL: http://frontend:3000
+      IMAGEKIT_BASE_URL: https://ik.imagekit.io/92jpwaahykk/local
+      OPENAI_API_KEY: ${PREVIEW_OPENAI_API_KEY}
+      PREVIEW_KEY: preview-key
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    command:
+      - --storageEngine=wiredTiger
+    volumes:
+      - data:/data/db
+    logging:
+      driver: none
+
+volumes:
+  data:

@@ -1,4 +1,3 @@
-import type { Page } from "@fxmk/payload-types";
 import {
   type TextNode,
   type ElementNode,
@@ -95,7 +94,7 @@ export function paragraph(
 }
 
 export function heading(
-  tag: "h4" | "h5",
+  tag: HeadingElementNode["tag"],
   ...children: Node[]
 ): HeadingElementNode {
   return { type: "heading", tag, children };
@@ -129,7 +128,7 @@ export function internalLink(
       linkType: "internal",
       doc: {
         relationTo: "pages",
-        value: { pathname } as Page,
+        value: { pathname },
       },
     },
     children,

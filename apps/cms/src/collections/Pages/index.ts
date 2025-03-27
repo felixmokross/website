@@ -73,7 +73,6 @@ export const Pages: CollectionConfig<"pages"> = {
                 AboutBlock,
                 ProjectsBlock,
               ],
-              required: true,
               admin: {
                 initCollapsed: true,
               },
