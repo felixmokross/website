@@ -266,6 +266,7 @@ jobs:
       - cms-lint
       - cms-check-format
       - cms-build-push
+      - e2e-tests
 
     if: github.event_name != 'pull_request'
     uses: ./.github/workflows/deploy.yml
