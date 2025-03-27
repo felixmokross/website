@@ -356,6 +356,6 @@ jobs:
         run: pnpm --filter releaser install
       - name: Create release
         run: |
-          pnpm --filter releaser start publish ${{ needs.version.outputs.version }}
+          pnpm --filter releaser start publish --draft ${{ needs.version.outputs.version }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

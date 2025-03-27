@@ -1,9 +1,4 @@
-import {
-  determineSemverChange,
-  getGitDiff,
-  loadChangelogConfig,
-  parseCommits,
-} from "changelogen";
+import { determineSemverChange } from "changelogen";
 import { execSync } from "child_process";
 import { program } from "commander";
 import semver from "semver";
@@ -37,8 +32,7 @@ program
     }
 
     const sha = execSync(`git rev-parse --short HEAD`).toString().trim();
-    const isRelease =
-      (commitMessage.includes("!release") || options.release);
+    const isRelease = commitMessage.includes("!release") || !!options.release;
 
     let completeNewVersion = newVersion;
 
