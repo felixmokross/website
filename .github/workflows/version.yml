@@ -5,8 +5,9 @@ on:
       release:
         description: "Create a release"
         required: false
-        default: false
-        type: boolean
+        default: "false"
+        # using a string due to this issue with GitHub Actions: https://github.com/actions/runner/issues/1483
+        type: string
     outputs:
       version:
         value: ${{ jobs.version.outputs.version }}
