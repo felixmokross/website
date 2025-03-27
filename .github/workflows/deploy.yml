@@ -43,7 +43,7 @@ jobs:
           --image registry.fly.io/fxmk-frontend-staging:v${{ needs.version.outputs.version_with_sha }} \
           --env CANONICAL_HOSTNAME=${{ vars.CANONICAL_HOSTNAME }} \
           --env PAYLOAD_CMS_BASE_URL=${{ vars.PAYLOAD_CMS_BASE_URL }} \
-          --env IMAGEKIT_BASE_URL=${{ vars.IMAGAEKIT_BASE_URL }} \
+          --env IMAGEKIT_BASE_URL=${{ vars.IMAGEKIT_BASE_URL }} \
           --env ANALYTICS_DOMAIN=${{ vars.ANALYTICS_DOMAIN }} \
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
