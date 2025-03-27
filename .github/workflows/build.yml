@@ -29,6 +29,8 @@ jobs:
   version:
     name: "Generate version"
     uses: ./.github/workflows/version.yml
+    with:
+      release: ${{ inputs.release }}
 
   frontend-lint:
     name: "Frontend: Lint"
@@ -276,13 +278,10 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     secrets: inherit
 
-  # TODO this doesn't work as desired – version will be incorrect if we want a release
   create-release:
     name: Create release
     runs-on: ubuntu-latest
-    if:
-      contains(github.event.head_commit.message, '!release') || inputs.release
-      == 'true'
+    if: needs.version.outputs.is_new_release == 'true'
     needs: [deploy, version]
     permissions:
       contents: write

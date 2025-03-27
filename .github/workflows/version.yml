@@ -1,6 +1,12 @@
 name: Version
 on:
   workflow_call:
+    inputs:
+      release:
+        description: "Create a release"
+        required: false
+        default: false
+        type: boolean
     outputs:
       version:
         value: ${{ jobs.version.outputs.version }}
@@ -8,6 +14,9 @@ on:
       version_with_sha:
         value: ${{ jobs.version.outputs.version_with_sha }}
         description: "Version of the release with SHA"
+      is_new_release:
+        value: ${{ jobs.version.outputs.is_new_release }}
+        description: "Is this a new release?"
 
 env:
   NODE_VERSION: 22
@@ -19,6 +28,7 @@ jobs:
     outputs:
       version: ${{ steps.get-version.outputs.version }}
       version_with_sha: ${{ steps.get-version.outputs.version_with_sha }}
+      is_new_release: ${{ steps.get-version.outputs.is_new_release }}
     steps:
       - name: Checkout with full history
         uses: actions/checkout@v4
@@ -31,12 +41,15 @@ jobs:
       - name: Get version
         id: get-version
         run: |
-          RESULT=$(pnpm --filter releaser --silent start get-version)
+          RESULT=$(pnpm --filter releaser --silent start get-version $([[ "${{ inputs.release }}" == 'true' ]] && echo '--release'))
 
           VERSION=$(echo $RESULT | jq -r '.version')
           VERSION_WITH_SHA=$(echo $RESULT | jq -r '.versionWithSha')
+          IS_NEW_RELEASE=$(echo $RESULT | jq -r '.isNewRelease')
           echo "Version is: $VERSION"
           echo "Version (incl. SHA) is: $VERSION_WITH_SHA"
+          echo "Is new release: $IS_NEW_RELEASE"
 
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "version_with_sha=$VERSION_WITH_SHA" >> "$GITHUB_OUTPUT"
+          echo "is_new_release=$IS_NEW_RELEASE" >> "$GITHUB_OUTPUT"
