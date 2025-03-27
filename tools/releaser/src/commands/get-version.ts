@@ -24,7 +24,8 @@ program
     const hasUnreleasedChanges = rawCommits.length > 0;
 
     const isReleaseRequested =
-      rawCommits[0].body.includes("!release") || !!options.release;
+      (hasUnreleasedChanges && rawCommits[0].body.includes("!release")) ||
+      !!options.release;
 
     const isNewRelease = hasUnreleasedChanges && isReleaseRequested;
     if (hasUnreleasedChanges) {
