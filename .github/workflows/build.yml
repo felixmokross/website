@@ -221,7 +221,7 @@ jobs:
           labels: |
             org.opencontainers.image.version=${{ steps.image-name.outputs.image_tag }}
           cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
 
   e2e-tests:
     name: End-to-End Tests
