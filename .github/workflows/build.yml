@@ -186,6 +186,22 @@ jobs:
         uses: superfly/flyctl-actions/setup-flyctl@master
         with:
           version: ${{ env.FLYCTL_VERSION }}
+      - name: Cache
+        uses: actions/cache@v4
+        id: cache
+        with:
+          path: next-cache
+          key: ${{ runner.os }}-next-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-next-
+      - name: Inject Next.js cache into Docker
+        uses: reproducible-containers/buildkit-cache-dance@v3.1.0
+        with:
+          cache-map: |
+            {
+              "next-cache": "/app/apps/cms/.next/cache",
+            }
+          skip-extraction: ${{ steps.cache.outputs.cache-hit }}
       - name: Authenticate Fly.io Docker registry
         run: flyctl auth docker
         env:
