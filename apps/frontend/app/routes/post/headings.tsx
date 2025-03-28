@@ -3,6 +3,7 @@ import {
   type HTMLAttributes,
   useRef,
   type RefObject,
+  type ReactNode,
 } from "react";
 import toast from "react-hot-toast";
 import { LinkIcon } from "~/components/icons";
@@ -66,10 +67,15 @@ function PostHeading({
       {...props}
       ref={ref}
       id={id}
-      className="group flex items-center"
+      className="flex items-center gap-1.5"
     >
-      {children}
-      {id && <AnchorLink targetId={id} targetRef={ref} />}
+      {id ? (
+        <AnchorLink targetId={id} targetRef={ref}>
+          {children}
+        </AnchorLink>
+      ) : (
+        children
+      )}
     </HeadingElement>
   );
 }
@@ -77,9 +83,11 @@ function PostHeading({
 function AnchorLink({
   targetRef,
   targetId,
+  children,
 }: {
   targetId: string;
   targetRef: RefObject<Element | null>;
+  children: ReactNode;
 }) {
   return (
     <a
@@ -94,11 +102,12 @@ function AnchorLink({
         await navigator.clipboard.writeText(location.href);
         toast.success("Link copied to clipboard");
       }}
-      className="invisible ml-1.5 inline-block text-zinc-500 group-hover:visible hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-zinc-300"
+      className="not-prose group flex items-center gap-1.5"
       href={`#${targetId}`}
       title="Copy link to this section"
     >
-      <LinkIcon className="h-6 w-6" />
+      {children}
+      <LinkIcon className="hidden h-6 w-6 text-zinc-800 group-hover:inline dark:text-zinc-300" />
     </a>
   );
 }
