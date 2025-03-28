@@ -57,7 +57,7 @@ function getHeadCommitSha() {
 }
 
 function hasReleaseKeyword(rawCommits: RawGitCommit[]) {
-  return rawCommits[0].body.includes("!release");
+  return rawCommits.some((c) => c.body.includes("!release"));
 }
 
 function getNewVersion(
