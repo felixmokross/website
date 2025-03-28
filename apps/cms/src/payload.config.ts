@@ -73,7 +73,6 @@ export default buildConfig({
     outputFile: path.resolve(dirname, "payload-types.ts"),
     declare: false,
   },
-
   async onInit(payload) {
     if (process.env.ENABLE_E2E_USER === "true") {
       const users = await payload.find({
