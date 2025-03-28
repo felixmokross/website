@@ -25,7 +25,7 @@ RUN pnpm --filter cms install --frozen-lockfile
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN pnpm --dir apps/cms build
+RUN --mount=type=cache,target=apps/cms/.next/cache pnpm --dir apps/cms build
 
 # Production image, copy all the files and run next
 FROM base AS runner
