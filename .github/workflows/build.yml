@@ -180,10 +180,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
       - name: Set up flyctl
         uses: superfly/flyctl-actions/setup-flyctl@master
         with:
           version: ${{ env.FLYCTL_VERSION }}
+      - name: Authenticate Fly.io Docker registry
+        run: flyctl auth docker
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
       - name: Setup
         uses: ./.github/actions/setup
       - name: Set version on CMS
@@ -198,17 +204,15 @@ jobs:
           echo "image_name=$IMAGE_NAME" >> "$GITHUB_OUTPUT"
           echo "image_tag=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
           echo "image=registry.fly.io/$IMAGE_NAME:$IMAGE_TAG" >> "$GITHUB_OUTPUT"
-      - name: Build and push frontend Docker image
-        run: |
-          flyctl deploy \
-            --app ${{ steps.image-name.outputs.image_name }} \
-            --config apps/cms/fly.staging.toml \
-            --build-only \
-            --image-label ${{ steps.image-name.outputs.image_tag }} \
-            --label org.opencontainers.image.version=${{ steps.image-name.outputs.image_tag }} \
-            --push \
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/cms/Dockerfile
+          push: true
+          tags: ${{ steps.image-name.outputs.image }}
+          labels: |
+            org.opencontainers.image.version=${{ steps.image-name.outputs.image_tag }}
 
   e2e-tests:
     name: End-to-End Tests
