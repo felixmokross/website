@@ -25,7 +25,7 @@ RUN --mount=type=cache,target=/root/.pnpm-store mkdir -p /root/.pnpm-store && ls
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN --mount=type=cache,target=apps/cms/.next/cache mkdir -p apps/cms/.next/cache && pnpm --filter cms build
+RUN --mount=type=cache,target=apps/cms/.next/cache mkdir -p apps/cms/.next/cache && ls -la apps/cms/.next/cache && pnpm --filter cms build  && ls -la apps/cms/.next/cache 
 
 # Production image, copy all the files and run next
 FROM base AS runner
