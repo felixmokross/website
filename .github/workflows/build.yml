@@ -186,7 +186,7 @@ jobs:
         uses: superfly/flyctl-actions/setup-flyctl@master
         with:
           version: ${{ env.FLYCTL_VERSION }}
-      - name: Cache
+      - name: Cache Next.js
         uses: actions/cache@v4
         id: cache
         with:
