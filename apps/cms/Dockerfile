@@ -23,7 +23,7 @@ RUN pnpm --filter cms install --frozen-lockfile
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
-# ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN pnpm --dir apps/cms build
 
@@ -32,27 +32,24 @@ FROM base AS runner
 RUN corepack enable pnpm
 WORKDIR /app
 
-ENV NODE_ENV=production
+ENV NODE_ENV=production \
+    PORT=3001
 # Uncomment the following line in case you want to disable telemetry during runtime.
 # ENV NEXT_TELEMETRY_DISABLED 1
-
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
 
 # Copy source files so that we can run scripts like 'payload migrate'
 COPY --from=builder /app .
 
-RUN mv apps/cms/.next/static apps/cms/.next/standalone/apps/cms/.next/static
-RUN cp apps/cms/public apps/cms/.next/standalone/apps/cms/public -r
-
-# Set the correct permission for prerender cache
-RUN chown nextjs:nodejs apps/cms/.next/standalone/apps/cms/.next
+RUN addgroup --system --gid 1001 nodejs \
+    && adduser --system --uid 1001 nextjs \
+    && mv apps/cms/.next/static apps/cms/.next/standalone/apps/cms/.next/static \
+    && cp apps/cms/public apps/cms/.next/standalone/apps/cms/public -r \
+    # Set the correct permission for prerender cache
+    && chown nextjs:nodejs apps/cms/.next/standalone/apps/cms/.next
 
 USER nextjs
 
 EXPOSE 3001
-
-ENV PORT=3001
 
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
