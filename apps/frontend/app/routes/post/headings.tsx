@@ -63,12 +63,7 @@ function PostHeading({
 }) {
   const ref = useRef<HTMLHeadingElement>(null);
   return (
-    <HeadingElement
-      {...props}
-      ref={ref}
-      id={id}
-      className="flex items-center gap-1.5"
-    >
+    <HeadingElement {...props} ref={ref} id={id}>
       {id ? (
         <AnchorLink targetId={id} targetRef={ref}>
           {children}
@@ -102,12 +97,12 @@ function AnchorLink({
         await navigator.clipboard.writeText(location.href);
         toast.success("Link copied to clipboard");
       }}
-      className="not-prose group flex items-center gap-1.5"
+      className="not-prose group block"
       href={`#${targetId}`}
       title="Copy link to this section"
     >
       {children}
-      <LinkIcon className="hidden h-6 w-6 text-zinc-800 group-hover:inline dark:text-zinc-300" />
+      <LinkIcon className="-mt-1 ml-1.5 hidden h-6 w-6 text-zinc-800 group-hover:inline dark:text-zinc-300" />
     </a>
   );
 }
