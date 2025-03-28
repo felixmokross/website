@@ -18,15 +18,14 @@ RUN corepack enable pnpm
 COPY --link package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY --link apps/cms apps/cms
 COPY --link libs/shared libs/shared
-RUN mkdir -p /root/.pnpm-store
-RUN --mount=type=cache,target=/root/.pnpm-store ls -la /root/.pnpm-store && pnpm --filter cms install --store-dir=/root/.pnpm-store --frozen-lockfile --loglevel debug && ls -la /root/.pnpm-store
+RUN --mount=type=cache,target=/root/.pnpm-store mkdir -p /root/.pnpm-store && ls -la /root/.pnpm-store && pnpm --filter cms install --store-dir=/root/.pnpm-store --frozen-lockfile --loglevel debug && ls -la /root/.pnpm-store
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN --mount=type=cache,target=apps/cms/.next/cache pnpm --dir apps/cms build
+RUN --mount=type=cache,target=apps/cms/.next/cache mkdir -p apps/cms/.next/cache && pnpm --filter cms build
 
 # Production image, copy all the files and run next
 FROM base AS runner
