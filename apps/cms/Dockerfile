@@ -19,6 +19,7 @@ COPY --link package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY --link apps/cms apps/cms
 COPY --link libs/shared libs/shared
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store pnpm --filter cms install --store-dir=/root/.local/share/pnpm/store --frozen-lockfile
+RUN ls -la /root/.local/share/pnpm/store
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
