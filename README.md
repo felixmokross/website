@@ -3,7 +3,7 @@
 [![Build](https://github.com/felixmokross/website/actions/workflows/build.yml/badge.svg)](https://github.com/felixmokross/website/actions/workflows/build.yml)
 
 This is my personal website [fxmk.dev](https://fxmk.dev). All content is
-controlled via a tailored CMS based on [Payload CMS](https://payloadcms.com/).
+controlled via a tailored, headless CMS based on [Payload CMS](https://payloadcms.com/).
 The frontend is powered by the
 [React Router framework (formerly Remix)](https://reactrouter.com).
 
