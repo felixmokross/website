@@ -199,7 +199,7 @@ jobs:
         with:
           cache-map: |
             {
-              "next-cache": "/app/apps/cms/.next/cache",
+              "next-cache": "/app/apps/cms/.next/cache"
             }
           skip-extraction: ${{ steps.cache.outputs.cache-hit }}
       - name: Authenticate Fly.io Docker registry
