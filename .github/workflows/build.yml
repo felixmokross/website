@@ -82,7 +82,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: payload-types
-          path: libs/payload-types/src/payload-types.ts
+          path: libs/payload-types/src
       - name: Install dependencies
         run: pnpm --filter frontend install
       - name: Run typecheck in frontend
@@ -124,7 +124,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: payload-types
-          path: libs/payload-types/src/payload-types.ts
+          path: libs/payload-types/src
       - name: Get frontend image name
         id: image-name
         run: |
@@ -264,7 +264,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: payload-types
-          path: libs/payload-types/src/payload-types.ts
+          path: libs/payload-types/src
       - name: Run e2e tests
         run: pnpm playwright test
         working-directory: tests/e2e
