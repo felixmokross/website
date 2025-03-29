@@ -76,7 +76,7 @@ export default buildConfig({
     declare: false,
   },
   async onInit(payload) {
-    if (process.env.ENABLE_E2E_API_KEY === "true") {
+    if (!!process.env.E2E_TESTS_API_KEY) {
       const e2eTestApiKeys = await payload.find({
         collection: "api-keys",
         where: { name: { equals: "e2e-tests" } },
@@ -88,7 +88,7 @@ export default buildConfig({
           collection: "api-keys",
           data: {
             enableAPIKey: true,
-            apiKey: "apikey",
+            apiKey: process.env.E2E_TESTS_API_KEY,
             name: "e2e-tests",
           },
         });
