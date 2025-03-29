@@ -9,6 +9,11 @@ export const Meta: GlobalConfig = {
       type: "text",
     },
     {
+      name: "locale",
+      label: "Locale Code (e.g. 'en')",
+      type: "text",
+    },
+    {
       name: "favicon",
       type: "upload",
       relationTo: "media",

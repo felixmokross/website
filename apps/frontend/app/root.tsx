@@ -116,9 +116,12 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { header, footer, environment } = useLoaderData<typeof loader>();
+  const { header, footer, environment, meta } = useLoaderData<typeof loader>();
   return (
-    <html lang="en" className="h-full scroll-pt-6 antialiased">
+    <html
+      lang={meta.locale ?? undefined}
+      className="h-full scroll-pt-6 antialiased"
+    >
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

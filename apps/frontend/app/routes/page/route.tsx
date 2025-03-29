@@ -9,8 +9,8 @@ import { Hero } from "./hero";
 import { Projects } from "./projects";
 import type { Route } from "./+types/route";
 import type { SerializeFromLoader } from "~/utils/types";
-import { type loader as rootLoader } from "~/root";
-import { getMeta } from "~/utils/meta";
+import { loader as rootLoader } from "~/root";
+import { getPageMetaDescriptors } from "~/utils/page-meta";
 
 export function meta({ data, matches }: Route.MetaArgs) {
   const { content, canonicalUrl } = data;
@@ -22,7 +22,12 @@ export function meta({ data, matches }: Route.MetaArgs) {
   const parentMeta = matches.flatMap((match) => match?.meta ?? []);
   return [
     ...parentMeta,
-    ...getMeta(canonicalUrl, content.meta, rootLoaderData.environment),
+    ...getPageMetaDescriptors(
+      canonicalUrl,
+      content.meta,
+      rootLoaderData.meta,
+      rootLoaderData.environment,
+    ),
   ];
 }
 

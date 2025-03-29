@@ -2,7 +2,7 @@ import { getCanonicalRequestUrl } from "~/utils/routing";
 import type { Route } from "./+types/route";
 import { getMeta, getPosts, tryGetPage } from "~/utils/cms-data.server";
 import { parseISO, format } from "date-fns";
-import { getSocialImageUrl } from "~/utils/meta";
+import { getSocialImageUrl } from "~/utils/page-meta";
 import { getEnvironment } from "~/utils/environment.server";
 
 const rssDateFormat = "eee, dd MMM yyyy HH:mm:ss xx";
