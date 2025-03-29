@@ -18,7 +18,7 @@ services:
       SERVER_URL: http://cms:3001
       DATABASE_URI: mongodb://mongo:27017/website-cms
       PAYLOAD_SECRET: ${PAYLOAD_SECRET}
-      ENABLE_E2E_USER: true
+      ENABLE_E2E_API_KEY: true
       MEDIA_S3_BUCKET: ${MEDIA_S3_BUCKET}
       MEDIA_S3_REGION: ${MEDIA_S3_REGION}
       MEDIA_S3_ACCESS_KEY_ID: ${MEDIA_S3_ACCESS_KEY_ID}
