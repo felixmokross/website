@@ -17,6 +17,7 @@ import { plugins } from "./plugins";
 import { defaultLexical } from "@/fields/defaultLexical";
 import { Config } from "./payload-types";
 import { SocialLinks } from "./collections/SocialLinks";
+import { Meta } from "./meta/config";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -64,7 +65,7 @@ export default buildConfig({
     url: process.env.DATABASE_URI || "",
   }),
   collections: [Pages, Posts, Media, Categories, Users, SocialLinks],
-  globals: [Header, Footer],
+  globals: [Header, Footer, Meta],
   plugins,
   secret: process.env.PAYLOAD_SECRET!,
   serverURL: process.env.SERVER_URL,
@@ -85,7 +86,7 @@ export default buildConfig({
         await payload.create({
           collection: "users",
           data: {
-            email: "e2e@fxmk.dev",
+            email: "e2e@fxmk.dev", // TODO consider introducing a separate collection for system users / api keys with `disableLocalStrategy` — maybe we can get rid of the email?
             password: "password",
             enableAPIKey: true,
             apiKey: "apikey",

@@ -45,7 +45,7 @@ export function getMeta(
     },
     {
       name: "og:site_name",
-      content: "fxmk.dev",
+      content: "fxmk.dev", // TODO replace this
     },
     {
       name: "og:url",

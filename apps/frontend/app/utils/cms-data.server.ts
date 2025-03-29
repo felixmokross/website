@@ -2,6 +2,7 @@ import fs from "fs/promises";
 import {
   type Footer,
   type Header,
+  type Meta,
   type Page,
   type Post,
   type Redirect,
@@ -149,6 +150,17 @@ export async function getHeader() {
   if (!header) throw new Error("Could not load Header global");
 
   return header;
+}
+
+export async function getMeta() {
+  const meta = (await getData(
+    "globals/meta",
+    "globals_meta",
+    1,
+  )) as Meta | null;
+  if (!meta) throw new Error("Could not load Meta global");
+
+  return meta;
 }
 
 export async function getFooter() {

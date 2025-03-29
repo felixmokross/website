@@ -12,11 +12,13 @@ import type { Route } from "./+types/root";
 import appStylesheet from "./app.css?url";
 import prismStylesheet from "./prism.css?url";
 import { LayoutContainer } from "./layout/layout-container";
-import { getFooter, getHeader } from "./utils/cms-data.server";
+import { getFooter, getHeader, getMeta } from "./utils/cms-data.server";
 import { EnvironmentContext } from "./utils/environment";
 import { AnalyticsScript } from "./components/analytics-script";
 import { getEnvironment } from "./utils/environment.server";
 import { Toaster } from "./layout/toaster";
+import { imagekitUrl } from "./utils/imagekit";
+import type { Media } from "@fxmk/payload-types";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -32,46 +34,83 @@ export const links: Route.LinksFunction = () => [
   { rel: "stylesheet", href: appStylesheet },
   { rel: "stylesheet", href: prismStylesheet },
   {
-    rel: "icon",
-    type: "image/png",
-    sizes: "96x96",
-    href: `/favicon-96x96.png`,
-  },
-  {
-    rel: "icon",
-    type: "image/svg+xml",
-    href: `/favicon.svg`,
-  },
-  {
-    rel: "shortcut icon",
-    href: `/favicon.ico`,
-  },
-  {
-    rel: "apple-touch-icon",
-    sizes: "180x180",
-    href: `/apple-touch-icon.png`,
-  },
-  {
     rel: "manifest",
     href: `/site.webmanifest`,
   },
 ];
 
-export const meta: Route.MetaFunction = () => [
-  { name: "apple-mobile-web-app-title", content: "fxmk.dev" },
-  {
-    name: "theme-color",
-    content: "oklch(0.21 0.006 285.885)",
-    media: "(prefers-color-scheme: dark)",
-  },
-];
+export const meta: Route.MetaFunction = ({ data }) => {
+  if (!data.meta.favicon || typeof data.meta.favicon !== "object") {
+    throw new Error("Invalid favicon");
+  }
+  if (!data.meta.faviconIco || typeof data.meta.faviconIco !== "object") {
+    throw new Error("Invalid faviconIco");
+  }
+  return [
+    { name: "apple-mobile-web-app-title", content: data.meta.siteName },
+    {
+      name: "theme-color",
+      content: data.meta.themeColorDark,
+      media: "(prefers-color-scheme: dark)",
+    },
+    {
+      tagName: "link",
+      rel: "icon",
+      type: "image/png",
+      sizes: "96x96",
+      href: imagekitUrl(
+        data.environment.imagekitBaseUrl,
+        data.meta.favicon.filename!,
+        [{ format: "png", width: "96", height: "96" }],
+      ),
+    },
+    {
+      tagName: "link",
+      rel: "apple-touch-icon",
+      sizes: "180x180",
+      href: imagekitUrl(
+        data.environment.imagekitBaseUrl,
+        data.meta.favicon.filename!,
+        [{ format: "png", width: "180", height: "180" }],
+      ),
+    },
+    {
+      tagName: "link",
+      rel: "shortcut icon",
+      href: imagekitUrl(
+        data.environment.imagekitBaseUrl,
+        data.meta.faviconIco.filename!,
+        [{ format: "orig" }],
+      ),
+    },
+    ...(data.meta.faviconSvg
+      ? [
+          {
+            tagName: "link",
+            rel: "icon",
+            type: "image/svg+xml",
+            href: imagekitUrl(
+              data.environment.imagekitBaseUrl,
+              (data.meta.faviconSvg as Media).filename!,
+              [{ format: "orig" }],
+            ),
+          },
+        ]
+      : []),
+  ];
+};
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const [header, footer] = await Promise.all([getHeader(), getFooter()]);
+  const [header, footer, meta] = await Promise.all([
+    getHeader(),
+    getFooter(),
+    getMeta(),
+  ]);
 
   return {
     header,
     footer,
+    meta,
     environment: getEnvironment(request),
   };
 }
