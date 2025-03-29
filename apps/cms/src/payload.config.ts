@@ -65,7 +65,7 @@ export default buildConfig({
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || "",
   }),
-  collections: [Pages, Posts, Media, Categories, Users, SocialLinks, ApiKeys],
+  collections: [Pages, Posts, Categories, SocialLinks, Media, Users, ApiKeys],
   globals: [Header, Footer, Meta],
   plugins,
   secret: process.env.PAYLOAD_SECRET!,
