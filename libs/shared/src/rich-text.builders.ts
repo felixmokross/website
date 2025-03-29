@@ -12,6 +12,7 @@ import {
   type LinkElementNode,
   type LineBreakNode,
   type ParagraphElementNode,
+  TabNode,
 } from "./rich-text.model";
 
 export function richTextRoot(...children: ElementNode[]): RichTextObject {
@@ -47,6 +48,10 @@ export function text(
 
 export function lineBreak(): LineBreakNode {
   return { type: "linebreak" };
+}
+
+export function tab(): TabNode {
+  return { type: "tab" };
 }
 
 export function bold(t: string): TextNode {

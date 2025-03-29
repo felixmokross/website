@@ -275,6 +275,11 @@ function RenderedNode({ node, isLast }: { node: Node; isLast: boolean }) {
     return <elements.linebreak />;
   }
 
+  // Lexical tab nodes shall just render a normal space
+  if (node.type === "tab") {
+    return " ";
+  }
+
   return <RenderedElementNode node={node} isLast={isLast} />;
 }
 

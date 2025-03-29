@@ -17,6 +17,7 @@ import {
   unsupportedElementWithoutChildren,
   lineBreak,
   listitem,
+  tab,
 } from "@fxmk/shared";
 import type { PropsWithChildren } from "react";
 
@@ -303,6 +304,16 @@ test("line breaks are rendered as <br /> elements.", () => {
       </p>
     </div>
   `);
+});
+
+test("tabs are rendered as whitespace.", () => {
+  render(
+    <RichText
+      content={richTextRoot(paragraph(text("hello"), tab(), text("world")))}
+    />,
+  );
+
+  expect(screen.getByText("hello world")).toBeInTheDocument();
 });
 
 describe("custom elements", () => {
