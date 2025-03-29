@@ -12,7 +12,7 @@ import {
   type LinkElementNode,
   type LineBreakNode,
   type ParagraphElementNode,
-  TabNode,
+  type TabNode,
 } from "./rich-text.model";
 
 export function richTextRoot(...children: ElementNode[]): RichTextObject {
