@@ -10,4 +10,5 @@ export default [
   route("/robots.txt", "routes/robots/route.ts"),
   route("/version", "routes/version/route.ts"),
   route("/site.webmanifest", "routes/webmanifest/route.ts"),
+  route("/favicon.ico", "routes/favicon/route.ts"),
 ] satisfies RouteConfig;
