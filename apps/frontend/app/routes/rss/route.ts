@@ -24,7 +24,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   const content = `<?xml version="1.0" encoding="UTF-8"?>
      <rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:webfeeds="http://webfeeds.org/rss/1.0" version="2.0">
        <channel>
-         <title>${meta.siteName}</title>
+         <title>${meta.siteName ?? ""}</title>
          <link>${getCanonicalUrl(request, "/articles")}</link>
          <description>${page.meta?.description}</description>
          <language>en</language>

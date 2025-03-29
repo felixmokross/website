@@ -40,49 +40,53 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export const meta: Route.MetaFunction = ({ data }) => {
-  if (!data.meta.favicon || typeof data.meta.favicon !== "object") {
-    throw new Error("Invalid favicon");
-  }
-  if (!data.meta.faviconIco || typeof data.meta.faviconIco !== "object") {
-    throw new Error("Invalid faviconIco");
-  }
   return [
-    { name: "apple-mobile-web-app-title", content: data.meta.siteName },
+    ...(data.meta.siteName
+      ? [{ name: "apple-mobile-web-app-title", content: data.meta.siteName }]
+      : []),
     {
       name: "theme-color",
       content: data.meta.themeColorDark,
       media: "(prefers-color-scheme: dark)",
     },
-    {
-      tagName: "link",
-      rel: "icon",
-      type: "image/png",
-      sizes: "96x96",
-      href: imagekitUrl(
-        data.environment.imagekitBaseUrl,
-        data.meta.favicon.filename!,
-        [{ format: "png", width: "96", height: "96" }],
-      ),
-    },
-    {
-      tagName: "link",
-      rel: "apple-touch-icon",
-      sizes: "180x180",
-      href: imagekitUrl(
-        data.environment.imagekitBaseUrl,
-        data.meta.favicon.filename!,
-        [{ format: "png", width: "180", height: "180" }],
-      ),
-    },
-    {
-      tagName: "link",
-      rel: "shortcut icon",
-      href: imagekitUrl(
-        data.environment.imagekitBaseUrl,
-        data.meta.faviconIco.filename!,
-        [{ format: "orig" }],
-      ),
-    },
+    ...(data.meta.favicon
+      ? [
+          {
+            tagName: "link",
+            rel: "icon",
+            type: "image/png",
+            sizes: "96x96",
+            href: imagekitUrl(
+              data.environment.imagekitBaseUrl,
+              (data.meta.favicon as Media).filename!,
+              [{ format: "png", width: "96", height: "96" }],
+            ),
+          },
+          {
+            tagName: "link",
+            rel: "apple-touch-icon",
+            sizes: "180x180",
+            href: imagekitUrl(
+              data.environment.imagekitBaseUrl,
+              (data.meta.favicon as Media).filename!,
+              [{ format: "png", width: "180", height: "180" }],
+            ),
+          },
+        ]
+      : []),
+    ...(data.meta.faviconIco
+      ? [
+          {
+            tagName: "link",
+            rel: "shortcut icon",
+            href: imagekitUrl(
+              data.environment.imagekitBaseUrl,
+              (data.meta.faviconIco as Media).filename!,
+              [{ format: "orig" }],
+            ),
+          },
+        ]
+      : []),
     ...(data.meta.faviconSvg
       ? [
           {

@@ -22,33 +22,18 @@ export function getPageMetaDescriptors(
   const title = pageMeta?.title ?? "";
   const description = pageMeta?.description ?? "";
   return [
-    {
-      tagName: "link",
-      rel: "canonical",
-      href: canonicalUrl,
-    },
+    { tagName: "link", rel: "canonical", href: canonicalUrl },
     { title },
     { name: "description", content: description },
-    {
-      name: "og:title",
-      content: title,
-    },
-    {
-      name: "og:description",
-      content: description,
-    },
-    {
-      name: "og:locale",
-      content: siteMeta.locale,
-    },
-    {
-      name: "og:type",
-      content: "website",
-    },
-    {
-      name: "og:site_name",
-      content: siteMeta.siteName,
-    },
+    { name: "og:title", content: title },
+    { name: "og:description", content: description },
+    ...(siteMeta.locale
+      ? [{ name: "og:locale", content: siteMeta.locale }]
+      : []),
+    { name: "og:type", content: "website" },
+    ...(siteMeta.siteName
+      ? [{ name: "og:site_name", content: siteMeta.siteName }]
+      : []),
     {
       name: "og:url",
       content: canonicalUrl,
