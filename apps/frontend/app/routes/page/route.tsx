@@ -9,7 +9,7 @@ import { Hero } from "./hero";
 import { Projects } from "./projects";
 import type { Route } from "./+types/route";
 import type { SerializeFromLoader } from "~/utils/types";
-import { loader as rootLoader } from "~/root";
+import { type loader as rootLoader } from "~/root";
 import { getPageMetaDescriptors } from "~/utils/page-meta";
 
 export function meta({ data, matches }: Route.MetaArgs) {
