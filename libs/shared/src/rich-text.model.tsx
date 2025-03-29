@@ -21,9 +21,11 @@ export type ElementNode =
   | HeadingElementNode
   | BlockElementNode;
 
-export type Node = ElementNode | TextNode | LineBreakNode;
+export type Node = ElementNode | TextNode | LineBreakNode | TabNode;
 
 export type LineBreakNode = { type: "linebreak" };
+
+export type TabNode = { type: "tab" };
 
 type ElementNodeWithChildren = { children: Node[] };
 
