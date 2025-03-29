@@ -1,6 +1,5 @@
 import type { CollectionConfig } from "payload";
 
-import { authenticated } from "../../access/authenticated";
 import { Archive } from "../../blocks/ArchiveBlock/config";
 import { CallToAction } from "../../blocks/CallToAction/config";
 import { Content } from "../../blocks/Content/config";
@@ -26,12 +25,6 @@ import { ProjectsBlock } from "@/blocks/Projects/config";
 
 export const Pages: CollectionConfig<"pages"> = {
   slug: "pages",
-  access: {
-    create: authenticated,
-    delete: authenticated,
-    read: authenticated,
-    update: authenticated,
-  },
   // This config controls what's populated by default when a page is referenced
   // https://payloadcms.com/docs/queries/select#defaultpopulate-collection-config-property
   // Type safe if the collection slug generic is passed to `CollectionConfig` - `CollectionConfig<'pages'>

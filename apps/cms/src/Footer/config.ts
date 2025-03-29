@@ -5,9 +5,6 @@ import { refreshCacheForGlobals } from "@/hooks/refresh-cache-hook";
 
 export const Footer: GlobalConfig = {
   slug: "footer",
-  access: {
-    read: () => true,
-  },
   fields: [
     {
       name: "navItems",

@@ -17,6 +17,8 @@ import { plugins } from "./plugins";
 import { defaultLexical } from "@/fields/defaultLexical";
 import { Config } from "./payload-types";
 import { SocialLinks } from "./collections/SocialLinks";
+import { Meta } from "./meta/config";
+import { ApiKeys } from "./collections/api-keys/config";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -63,8 +65,8 @@ export default buildConfig({
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || "",
   }),
-  collections: [Pages, Posts, Media, Categories, Users, SocialLinks],
-  globals: [Header, Footer],
+  collections: [Pages, Posts, Categories, SocialLinks, Media, Users, ApiKeys],
+  globals: [Header, Footer, Meta],
   plugins,
   secret: process.env.PAYLOAD_SECRET!,
   serverURL: process.env.SERVER_URL,
@@ -74,21 +76,20 @@ export default buildConfig({
     declare: false,
   },
   async onInit(payload) {
-    if (process.env.ENABLE_E2E_USER === "true") {
-      const users = await payload.find({
-        collection: "users",
-        where: { email: { equals: "e2e@fxmk.dev" } },
+    if (!!process.env.E2E_TESTS_API_KEY) {
+      const e2eTestApiKeys = await payload.find({
+        collection: "api-keys",
+        where: { name: { equals: "e2e-tests" } },
         pagination: false,
       });
 
-      if (users.totalDocs === 0) {
+      if (e2eTestApiKeys.totalDocs === 0) {
         await payload.create({
-          collection: "users",
+          collection: "api-keys",
           data: {
-            email: "e2e@fxmk.dev",
-            password: "password",
             enableAPIKey: true,
-            apiKey: "apikey",
+            apiKey: process.env.E2E_TESTS_API_KEY,
+            name: "e2e-tests",
           },
         });
       }

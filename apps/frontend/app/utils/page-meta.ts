@@ -1,57 +1,44 @@
-import type { Media } from "@fxmk/payload-types";
+import type { Media, Meta } from "@fxmk/payload-types";
 import { getAltFromMedia } from "./media";
 import { imagekitUrl } from "./imagekit";
+import type { MetaDescriptor } from "react-router";
 
 type Environment = {
   imagekitBaseUrl: string;
 };
 
-type Meta = {
+type PageMeta = {
   title?: string | null;
   image?: (string | null) | Media;
   description?: string | null;
 };
 
-export function getMeta(
+export function getPageMetaDescriptors(
   canonicalUrl: string | undefined,
-  meta: Meta | undefined,
+  pageMeta: PageMeta | undefined,
+  siteMeta: Meta,
   environment: Environment,
-) {
-  const title = meta?.title ?? "";
-  const description = meta?.description ?? "";
+): MetaDescriptor[] {
+  const title = pageMeta?.title ?? "";
+  const description = pageMeta?.description ?? "";
   return [
-    {
-      tagName: "link",
-      rel: "canonical",
-      href: canonicalUrl,
-    },
+    { tagName: "link", rel: "canonical", href: canonicalUrl },
     { title },
     { name: "description", content: description },
-    {
-      name: "og:title",
-      content: title,
-    },
-    {
-      name: "og:description",
-      content: description,
-    },
-    {
-      name: "og:locale",
-      content: "en",
-    },
-    {
-      name: "og:type",
-      content: "website",
-    },
-    {
-      name: "og:site_name",
-      content: "fxmk.dev",
-    },
+    { name: "og:title", content: title },
+    { name: "og:description", content: description },
+    ...(siteMeta.locale
+      ? [{ name: "og:locale", content: siteMeta.locale }]
+      : []),
+    { name: "og:type", content: "website" },
+    ...(siteMeta.siteName
+      ? [{ name: "og:site_name", content: siteMeta.siteName }]
+      : []),
     {
       name: "og:url",
       content: canonicalUrl,
     },
-    ...getOpenGraphImageMeta(meta, environment),
+    ...getOpenGraphImageMeta(pageMeta, environment),
     {
       name: "twitter:card",
       content: "summary_large_image",
@@ -64,12 +51,12 @@ export function getMeta(
       name: "twitter:description",
       content: description,
     },
-    ...getTwitterCardImageMeta(meta, environment),
+    ...getTwitterCardImageMeta(pageMeta, environment),
   ];
 }
 
 function getTwitterCardImageMeta(
-  meta: Meta | undefined,
+  meta: PageMeta | undefined,
   environment: Environment,
 ): { name: string; content: string }[] {
   const image = meta?.image;
@@ -94,7 +81,7 @@ function getTwitterCardImageMeta(
 }
 
 function getOpenGraphImageMeta(
-  meta: Meta | undefined,
+  meta: PageMeta | undefined,
   environment: Environment,
 ): { name: string; content: string }[] {
   const image = meta?.image;
@@ -125,7 +112,7 @@ function getOpenGraphImageMeta(
 }
 
 export function getSocialImageUrl(
-  meta: Meta | undefined,
+  meta: PageMeta | undefined,
   width: number,
   height: number,
   environment: Environment,

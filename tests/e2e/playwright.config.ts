@@ -22,11 +22,12 @@ export default defineConfig({
     baseURL: process.env.FRONTEND_BASE_URL,
 
     extraHTTPHeaders: {
-      Authorization: `users API-Key ${process.env.CMS_API_KEY}`,
+      Authorization: `api-keys API-Key ${process.env.CMS_API_KEY}`,
     },
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
+    video: "on-first-retry",
   },
 
   /* Configure projects for major browsers */

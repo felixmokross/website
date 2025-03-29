@@ -9,4 +9,5 @@ export default [
   route("/sitemap.xml", "routes/sitemap/route.ts"),
   route("/robots.txt", "routes/robots/route.ts"),
   route("/version", "routes/version/route.ts"),
+  route("/site.webmanifest", "routes/webmanifest/route.ts"),
 ] satisfies RouteConfig;

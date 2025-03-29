@@ -4,10 +4,10 @@ services:
     ports:
       - "3000:3000"
     environment:
-      PAYLOAD_CMS_API_KEY: apikey
+      PAYLOAD_CMS_API_KEY: ${CMS_API_KEY}
       PAYLOAD_CMS_BASE_URL: http://cms:3001
       CANONICAL_HOSTNAME: canonical.localhost
-      IMAGEKIT_BASE_URL: https://ik.imagekit.io/92jpwaahykk/local
+      IMAGEKIT_BASE_URL: ${IMAGEKIT_BASE_URL}
       PREVIEW_KEY: preview-key
 
   cms:
@@ -18,16 +18,16 @@ services:
       SERVER_URL: http://cms:3001
       DATABASE_URI: mongodb://mongo:27017/website-cms
       PAYLOAD_SECRET: ${PAYLOAD_SECRET}
-      ENABLE_E2E_USER: true
-      MEDIA_S3_BUCKET: fxmk-media-local
-      MEDIA_S3_REGION: eu-west-3
-      MEDIA_S3_ACCESS_KEY_ID: ${PREVIEW_MEDIA_S3_ACCESS_KEY_ID}
-      MEDIA_S3_SECRET_ACCESS_KEY: ${PREVIEW_MEDIA_S3_SECRET_ACCESS_KEY}
+      E2E_TESTS_API_KEY: ${CMS_API_KEY}
+      MEDIA_S3_BUCKET: ${MEDIA_S3_BUCKET}
+      MEDIA_S3_REGION: ${MEDIA_S3_REGION}
+      MEDIA_S3_ACCESS_KEY_ID: ${MEDIA_S3_ACCESS_KEY_ID}
+      MEDIA_S3_SECRET_ACCESS_KEY: ${MEDIA_S3_SECRET_ACCESS_KEY}
       CACHE_REFRESH_TARGET_TYPE: single
       CACHE_REFRESH_TARGET: http://frontend:3000
       FRONTEND_BASE_URL: http://frontend:3000
-      IMAGEKIT_BASE_URL: https://ik.imagekit.io/92jpwaahykk/local
-      OPENAI_API_KEY: ${PREVIEW_OPENAI_API_KEY}
+      IMAGEKIT_BASE_URL: ${IMAGEKIT_BASE_URL}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
       PREVIEW_KEY: preview-key
 
   mongo:

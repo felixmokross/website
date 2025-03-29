@@ -19,10 +19,12 @@ program
 
     const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
+    const [owner, repo] = process.env.GITHUB_REPOSITORY!.split("/");
+
     console.log(`Creating release…`);
     const createReleaseResponse = await octokit.repos.createRelease({
-      owner: "felixmokross",
-      repo: "website",
+      owner,
+      repo,
       tag_name: newVersionTag,
       name: newVersionTag,
       body: await getReleaseNotes(lastVersionTag, config),

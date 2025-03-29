@@ -1,14 +1,15 @@
 import { getCanonicalRequestUrl } from "~/utils/routing";
 import type { Route } from "./+types/route";
-import { getPosts, tryGetPage } from "~/utils/cms-data.server";
+import { getMeta, getPosts, tryGetPage } from "~/utils/cms-data.server";
 import { parseISO, format } from "date-fns";
-import { getSocialImageUrl } from "~/utils/meta";
+import { getSocialImageUrl } from "~/utils/page-meta";
 import { getEnvironment } from "~/utils/environment.server";
 
 const rssDateFormat = "eee, dd MMM yyyy HH:mm:ss xx";
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const [page, posts] = await Promise.all([
+  const [meta, page, posts] = await Promise.all([
+    getMeta(),
     tryGetPage("/articles"),
     getPosts(),
   ]);
@@ -23,7 +24,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   const content = `<?xml version="1.0" encoding="UTF-8"?>
      <rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:webfeeds="http://webfeeds.org/rss/1.0" version="2.0">
        <channel>
-         <title>fxmk.dev</title>
+         <title>${meta.siteName ?? ""}</title>
          <link>${getCanonicalUrl(request, "/articles")}</link>
          <description>${page.meta?.description}</description>
          <language>en</language>

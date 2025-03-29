@@ -12,7 +12,7 @@ import { ArrowLeftIcon } from "~/components/icons";
 import type { Route } from "./+types/route";
 import type { SerializeFromLoader } from "~/utils/types";
 import { type loader as rootLoader } from "~/root";
-import { getMeta } from "~/utils/meta";
+import { getPageMetaDescriptors as getPageMetaDescriptors } from "~/utils/page-meta";
 import { Link } from "~/components/link";
 import { OptInLivePreview } from "~/components/live-preview";
 import { POST_DEPTH } from "~/utils/cms-data";
@@ -30,7 +30,12 @@ export function meta({ data, matches }: Route.MetaArgs) {
   const parentMeta = matches.flatMap((match) => match?.meta ?? []);
   return [
     ...parentMeta,
-    ...getMeta(canonicalUrl, content.meta, rootLoaderData.environment),
+    ...getPageMetaDescriptors(
+      canonicalUrl,
+      content.meta,
+      rootLoaderData.meta,
+      rootLoaderData.environment,
+    ),
   ];
 }
 

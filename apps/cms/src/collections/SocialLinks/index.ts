@@ -1,15 +1,8 @@
-import { authenticated } from "@/access/authenticated";
 import { CollectionConfig } from "payload";
 import { socialPlatformOptions } from "@fxmk/shared";
 
 export const SocialLinks: CollectionConfig<"social-links"> = {
   slug: "social-links",
-  access: {
-    create: authenticated,
-    delete: authenticated,
-    read: authenticated,
-    update: authenticated,
-  },
   admin: {
     useAsTitle: "platform",
   },
