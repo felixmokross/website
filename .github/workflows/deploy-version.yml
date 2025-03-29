@@ -11,7 +11,6 @@ on:
 
 env:
   FLYCTL_VERSION: 0.3.55
-  MEDIA_S3_REGION: eu-west-3
   FRONTEND_INTERNAL_PORT: 3000
 
 jobs:
@@ -61,7 +60,7 @@ jobs:
             --app ${{ vars.FLY_APP }} \
             --config apps/cms/${{ vars.FLY_CONFIG }} \
             --image registry.fly.io/fxmk-cms-staging:v${{ inputs.version_with_sha }} \
-            --env MEDIA_S3_REGION=${{ env.MEDIA_S3_REGION }} \
+            --env MEDIA_S3_REGION=${{ vars.MEDIA_S3_REGION }} \
             --env MEDIA_S3_BUCKET=${{ vars.MEDIA_S3_BUCKET }} \
             --env CACHE_REFRESH_TARGET_TYPE=fly \
             --env CACHE_REFRESH_TARGET_ARG=${{ vars.FRONTEND_FLY_APP }},${{ env.FRONTEND_INTERNAL_PORT }} \
