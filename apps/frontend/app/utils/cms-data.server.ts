@@ -128,7 +128,7 @@ export async function loadData(
   console.log(`Loading data from CMS for ${url.toString()}`);
   const response = await fetch(url, {
     headers: {
-      Authorization: `users API-Key ${process.env.PAYLOAD_CMS_API_KEY}`,
+      Authorization: `api-keys API-Key ${process.env.PAYLOAD_CMS_API_KEY}`,
     },
   });
 

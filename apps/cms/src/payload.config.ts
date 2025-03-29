@@ -18,6 +18,7 @@ import { defaultLexical } from "@/fields/defaultLexical";
 import { Config } from "./payload-types";
 import { SocialLinks } from "./collections/SocialLinks";
 import { Meta } from "./meta/config";
+import { ApiKeys } from "./collections/api-keys/config";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -64,7 +65,7 @@ export default buildConfig({
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || "",
   }),
-  collections: [Pages, Posts, Media, Categories, Users, SocialLinks],
+  collections: [Pages, Posts, Media, Categories, Users, SocialLinks, ApiKeys],
   globals: [Header, Footer, Meta],
   plugins,
   secret: process.env.PAYLOAD_SECRET!,
@@ -76,20 +77,19 @@ export default buildConfig({
   },
   async onInit(payload) {
     if (process.env.ENABLE_E2E_USER === "true") {
-      const users = await payload.find({
-        collection: "users",
-        where: { email: { equals: "e2e@fxmk.dev" } },
+      const e2eTestApiKeys = await payload.find({
+        collection: "api-keys",
+        where: { name: { equals: "e2e-tests" } },
         pagination: false,
       });
 
-      if (users.totalDocs === 0) {
+      if (e2eTestApiKeys.totalDocs === 0) {
         await payload.create({
-          collection: "users",
+          collection: "api-keys",
           data: {
-            email: "e2e@fxmk.dev", // TODO consider introducing a separate collection for system users / api keys with `disableLocalStrategy` — maybe we can get rid of the email?
-            password: "password",
             enableAPIKey: true,
             apiKey: "apikey",
+            name: "e2e-tests",
           },
         });
       }

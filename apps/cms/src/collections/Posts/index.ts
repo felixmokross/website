@@ -1,7 +1,5 @@
 import type { CollectionConfig } from "payload";
 
-import { authenticated } from "../../access/authenticated";
-
 import {
   MetaDescriptionField,
   MetaImageField,
@@ -16,12 +14,6 @@ import { contentFields } from "./content";
 
 export const Posts: CollectionConfig<"posts"> = {
   slug: "posts",
-  access: {
-    create: authenticated,
-    delete: authenticated,
-    read: authenticated,
-    update: authenticated,
-  },
   // This config controls what's populated by default when a post is referenced
   // https://payloadcms.com/docs/queries/select#defaultpopulate-collection-config-property
   // Type safe if the collection slug generic is passed to `CollectionConfig` - `CollectionConfig<'posts'>

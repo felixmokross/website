@@ -104,7 +104,7 @@ async function fetchCms(path: string, init?: RequestInit) {
 
   const headers = new Headers({
     ...init?.headers,
-    Authorization: `users API-Key ${process.env.CMS_API_KEY}`,
+    Authorization: `api-keys API-Key ${process.env.CMS_API_KEY}`,
   });
   if (typeof init?.body === "string") {
     headers.set("Content-Type", "application/json");
