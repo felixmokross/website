@@ -85,8 +85,9 @@ jobs:
           FLY_CPUS: ${{ vars.FLY_CPUS }}
           MEDIA_S3_REGION: ${{ vars.MEDIA_S3_REGION }}
           MEDIA_S3_BUCKET: ${{ vars.MEDIA_S3_BUCKET }}
-          CACHE_REFRESH_TARGET_TYPE: ${{ vars.CACHE_REFRESH_TARGET_TYPE }}
-          CACHE_REFRESH_TARGET_ARG: ${{ vars.CACHE_REFRESH_TARGET_ARG }}
+          CACHE_REFRESH_TARGET_TYPE: fly
+          CACHE_REFRESH_TARGET_ARG:
+            "${{ vars.FRONTEND_FLY_APP }},${{ env.FRONTEND_INTERNAL_PORT }}"
           FRONTEND_BASE_URL: ${{ vars.FRONTEND_BASE_URL }}
           IMAGEKIT_BASE_URL: ${{ vars.IMAGEKIT_BASE_URL }}
       - name: Deploy CMS
