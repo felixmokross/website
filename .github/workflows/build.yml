@@ -128,7 +128,7 @@ jobs:
       - name: Get frontend image name
         id: image-name
         run: |
-          IMAGE_NAME=fxmk-frontend-staging
+          IMAGE_NAME=${{ vars.FLY_STAGING_FRONTEND_APP }}
           IMAGE_TAG=v${{ needs.version.outputs.version_with_sha }}
           echo "image_name=$IMAGE_NAME" >> "$GITHUB_OUTPUT"
           echo "image_tag=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
@@ -193,7 +193,7 @@ jobs:
       - name: Get CMS image name
         id: image-name
         run: |
-          IMAGE_NAME=fxmk-cms-staging
+          IMAGE_NAME=${{ vars.FLY_STAGING_CMS_APP }}
           IMAGE_TAG=v${{ needs.version.outputs.version_with_sha }}
           echo "image_name=$IMAGE_NAME" >> "$GITHUB_OUTPUT"
           echo "image_tag=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
