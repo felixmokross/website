@@ -29,9 +29,10 @@ jobs:
           version: ${{ env.FLYCTL_VERSION }}
       - name: Prepare configuration file
         run: |
-          envsubst
-            < apps/frontend/fly.template.toml
-            > apps/frontend/fly.generated.toml
+          envsubst \
+            < apps/frontend/fly.template.toml \
+            > apps/frontend/fly.generated.toml \
+
           echo "Generated configuration file:"
           cat apps/frontend/fly.generated.toml
         env:
@@ -69,9 +70,10 @@ jobs:
           version: ${{ env.FLYCTL_VERSION }}
       - name: Prepare configuration file
         run: |
-          envsubst
-            < apps/cms/fly.template.toml
-            > apps/cms/fly.generated.toml
+          envsubst \
+            < apps/cms/fly.template.toml \
+            > apps/cms/fly.generated.toml \
+            
           echo "Generated configuration file:"
           cat apps/cms/fly.generated.toml
         env:
