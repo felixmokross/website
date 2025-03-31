@@ -137,7 +137,7 @@ jobs:
         run: |
           flyctl deploy \
             --app ${{ steps.image-name.outputs.image_name }} \
-            --dockerfile apps/frontend/Dockerfile \
+            --config apps/cms/fly.build.toml \
             --build-only \
             --image-label ${{ steps.image-name.outputs.image_tag }} \
             --label org.opencontainers.image.version=${{ steps.image-name.outputs.image_tag }} \
@@ -202,7 +202,7 @@ jobs:
         run: |
           flyctl deploy \
             --app ${{ steps.image-name.outputs.image_name }} \
-            --dockerfile apps/cms/Dockerfile \
+            --config apps/cms/fly.build.toml \
             --build-only \
             --image-label ${{ steps.image-name.outputs.image_tag }} \
             --label org.opencontainers.image.version=${{ steps.image-name.outputs.image_tag }} \
