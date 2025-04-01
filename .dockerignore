@@ -1,3 +1,9 @@
+/.backup
+/.s3-backup
 /.github
 /tests
 /tools
+
+node_modules
+.env
+.previous-backup.tar.gz

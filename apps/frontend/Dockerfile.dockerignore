@@ -1,0 +1,21 @@
+# Ignore everything
+**
+
+# But include the necessary parts
+!package.json
+!pnpm-lock.yaml
+!pnpm-workspace.yaml
+!.npmrc
+!/apps/frontend
+!/libs/shared
+!/libs/payload-types
+
+# These should be ignored, though
+**/.cms-cache
+**/.next
+**/.react-router
+**/build
+**/node_modules
+**/tests
+**/.env
+**/tsconfig.tsbuildinfo
