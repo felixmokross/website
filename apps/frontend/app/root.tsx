@@ -19,6 +19,7 @@ import { getEnvironment } from "./utils/environment.server";
 import { Toaster } from "./layout/toaster";
 import { imagekitUrl } from "./utils/imagekit";
 import type { Media } from "@fxmk/payload-types";
+import { ThemeInitScript } from "./layout/theme";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -125,6 +126,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
     <html
       lang={meta.locale ?? undefined}
       className="h-full scroll-pt-6 antialiased"
+      suppressHydrationWarning={true} // Prevent hydration warning due to theme class added by client-side code
     >
       <head>
         <meta charSet="utf-8" />
@@ -132,6 +134,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
         <AnalyticsScript analyticsDomain={environment.analyticsDomain} />
+        <ThemeInitScript />
       </head>
       <body className="flex h-full bg-zinc-50 dark:bg-black">
         <EnvironmentContext.Provider value={environment}>
