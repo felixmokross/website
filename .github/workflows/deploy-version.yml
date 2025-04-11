@@ -164,16 +164,3 @@ jobs:
             --image registry.fly.io/${{ vars.FLY_STAGING_CMS_APP }}:v${{ inputs.version_with_sha }} \
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-      - name: Wait 30s for app to become ready
-        if: inputs.environment != 'preview'
-        run: sleep 30
-      - name: Prime frontend cache
-        if: inputs.environment != 'preview'
-        # We rely here on the frontend deployment being significantly faster
-        # – We can't make cache priming a separate job because we need an environment secret
-        # - We should anyway add some logic to synchronize the deployments (or simply merge them)
-        run: |
-          curl "${{ inputs.environment == 'preview' && format('https://{0}.fly.dev', steps.create-app.outputs.app_name) || vars.SERVER_URL }}/api/prime-frontend-cache" \
-            -f -s -S \
-            -X POST \
-            -H "Authorization: api-keys API-Key ${{ secrets.CMS_API_KEY }}"
