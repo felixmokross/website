@@ -1,0 +1,48 @@
+name: Clean Preview
+on:
+  schedule:
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+  workflow_call:
+
+env:
+  FLYCTL_VERSION: 0.3.95
+
+jobs:
+  clean-preview:
+    name: Clean Preview
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+        with:
+          version: ${{ env.FLYCTL_VERSION }}
+      - name: Clean up old preview apps
+        run: |
+          flyctl apps list --json --org ${{ vars.FLY_ORG }} \
+            | jq '[map(
+              { ID, LastReleasedAt: .CurrentRelease.CreatedAt }
+              | select(.ID | (test("^${{ vars.FLY_PREVIEW_FRONTEND_APP_PREFIX }}-") or test("^${{ vars.FLY_PREVIEW_CMS_APP_PREFIX }}-")))
+              | {
+                  ID,
+                  LastReleasedDaysAgo: (
+                    if .LastReleasedAt == null
+                      then null
+                      else ((now - (.LastReleasedAt | fromdate)) / 60 / 60 / 24)
+                    end
+                  )
+                }
+            )]
+            | map((. | map(select(.LastReleasedDaysAgo == null or .LastReleasedDaysAgo > 4))), (.
+                | sort_by(.LastReleasedDaysAgo)
+                | .[6:])
+            )
+            | flatten
+            | unique_by(.ID)
+            | map(.ID)
+            | .[]' \
+              | xargs -I {} flyctl apps destroy --yes {}
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

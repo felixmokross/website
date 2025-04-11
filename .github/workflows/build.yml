@@ -289,6 +289,7 @@ jobs:
 
   deploy:
     name: Deploy
+    if: github.event_name != 'pull_request'
     needs:
       - version
       - frontend-lint
@@ -300,11 +301,26 @@ jobs:
       - cms-check-format
       - cms-build-push
       - e2e-tests
-    if: github.event_name != 'pull_request'
     uses: ./.github/workflows/deploy-version.yml
     with:
       version_with_sha: ${{ needs.version.outputs.version_with_sha }}
+      sha: ${{ needs.version.outputs.sha }}
       environment: staging
+    secrets: inherit
+
+  deploy-preview:
+    name: Deploy Preview
+    if: github.event_name == 'pull_request'
+    needs:
+      - version
+      - frontend-build-push
+      - cms-build-push
+    uses: ./.github/workflows/deploy-version.yml
+    with:
+      version_with_sha: ${{ needs.version.outputs.version_with_sha }}
+      sha: ${{ needs.version.outputs.sha }}
+      environment: preview
+      high_availability: false
     secrets: inherit
 
   create-release:
@@ -328,3 +344,9 @@ jobs:
           pnpm --filter releaser start publish --draft ${{ needs.version.outputs.version }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  clean-preview:
+    name: Clean Preview Apps
+    uses: ./.github/workflows/clean-preview.yml
+    secrets: inherit
+    needs: deploy-preview

@@ -1,10 +1,14 @@
 import { program } from "commander";
-import { getConfig, getLastVersionTag, getReleaseNotes } from "src/common";
+import {
+  getConfig,
+  getLastReleaseVersionTag,
+  getReleaseNotes,
+} from "src/common";
 
 program.command("get-release-notes").action(async () => {
-  const lastVersionTag = getLastVersionTag();
+  const lastReleaseVersionTag = getLastReleaseVersionTag();
 
-  const config = await getConfig(lastVersionTag);
+  const config = await getConfig(lastReleaseVersionTag);
 
-  console.info(await getReleaseNotes(lastVersionTag, config));
+  console.info(await getReleaseNotes(lastReleaseVersionTag, config));
 });

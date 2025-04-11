@@ -21,5 +21,6 @@ jobs:
     uses: ./.github/workflows/deploy-version.yml
     with:
       version_with_sha: ${{ needs.version.outputs.version_with_sha }}
+      sha: ${{ needs.version.outputs.sha }}
       environment: ${{ inputs.environment }}
     secrets: inherit
