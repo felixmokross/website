@@ -11,13 +11,25 @@ on:
     outputs:
       version:
         value: ${{ jobs.version.outputs.version }}
-        description: "Version of the release"
+        description: "Version"
       version_with_sha:
         value: ${{ jobs.version.outputs.version_with_sha }}
-        description: "Version of the release with SHA"
+        description: "Version with SHA"
+      is_release:
+        value: ${{ jobs.version.outputs.is_release }}
+        description: "Is this a release?"
       is_new_release:
         value: ${{ jobs.version.outputs.is_new_release }}
         description: "Is this a new release?"
+      release_version:
+        value: ${{ jobs.version.outputs.release_version }}
+        description: "Release version (without prerelease tag if any)"
+      prerelease_tag:
+        value: ${{ jobs.version.outputs.prerelease_tag }}
+        description: "Prerelease tag"
+      sha:
+        value: ${{ jobs.version.outputs.sha }}
+        description: "Commit SHA"
 
 env:
   NODE_VERSION: 22
@@ -29,7 +41,11 @@ jobs:
     outputs:
       version: ${{ steps.get-version.outputs.version }}
       version_with_sha: ${{ steps.get-version.outputs.version_with_sha }}
+      is_release: ${{ steps.get-version.outputs.is_release }}
       is_new_release: ${{ steps.get-version.outputs.is_new_release }}
+      release_version: ${{ steps.get-version.outputs.release_version }}
+      prerelease_tag: ${{ steps.get-version.outputs.prerelease_tag }}
+      sha: ${{ steps.get-version.outputs.sha }}
     steps:
       - name: Checkout with full history
         uses: actions/checkout@v4
@@ -44,13 +60,12 @@ jobs:
         run: |
           RESULT=$(pnpm --filter releaser --silent start get-version $([[ "${{ inputs.release }}" == 'true' ]] && echo '--release'))
 
-          VERSION=$(echo $RESULT | jq -r '.version')
-          VERSION_WITH_SHA=$(echo $RESULT | jq -r '.versionWithSha')
-          IS_NEW_RELEASE=$(echo $RESULT | jq -r '.isNewRelease')
-          echo "Version is: $VERSION"
-          echo "Version (incl. SHA) is: $VERSION_WITH_SHA"
-          echo "Is new release: $IS_NEW_RELEASE"
+          echo $RESULT
 
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "version_with_sha=$VERSION_WITH_SHA" >> "$GITHUB_OUTPUT"
-          echo "is_new_release=$IS_NEW_RELEASE" >> "$GITHUB_OUTPUT"
+          echo "version=$(echo $RESULT | jq -r '.version')" >> "$GITHUB_OUTPUT"
+          echo "version_with_sha=$(echo $RESULT | jq -r '.versionWithSha')" >> "$GITHUB_OUTPUT"
+          echo "is_release=$(echo $RESULT | jq -r '.isRelease')" >> "$GITHUB_OUTPUT"
+          echo "is_new_release=$(echo $RESULT | jq -r '.isNewRelease')" >> "$GITHUB_OUTPUT"
+          echo "release_version=$(echo $RESULT | jq -r '.releaseVersion')" >> "$GITHUB_OUTPUT"
+          echo "prerelease_tag=$(echo $RESULT | jq -r '.prereleaseTag // ""')" >> "$GITHUB_OUTPUT"
+          echo "sha=$(echo $RESULT | jq -r '.sha')" >> "$GITHUB_OUTPUT"

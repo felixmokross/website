@@ -10,37 +10,46 @@ import {
   filterConventionalCommits,
   getConfig,
   getRawCommits,
-  getLastVersionTag,
+  getLastReleaseVersionTag,
 } from "src/common";
 
 program
   .command("get-version")
   .option("-r, --release", "Create a release version")
   .action(async (options) => {
-    const lastVersionTag = getLastVersionTag();
-    const config = await getConfig(lastVersionTag);
-    const commitsSinceLastVersion = await getRawCommits(lastVersionTag);
+    const lastReleaseVersionTag = getLastReleaseVersionTag();
+    const config = await getConfig(lastReleaseVersionTag);
+    const commitsSinceLastVersion = await getRawCommits(lastReleaseVersionTag);
 
-    const lastVersion = getVersionFromGitTag(lastVersionTag);
+    const lastReleaseVersion = getReleaseVersionFromGitTag(
+      lastReleaseVersionTag,
+    );
 
     const hasUnreleasedChanges = commitsSinceLastVersion.length > 0;
     const isReleaseRequested =
       hasReleaseKeyword(commitsSinceLastVersion) || !!options.release;
 
-    const newVersion = getNewVersion(
+    const [newReleaseVersion, prereleaseTag] = getNewVersion(
       hasUnreleasedChanges,
       isReleaseRequested,
       commitsSinceLastVersion,
-      lastVersion,
+      lastReleaseVersion,
       config,
     );
+
+    const version = `${newReleaseVersion}${prereleaseTag ? `-${prereleaseTag}` : ""}`;
+    const sha = getHeadCommitSha();
 
     console.log(
       JSON.stringify(
         {
-          version: newVersion,
-          versionWithSha: `${newVersion}-${getHeadCommitSha()}`,
+          version,
+          versionWithSha: `${version}-${sha}`,
+          isRelease: !prereleaseTag,
           isNewRelease: hasUnreleasedChanges && isReleaseRequested,
+          releaseVersion: newReleaseVersion,
+          prereleaseTag,
+          sha,
         },
         null,
         2,
@@ -48,7 +57,7 @@ program
     );
   });
 
-function getVersionFromGitTag(tag: string) {
+function getReleaseVersionFromGitTag(tag: string) {
   return tag.substring(1);
 }
 
@@ -64,17 +73,17 @@ function getNewVersion(
   hasUnreleasedChanges: boolean,
   isReleaseRequested: boolean,
   rawCommits: RawGitCommit[],
-  lastVersion: string,
+  lastReleaseVersion: string,
   config: ResolvedChangelogConfig,
 ) {
-  if (!hasUnreleasedChanges) return lastVersion;
+  if (!hasUnreleasedChanges) return [lastReleaseVersion, null];
 
   const newReleaseVersion = determineNewReleaseVersion(
     rawCommits,
-    lastVersion,
+    lastReleaseVersion,
     config,
   );
-  if (isReleaseRequested) return newReleaseVersion;
+  if (isReleaseRequested) return [newReleaseVersion, null];
 
   const githubHeadRef = process.env.GITHUB_HEAD_REF;
   const branchName = execSync(`git rev-parse --abbrev-ref HEAD`)
@@ -85,7 +94,7 @@ function getNewVersion(
     .replace("_", "-")
     .replace(/[^a-zA-Z0-9.-]/g, "");
 
-  return `${newReleaseVersion}-${sanitizedBranchName}.${rawCommits.length}`;
+  return [newReleaseVersion, `${sanitizedBranchName}.${rawCommits.length}`];
 }
 
 function determineNewReleaseVersion(

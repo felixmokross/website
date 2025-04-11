@@ -16,7 +16,7 @@ export async function getConfig(lastVersionTag: string) {
   });
 }
 
-export function getLastVersionTag(): string {
+export function getLastReleaseVersionTag(): string {
   const tag = execSync("git describe --tags --abbrev=0").toString().trim();
   return tag;
 }
@@ -33,11 +33,11 @@ export function filterConventionalCommits(
 }
 
 export async function getReleaseNotes(
-  lastVersionTag: string,
+  lastReleaseVersionTag: string,
   config: ResolvedChangelogConfig,
 ) {
   const conventionalCommits = filterConventionalCommits(
-    await getRawCommits(lastVersionTag),
+    await getRawCommits(lastReleaseVersionTag),
     config,
   );
   return await generateMarkDown(conventionalCommits, config);
