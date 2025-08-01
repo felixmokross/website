@@ -54,11 +54,11 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
       - name: Install dependencies
-        run: pnpm --filter releaser install
+        run: pnpm --workspace-root install --dev
       - name: Get version
         id: get-version
         run: |
-          RESULT=$(pnpm --filter releaser --silent start get-version $([[ "${{ inputs.release }}" == 'true' ]] && echo '--release'))
+          RESULT=$(pnpm releaser get-version $([[ "${{ inputs.release }}" == 'true' ]] && echo '--release'))
 
           echo $RESULT
 
