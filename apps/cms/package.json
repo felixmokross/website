@@ -5,7 +5,8 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "pnpm generate:types && cross-env NODE_OPTIONS=--no-deprecation next build",
+    "build": "pnpm generate:types && pnpm build:generated",
+    "build:generated": "cross-env NODE_OPTIONS=--no-deprecation next build",
     "dev": "cross-env NODE_OPTIONS=--no-deprecation PORT=3001 next dev",
     "dev:prod": "cross-env NODE_OPTIONS=--no-deprecation rm -rf .next && pnpm build && mv .next/static .next/standalone/apps/cms/.next/static && pnpm start",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",

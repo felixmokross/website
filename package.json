@@ -8,13 +8,14 @@
   "packageManager": "pnpm@10.0.0+sha512.b8fef5494bd3fe4cbd4edabd0745df2ee5be3e4b0b8b08fa643aa3e4c6702ccc0f00d68fa8a8c9858a735a0032485a44990ed2810526c875e416f001b17df12b",
   "version": "0.0.0-unknown",
   "scripts": {
-    "generate:types": "pnpm --filter payload-types pull-payload-types",
-    "lint": "pnpm --filter frontend lint --max-warnings=0 && pnpm --filter cms lint --max-warnings=0",
-    "check-format": "pnpm --filter frontend check-format && pnpm --filter cms check-format",
-    "typecheck": "pnpm generate:types && pnpm --filter frontend typecheck",
-    "test": "pnpm --filter frontend exec vitest run",
-    "build": "pnpm generate:types && pnpm --filter frontend build && pnpm --filter cms build",
-    "check": "pnpm check-format && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+    "generate:types": "pnpm --filter @fxmk/payload-types pull-payload-types",
+    "lint": "pnpm --filter @fxmk/frontend lint --max-warnings=0 && pnpm --filter @fxmk/cms lint --max-warnings=0",
+    "check-format": "pnpm --filter @fxmk/frontend check-format && pnpm --filter @fxmk/cms check-format",
+    "typecheck": "pnpm --filter @fxmk/frontend typecheck",
+    "test": "pnpm --filter @fxmk/frontend exec vitest run",
+    "build": "pnpm generate:types && pnpm build:generated",
+    "build:generated": "pnpm --filter @fxmk/frontend build && pnpm --filter @fxmk/cms build:generated",
+    "check": "pnpm generate:types && pnpm check-format && pnpm lint && pnpm typecheck && pnpm test && pnpm build:generated"
   },
   "devDependencies": {
     "prettier": "^3.5.3"
