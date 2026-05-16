@@ -41,6 +41,10 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export const meta: Route.MetaFunction = ({ data }) => {
+  if (!data) {
+    return [];
+  }
+
   return [
     ...(data.meta.siteName
       ? [{ name: "apple-mobile-web-app-title", content: data.meta.siteName }]

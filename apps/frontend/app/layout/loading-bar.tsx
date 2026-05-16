@@ -21,7 +21,8 @@ export function LoadingBar() {
           animate={{ width: "80%" }}
           exit={{
             width: "100%",
-            transition: { duration: 0.4, opacity: 0, ease: "easeIn" },
+            opacity: 0,
+            transition: { duration: 0.4, ease: "easeIn" },
           }}
           transition={{ duration: 2, ease: "easeOut" }}
         />

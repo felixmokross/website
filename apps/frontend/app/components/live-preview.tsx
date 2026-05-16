@@ -2,14 +2,14 @@ import { useLivePreview } from "@payloadcms/live-preview-react";
 import { type ReactNode } from "react";
 import { useEnvironment } from "~/utils/environment";
 
-export type OptInLivePreviewProps<TData> = {
+export type OptInLivePreviewProps<TData extends object> = {
   document: string;
   data: TData;
   depth: number;
   children: (data: TData) => ReactNode;
 };
 
-export function OptInLivePreview<TData>({
+export function OptInLivePreview<TData extends object>({
   children,
   document,
   data,
@@ -26,18 +26,22 @@ export function OptInLivePreview<TData>({
   );
 }
 
-type LivePreviewProps<TData> = {
+type LivePreviewProps<TData extends object> = {
   data: TData;
   depth: number;
   children: (data: TData) => ReactNode;
 };
 
-function LivePreview<T>({ data, depth, children }: LivePreviewProps<T>) {
+function LivePreview<T extends object>({
+  data,
+  depth,
+  children,
+}: LivePreviewProps<T>) {
   const { payloadCmsBaseUrl } = useEnvironment();
   const { data: livePreviewData } = useLivePreview({
-    initialData: data,
+    initialData: data as Record<string, unknown>,
     serverURL: payloadCmsBaseUrl,
     depth,
   });
-  return children(livePreviewData);
+  return children(livePreviewData as T);
 }
