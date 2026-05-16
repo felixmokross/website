@@ -8,7 +8,7 @@
   },
   "types": "./src/index.ts",
   "scripts": {
-    "pull-payload-types": "pnpm --filter cms generate:types && cp ../../apps/cms/src/payload-types.ts ./src/payload-types.ts"
+    "pull-payload-types": "pnpm --filter @fxmk/cms generate:types && cp ../../apps/cms/src/payload-types.ts ./src/payload-types.ts"
   },
   "devDependencies": {
     "typescript": "^5.8.3"
