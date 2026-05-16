@@ -12,3 +12,17 @@ The frontend is powered by the
 - [React Router framework (formerly Remix)](https://reactrouter.com/)
 - [Payload CMS](https://payloadcms.com/)
 - [MongoDB](https://www.mongodb.com/)
+
+## Local Maintenance
+
+Use Node.js 22 and the pnpm version pinned in `package.json`.
+
+```sh
+pnpm install --frozen-lockfile
+pnpm generate:types
+pnpm check
+```
+
+Payload types are generated from the CMS and copied into `libs/payload-types`.
+Those generated files are gitignored, so run `pnpm generate:types` before
+frontend typechecks or builds in a fresh checkout.
