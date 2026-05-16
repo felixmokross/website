@@ -11,11 +11,12 @@
     "generate:types": "pnpm --filter @fxmk/payload-types pull-payload-types",
     "lint": "pnpm --filter @fxmk/frontend lint --max-warnings=0 && pnpm --filter @fxmk/cms lint --max-warnings=0",
     "check-format": "pnpm --filter @fxmk/frontend check-format && pnpm --filter @fxmk/cms check-format",
-    "typecheck": "pnpm --filter @fxmk/frontend typecheck",
+    "typecheck": "pnpm generate:types && pnpm typecheck:generated",
+    "typecheck:generated": "pnpm --filter @fxmk/frontend typecheck",
     "test": "pnpm --filter @fxmk/frontend exec vitest run",
     "build": "pnpm generate:types && pnpm build:generated",
     "build:generated": "pnpm --filter @fxmk/frontend build && pnpm --filter @fxmk/cms build:generated",
-    "check": "pnpm generate:types && pnpm check-format && pnpm lint && pnpm typecheck && pnpm test && pnpm build:generated"
+    "check": "pnpm generate:types && pnpm check-format && pnpm lint && pnpm typecheck:generated && pnpm test && pnpm build:generated"
   },
   "devDependencies": {
     "prettier": "^3.5.3"
