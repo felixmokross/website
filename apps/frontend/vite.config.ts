@@ -8,6 +8,20 @@ export default defineConfig({
   server: {
     port: 3000,
   },
+  build: {
+    rollupOptions: {
+      onwarn(warning, defaultHandler) {
+        if (
+          warning.code === "EMPTY_BUNDLE" &&
+          warning.names?.includes("route")
+        ) {
+          return;
+        }
+
+        defaultHandler(warning);
+      },
+    },
+  },
   plugins: [
     tailwindcss(),
     !isVitest() && reactRouter(),

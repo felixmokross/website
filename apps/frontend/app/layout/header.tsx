@@ -1,4 +1,10 @@
-import React, { useEffect, useRef } from "react";
+import {
+  type ComponentPropsWithoutRef,
+  type CSSProperties,
+  type ReactNode,
+  useEffect,
+  useRef,
+} from "react";
 import {
   Popover,
   PopoverButton,
@@ -17,13 +23,7 @@ import { MediaImage } from "~/components/media-image";
 import { Link } from "~/components/link";
 import { ThemeToggle } from "./theme";
 
-function MobileNavItem({
-  to,
-  children,
-}: {
-  to: string;
-  children: React.ReactNode;
-}) {
+function MobileNavItem({ to, children }: { to: string; children: ReactNode }) {
   return (
     <li>
       <PopoverButton as={Link} to={to} className="block py-2">
@@ -33,7 +33,7 @@ function MobileNavItem({
   );
 }
 
-type MobileNavigationProps = React.ComponentPropsWithoutRef<typeof Popover> &
+type MobileNavigationProps = ComponentPropsWithoutRef<typeof Popover> &
   Pick<HeaderType, "navItems">;
 
 function MobileNavigation({ navItems, ...props }: MobileNavigationProps) {
@@ -74,7 +74,7 @@ function MobileNavigation({ navItems, ...props }: MobileNavigationProps) {
   );
 }
 
-function NavItem({ to, children }: { to: string; children: React.ReactNode }) {
+function NavItem({ to, children }: { to: string; children: ReactNode }) {
   return (
     <li>
       <NavLink
@@ -101,7 +101,7 @@ function NavItem({ to, children }: { to: string; children: React.ReactNode }) {
   );
 }
 
-type DesktopNavigationProps = React.ComponentPropsWithoutRef<"nav"> &
+type DesktopNavigationProps = ComponentPropsWithoutRef<"nav"> &
   Pick<HeaderType, "navItems">;
 
 function DesktopNavigation({ navItems, ...props }: DesktopNavigationProps) {
@@ -127,7 +127,7 @@ function clamp(number: number, a: number, b: number) {
 function AvatarContainer({
   className,
   ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+}: ComponentPropsWithoutRef<"div">) {
   return (
     <div
       className={clsx(
@@ -144,7 +144,7 @@ function Avatar({
   className,
   avatar,
   ...props
-}: Omit<React.ComponentPropsWithoutRef<typeof Link>, "to"> & {
+}: Omit<ComponentPropsWithoutRef<typeof Link>, "to"> & {
   large?: boolean;
   avatar: HeaderType["avatar"];
 }) {
@@ -297,15 +297,14 @@ export function Header({ navItems, avatar }: HeaderProps) {
             <Container
               className="top-0 order-last -mb-3 pt-3"
               style={{
-                position:
-                  "var(--header-position)" as React.CSSProperties["position"],
+                position: "var(--header-position)" as CSSProperties["position"],
               }}
             >
               <div
                 className="top-(--avatar-top,--spacing(3)) w-full"
                 style={{
                   position:
-                    "var(--header-inner-position)" as React.CSSProperties["position"],
+                    "var(--header-inner-position)" as CSSProperties["position"],
                 }}
               >
                 <div className="relative">
@@ -331,15 +330,14 @@ export function Header({ navItems, avatar }: HeaderProps) {
           ref={headerRef}
           className="top-0 z-10 h-16 pt-6"
           style={{
-            position:
-              "var(--header-position)" as React.CSSProperties["position"],
+            position: "var(--header-position)" as CSSProperties["position"],
           }}
         >
           <Container
             className="top-(--header-top,--spacing(6)) w-full"
             style={{
               position:
-                "var(--header-inner-position)" as React.CSSProperties["position"],
+                "var(--header-inner-position)" as CSSProperties["position"],
             }}
           >
             <div className="relative flex gap-4">
