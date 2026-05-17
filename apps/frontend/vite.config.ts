@@ -13,7 +13,7 @@ export default defineConfig({
       onwarn(warning, defaultHandler) {
         if (
           warning.code === "EMPTY_BUNDLE" &&
-          warning.message === 'Generated an empty chunk: "route".'
+          warning.names?.includes("route")
         ) {
           return;
         }
