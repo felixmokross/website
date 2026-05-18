@@ -1,6 +1,6 @@
 # From https://github.com/vercel/next.js/blob/canary/examples/with-docker/Dockerfile
 
-FROM node:22-alpine AS base
+FROM node:24-alpine AS base
 
 # Install latest corepack to work around this issue: https://github.com/nodejs/corepack/issues/612
 RUN npm install -g corepack@latest

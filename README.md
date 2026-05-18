@@ -15,7 +15,7 @@ The frontend is powered by the
 
 ## Local Maintenance
 
-Use Node.js 22 and the pnpm version pinned in `package.json`.
+Use Node.js 24 and the pnpm version pinned in `package.json`.
 
 ```sh
 pnpm install --frozen-lockfile

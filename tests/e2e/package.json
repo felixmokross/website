@@ -15,7 +15,7 @@
     "@fxmk/shared": "workspace:../../libs/shared",
     "@paralleldrive/cuid2": "^2.3.1",
     "@playwright/test": "^1.60.0",
-    "@types/node": "^22.19.19",
+    "@types/node": "^24.12.4",
     "dotenv": "^16.6.1",
     "prettier": "^3.8.3",
     "typescript": "^5.9.3"
