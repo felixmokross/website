@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@eslint/compat": "^1.4.1",
-    "@types/node": "^22.19.19",
+    "@types/node": "^24.12.4",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.39.4",
@@ -50,7 +50,7 @@
     "typescript": "^5.9.3"
   },
   "engines": {
-    "node": ">=22 <23"
+    "node": ">=24 <25"
   },
   "packageManager": "pnpm@10.0.0+sha512.b8fef5494bd3fe4cbd4edabd0745df2ee5be3e4b0b8b08fa643aa3e4c6702ccc0f00d68fa8a8c9858a735a0032485a44990ed2810526c875e416f001b17df12b"
 }

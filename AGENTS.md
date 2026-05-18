@@ -8,7 +8,7 @@ React Router frontend and a Payload CMS backend.
 ## Repository-wide Guidelines
 
 - Use `pnpm` as package manager.
-- Use Node.js 22, as pinned in `.nvmrc` and CI.
+- Use Node.js 24, as pinned in `.nvmrc` and CI.
 - Keep changes focused and minimal; avoid unrelated refactors.
 - Keep docs in sync when introducing new patterns or conventions.
 - Preserve user changes you did not make, especially in a dirty worktree.
@@ -23,8 +23,8 @@ React Router frontend and a Payload CMS backend.
   otherwise.
 - After you address a pull request review comment, resolve that conversation in
   the PR.
-- Keep `@types/node` aligned with the current runtime major (Node 22). Do not
-  upgrade to Node 23+ typings until the runtime migration is planned.
+- Keep `@types/node` aligned with the current runtime major (Node 24). Do not
+  upgrade to Node 25+ typings until the runtime migration is planned.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the full contribution guidelines.
 

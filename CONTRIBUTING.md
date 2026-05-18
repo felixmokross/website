@@ -58,8 +58,8 @@ Keep descriptions concise, imperative, and behavior-focused.
 
 ## Runtime and Typings Policy
 
-- Use Node.js 22, as pinned in `.nvmrc` and CI.
-- Keep `@types/node` on the Node 22 line until runtime migration is scheduled.
+- Use Node.js 24, as pinned in `.nvmrc` and CI.
+- Keep `@types/node` on the Node 24 line until runtime migration is scheduled.
 
 ## Review Comment Workflow
 
