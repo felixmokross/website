@@ -1,5 +1,5 @@
 import { reactRouter } from "@react-router/dev/vite";
-import { defineConfig } from "vite";
+import { defineConfig } from "vitest/config";
 import tsconfigPaths from "vite-tsconfig-paths";
 import prismjs from "vite-plugin-prismjs";
 import tailwindcss from "@tailwindcss/vite";
