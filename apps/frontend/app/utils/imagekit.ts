@@ -1,13 +1,13 @@
-import ImageKit from "imagekit-javascript";
+import { buildSrc, type Transformation } from "@imagekit/javascript";
 
 export function imagekitUrl(
   urlEndpoint: string,
   filename: string,
-  transformation?: Partial<{
-    [key: string]: string;
-  }>[],
+  transformation?: Transformation[],
 ) {
-  return new ImageKit({
+  return buildSrc({
     urlEndpoint,
-  }).url({ path: filename, transformation });
+    src: filename,
+    transformation,
+  });
 }

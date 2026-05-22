@@ -137,6 +137,9 @@ importers:
       '@headlessui/react':
         specifier: ^2.2.10
         version: 2.2.10(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      '@imagekit/javascript':
+        specifier: ^5.4.0
+        version: 5.4.0
       '@payloadcms/live-preview-react':
         specifier: ^3.84.1
         version: 3.84.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -158,9 +161,6 @@ importers:
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
-      imagekit-javascript:
-        specifier: ^4.0.1
-        version: 4.0.1
       isbot:
         specifier: ^5.1.40
         version: 5.1.40
@@ -1379,6 +1379,9 @@ packages:
   '@humanwhocodes/retry@0.4.2':
     resolution: {integrity: sha512-xeO57FpIu4p1Ri3Jq/EXq4ClRm86dVF2z/+kvFnyqVYRavTZmaFaUBbWCOuuTh0o/g7DSsk6kc2vrS4Vl5oPOQ==}
     engines: {node: '>=18.18'}
+
+  '@imagekit/javascript@5.4.0':
+    resolution: {integrity: sha512-Z3RwkCbde2B4jaDOHFBszkctT0YB9JoAnqFvPQ3JP6iPzy0Xfd8J1JpI9dHz6sYsFjAiwI3sb2BgcuLX5XCgfA==}
 
   '@img/colour@1.1.0':
     resolution: {integrity: sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==}
@@ -3776,9 +3779,6 @@ packages:
     resolution: {integrity: sha512-IRqXKlaXwgSMAMtpNzZa1ZAe8m+Sa1770Dhk8VkSsP9LS+iHD62Zd8FQKs8fbPiagBE7BzoFX23cxFnwshpV6w==}
     engines: {node: '>=16.x'}
     hasBin: true
-
-  imagekit-javascript@4.0.1:
-    resolution: {integrity: sha512-V3eVMz7OW8w8dSNJXPtVcWQMdV0P1wRs+Bftb2B1bKRl8NjOf+NGRWYb/meJlrmSL/HxT68PjM92/XFB+9ZfJA==}
 
   immutable@5.1.5:
     resolution: {integrity: sha512-t7xcm2siw+hlUM68I+UEOK+z84RzmN59as9DZ7P1l0994DKUWV7UXBMQZVxaoMSRQ+PBZbHCOoBt7a2wxOMt+A==}
@@ -6811,6 +6811,8 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.2': {}
 
+  '@imagekit/javascript@5.4.0': {}
+
   '@img/colour@1.1.0': {}
 
   '@img/sharp-darwin-arm64@0.34.5':
@@ -9635,8 +9637,6 @@ snapshots:
   ignore@7.0.5: {}
 
   image-size@2.0.2: {}
-
-  imagekit-javascript@4.0.1: {}
 
   immutable@5.1.5: {}
 

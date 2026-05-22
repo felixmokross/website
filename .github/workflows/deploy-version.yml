@@ -82,10 +82,28 @@ jobs:
           ANALYTICS_DOMAIN: ${{ vars.ANALYTICS_DOMAIN }}
       - name: Deploy frontend
         run: |
-          flyctl deploy \
-          --config apps/frontend/fly.generated.toml \
-          --ha=${{ inputs.high_availability }} \
-          --image registry.fly.io/${{ vars.FLY_STAGING_FRONTEND_APP }}:v${{ inputs.version_with_sha }} \
+          set -o pipefail
+          for attempt in {1..12}; do
+            log_file=$(mktemp)
+
+            if flyctl deploy \
+              --config apps/frontend/fly.generated.toml \
+              --ha=${{ inputs.high_availability }} \
+              --image registry.fly.io/${{ vars.FLY_STAGING_FRONTEND_APP }}:v${{ inputs.version_with_sha }} 2>&1 | tee "$log_file"; then
+              break
+            fi
+
+            if ! grep -q 'Could not find image' "$log_file"; then
+              exit 1
+            fi
+
+            if [ "$attempt" -eq 12 ]; then
+              echo "Frontend deploy failed after $attempt attempts"
+              exit 1
+            fi
+
+            sleep 5
+          done
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
@@ -158,9 +176,28 @@ jobs:
           IMAGEKIT_BASE_URL: ${{ vars.IMAGEKIT_BASE_URL }}
       - name: Deploy CMS
         run: |
-          flyctl deploy \
-            --config apps/cms/fly.generated.toml \
-            --ha=${{ inputs.high_availability }} \
-            --image registry.fly.io/${{ vars.FLY_STAGING_CMS_APP }}:v${{ inputs.version_with_sha }} \
+          set -o pipefail
+          for attempt in {1..12}; do
+            log_file=$(mktemp)
+
+            if flyctl deploy \
+              --config apps/cms/fly.generated.toml \
+              --ha=${{ inputs.high_availability }} \
+              --image registry.fly.io/${{ vars.FLY_STAGING_CMS_APP }}:v${{ inputs.version_with_sha }} 2>&1 | tee "$log_file"; then
+              break
+
+            fi
+
+            if ! grep -q 'Could not find image' "$log_file"; then
+              exit 1
+            fi
+
+            if [ "$attempt" -eq 12 ]; then
+              echo "CMS deploy failed after $attempt attempts"
+              exit 1
+            fi
+
+            sleep 5
+          done
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
