@@ -11,7 +11,7 @@ import {
   getConfig,
   getRawCommits,
   getLastReleaseVersionTag,
-} from "src/common";
+} from "../common";
 
 program
   .command("get-version")
