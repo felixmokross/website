@@ -2,34 +2,37 @@ import { mediaImageSizes } from "@fxmk/shared";
 import { type Media } from "@fxmk/payload-types";
 import { useEnvironment } from "../utils/environment";
 import { useMemo } from "react";
-import { imagekitUrl } from "~/utils/imagekit";
+import { imagekitImageSources, type ImageCrop } from "~/utils/imagekit";
 
 type MediaImageProps = {
   media: Media | string;
   preferredSize: ImageSize;
+  crop?: ImageCrop;
 } & Omit<
   React.DetailedHTMLProps<
     React.ImgHTMLAttributes<HTMLImageElement>,
     HTMLImageElement
   >,
-  "alt" | "src"
+  "alt" | "src" | "srcSet"
 >;
 
 export function MediaImage({
   media,
   preferredSize = "large",
+  crop,
   ...props
 }: MediaImageProps) {
   if (typeof media !== "object") return null;
 
   const imageMeta = selectImageFromMedia(media, preferredSize);
 
-  const src = useImageSrc(imageMeta);
-  if (!src) return null;
+  const sources = useImageSources(imageMeta, crop);
+  if (!sources) return null;
 
   return (
     <img
-      src={src}
+      src={sources.src}
+      srcSet={sources.srcSet}
       alt={media.alt ?? undefined}
       width={imageMeta.width ?? undefined}
       height={imageMeta.height ?? undefined}
@@ -38,20 +41,23 @@ export function MediaImage({
   );
 }
 
-function useImageSrc(imageMeta: ImageMeta | undefined | null) {
+function useImageSources(
+  imageMeta: ImageMeta | undefined | null,
+  crop: ImageCrop | undefined,
+) {
   const { imagekitBaseUrl } = useEnvironment();
-  const src = useMemo(
+  const sources = useMemo(
     () =>
       imageMeta?.filename
-        ? imagekitUrl(imagekitBaseUrl, imageMeta.filename)
+        ? imagekitImageSources(imagekitBaseUrl, imageMeta.filename, crop)
         : null,
-    [imageMeta?.filename, imagekitBaseUrl],
+    [crop, imageMeta?.filename, imagekitBaseUrl],
   );
 
-  return src;
+  return sources;
 }
 
-function selectImageFromMedia(media: Media, preferredSize: ImageSize) {
+export function selectImageFromMedia(media: Media, preferredSize: ImageSize) {
   if (!media.sizes) return media;
 
   const preferredSizeInfo = mediaImageSizes.find(

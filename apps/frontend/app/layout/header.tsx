@@ -160,6 +160,7 @@ function Avatar({
         media={avatar}
         preferredSize="thumbnail"
         sizes={large ? "4rem" : "2.25rem"}
+        crop={{ aspectRatio: 1, widths: large ? [64, 128] : [36, 72] }}
         className={clsx(
           "rounded-full bg-zinc-100 object-cover dark:bg-zinc-800",
           large ? "h-16 w-16" : "h-9 w-9",
