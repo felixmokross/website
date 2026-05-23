@@ -5,7 +5,7 @@ import {
   getConfig,
   getLastReleaseVersionTag,
   getReleaseNotes,
-} from "src/common";
+} from "../common";
 
 program
   .command("publish")
