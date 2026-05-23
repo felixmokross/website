@@ -4,9 +4,10 @@ packages:
   - "tests/*"
   - "tools/*"
 
-onlyBuiltDependencies:
-  - esbuild
-  - sharp
+allowBuilds:
+  "@parcel/watcher": true
+  esbuild: true
+  sharp: true
 
 overrides:
   "@aws-sdk/client-s3@3.782.0": 3.1048.0
