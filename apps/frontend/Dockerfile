@@ -19,6 +19,7 @@ RUN corepack enable pnpm
 
 # Throw-away build stage to reduce size of final image
 FROM base AS build
+ENV CI=true
 
 # Install packages needed to build node modules
 RUN apt-get update -qq && \
