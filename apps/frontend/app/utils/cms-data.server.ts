@@ -193,9 +193,10 @@ export async function getPages() {
     .docs as Page[];
 }
 
-export async function getPosts() {
-  return (await loadData(`posts`, 0, { "where[_status][equals]": "published" }))
-    .docs as Post[];
+export async function getPosts(depth = 0) {
+  return (
+    await loadData(`posts`, depth, { "where[_status][equals]": "published" })
+  ).docs as Post[];
 }
 
 export async function tryGetRedirect(pathname: string) {
