@@ -1,12 +1,11 @@
 import { expect, test } from "vitest";
-import type { Media } from "@fxmk/payload-types";
 
-import { selectImageFromMedia } from "../components/media-image";
 import {
   imageCropTransformation,
   imagekitImageSources,
   imagekitUrl,
 } from "./imagekit";
+import { selectImageFromMedia } from "./media-image";
 
 test("builds an ImageKit URL for a plain path", () => {
   expect(imagekitUrl("https://ik.imagekit.io/demo", "folder/photo.jpg")).toBe(
@@ -91,6 +90,6 @@ test("uses the original image when it is not larger than the preferred size", ()
   expect(image).toMatchObject({ filename: "original.jpg" });
 });
 
-function media(value: Partial<Media>) {
-  return value as Media;
+function media(value: Parameters<typeof selectImageFromMedia>[0]) {
+  return value;
 }

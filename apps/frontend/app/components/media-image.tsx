@@ -1,8 +1,8 @@
-import { mediaImageSizes } from "@fxmk/shared";
 import { type Media } from "@fxmk/payload-types";
 import { useEnvironment } from "../utils/environment";
 import { useMemo } from "react";
 import { imagekitImageSources, type ImageCrop } from "~/utils/imagekit";
+import { selectImageFromMedia } from "~/utils/media-image";
 
 type MediaImageProps = {
   media: Media | string;
@@ -55,49 +55,6 @@ function useImageSources(
   );
 
   return sources;
-}
-
-export function selectImageFromMedia(media: Media, preferredSize: ImageSize) {
-  if (!media.sizes) return media;
-
-  const preferredSizeInfo = mediaImageSizes.find(
-    (s) => s.name === preferredSize,
-  );
-  if (!preferredSizeInfo) {
-    throw new Error(`Invalid preferredSize '${preferredSize}'`);
-  }
-
-  if (
-    media.width &&
-    preferredSizeInfo.width &&
-    media.width <= preferredSizeInfo.width
-  ) {
-    // original is smaller or same as the preferred size, return original
-    return media;
-  }
-
-  // use preferredSize or next available larger size (to avoid returning a too big original if preferredSize was not generated)
-  const preferredSizeIndex = mediaImageSizes.indexOf(preferredSizeInfo);
-  for (
-    let index = preferredSizeIndex;
-    index < mediaImageSizes.length;
-    index++
-  ) {
-    const size = mediaImageSizes[index].name as ImageSize;
-
-    const image = media.sizes[size];
-    if (image && image.filename) return image;
-  }
-
-  // if no larger size is available, return the next smaller size
-  for (let index = preferredSizeIndex - 1; index >= 0; index--) {
-    const size = mediaImageSizes[index].name as ImageSize;
-
-    const image = media.sizes[size];
-    if (image && image.filename) return image;
-  }
-
-  return media;
 }
 
 export type ImageSize = keyof NonNullable<Media["sizes"]>;
