@@ -4,17 +4,21 @@ import { getMeta, getPosts, tryGetPage } from "~/utils/cms-data.server";
 import { parseISO, format } from "date-fns";
 import { getSocialImageUrl } from "~/utils/page-meta";
 import { getEnvironment } from "~/utils/environment.server";
+import type { Media, Post } from "@fxmk/payload-types";
 
 const rssDateFormat = "eee, dd MMM yyyy HH:mm:ss xx";
+const rssImageWidth = 1200;
+const rssImageHeight = 630;
 
 export async function loader({ request }: Route.LoaderArgs) {
   const [meta, page, posts] = await Promise.all([
     getMeta(),
     tryGetPage("/articles"),
-    getPosts(),
+    getPosts(1),
   ]);
 
   if (!page) throw new Response(null, { status: 404, statusText: "Not Found" });
+  const environment = getEnvironment(request);
 
   const channelLastChanged = posts
     .map((p) => p.publishedAt)
@@ -22,7 +26,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     .map((d) => format(parseISO(d!), rssDateFormat));
 
   const content = `<?xml version="1.0" encoding="UTF-8"?>
-     <rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:webfeeds="http://webfeeds.org/rss/1.0" version="2.0">
+     <rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:webfeeds="http://webfeeds.org/rss/1.0" version="2.0">
        <channel>
          <title>${meta.siteName ?? ""}</title>
          <link>${getCanonicalUrl(request, "/articles")}</link>
@@ -31,21 +35,23 @@ export async function loader({ request }: Route.LoaderArgs) {
          <ttl>60</ttl>
          <lastBuildDate>${channelLastChanged}</lastBuildDate>
          <atom:link href="${getCanonicalRequestUrl(request)}" rel="self" type="application/rss+xml" />
-         <webfeeds:cover image="${getSocialImageUrl(page.meta!, 2400, 1260, getEnvironment(request))}" />
+         <webfeeds:cover image="${getSocialImageUrl(page.meta!, 2400, 1260, environment)}" />
          <webfeeds:icon>${getCanonicalUrl(request, "/favicon-96x96.png")}</webfeeds:icon>
          <webfeeds:logo>${getCanonicalUrl(request, "/favicon.svg")}</webfeeds:logo>
          <webfeeds:accentColor>#2dd4bf</webfeeds:accentColor>
          ${posts
-           .map(
-             ({ title, content_summary, publishedAt, slug }) => `
+           .map((post) => {
+             const { title, content_summary, publishedAt, slug } = post;
+             return `
            <item>
              <title>${cdata(title)}</title>
              <description>${cdata(content_summary ?? "")}</description>
              ${publishedAt ? `<pubDate>${format(parseISO(publishedAt), rssDateFormat)}</pubDate>` : ""}
              <link>${getCanonicalUrl(request, `/articles/${slug}`)}</link>
              <guid>${getCanonicalUrl(request, `/articles/${slug}`)}</guid>
-           </item>`,
-           )
+             ${getItemImageTags(post, environment)}
+           </item>`;
+           })
            .join("")}
        </channel>
      </rss>`;
@@ -66,4 +72,27 @@ function getCanonicalUrl(request: Request, pathname: string) {
 
 function cdata(s: string) {
   return `<![CDATA[${s}]]>`;
+}
+
+function getItemImageTags(
+  post: Post,
+  environment: ReturnType<typeof getEnvironment>,
+) {
+  const image = post.meta?.image;
+  if (!isMedia(image)) return "";
+
+  const imageUrl = getSocialImageUrl(
+    { image },
+    rssImageWidth,
+    rssImageHeight,
+    environment,
+  );
+  const type = image.mimeType ?? "";
+
+  return `<media:content url="${imageUrl}" medium="image" type="${type}" width="${rssImageWidth}" height="${rssImageHeight}" />
+             <media:thumbnail url="${imageUrl}" width="${rssImageWidth}" height="${rssImageHeight}" />`;
+}
+
+function isMedia(image: Media | string | null | undefined): image is Media {
+  return typeof image === "object" && !!image?.filename;
 }
