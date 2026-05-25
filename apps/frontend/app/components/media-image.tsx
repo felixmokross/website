@@ -1,35 +1,38 @@
-import { mediaImageSizes } from "@fxmk/shared";
 import { type Media } from "@fxmk/payload-types";
 import { useEnvironment } from "../utils/environment";
 import { useMemo } from "react";
-import { imagekitUrl } from "~/utils/imagekit";
+import { imagekitImageSources, type ImageCrop } from "~/utils/imagekit";
+import { selectImageFromMedia } from "~/utils/media-image";
 
 type MediaImageProps = {
   media: Media | string;
   preferredSize: ImageSize;
+  crop?: ImageCrop;
 } & Omit<
   React.DetailedHTMLProps<
     React.ImgHTMLAttributes<HTMLImageElement>,
     HTMLImageElement
   >,
-  "alt" | "src"
+  "alt" | "src" | "srcSet"
 >;
 
 export function MediaImage({
   media,
   preferredSize = "large",
+  crop,
   ...props
 }: MediaImageProps) {
   if (typeof media !== "object") return null;
 
   const imageMeta = selectImageFromMedia(media, preferredSize);
 
-  const src = useImageSrc(imageMeta);
-  if (!src) return null;
+  const sources = useImageSources(imageMeta, crop);
+  if (!sources) return null;
 
   return (
     <img
-      src={src}
+      src={sources.src}
+      srcSet={sources.srcSet}
       alt={media.alt ?? undefined}
       width={imageMeta.width ?? undefined}
       height={imageMeta.height ?? undefined}
@@ -38,60 +41,29 @@ export function MediaImage({
   );
 }
 
-function useImageSrc(imageMeta: ImageMeta | undefined | null) {
+function useImageSources(
+  imageMeta: ImageMeta | undefined | null,
+  crop: ImageCrop | undefined,
+) {
   const { imagekitBaseUrl } = useEnvironment();
-  const src = useMemo(
+  const sources = useMemo(
     () =>
       imageMeta?.filename
-        ? imagekitUrl(imagekitBaseUrl, imageMeta.filename)
+        ? imagekitImageSources(imagekitBaseUrl, imageMeta.filename, crop, {
+            width: imageMeta.width,
+            height: imageMeta.height,
+          })
         : null,
-    [imageMeta?.filename, imagekitBaseUrl],
+    [
+      crop,
+      imageMeta?.filename,
+      imageMeta?.height,
+      imageMeta?.width,
+      imagekitBaseUrl,
+    ],
   );
 
-  return src;
-}
-
-function selectImageFromMedia(media: Media, preferredSize: ImageSize) {
-  if (!media.sizes) return media;
-
-  const preferredSizeInfo = mediaImageSizes.find(
-    (s) => s.name === preferredSize,
-  );
-  if (!preferredSizeInfo) {
-    throw new Error(`Invalid preferredSize '${preferredSize}'`);
-  }
-
-  if (
-    media.width &&
-    preferredSizeInfo.width &&
-    media.width <= preferredSizeInfo.width
-  ) {
-    // original is smaller or same as the preferred size, return original
-    return media;
-  }
-
-  // use preferredSize or next available larger size (to avoid returning a too big original if preferredSize was not generated)
-  const preferredSizeIndex = mediaImageSizes.indexOf(preferredSizeInfo);
-  for (
-    let index = preferredSizeIndex;
-    index < mediaImageSizes.length;
-    index++
-  ) {
-    const size = mediaImageSizes[index].name as ImageSize;
-
-    const image = media.sizes[size];
-    if (image && image.filename) return image;
-  }
-
-  // if no larger size is available, return the next smaller size
-  for (let index = preferredSizeIndex - 1; index >= 0; index--) {
-    const size = mediaImageSizes[index].name as ImageSize;
-
-    const image = media.sizes[size];
-    if (image && image.filename) return image;
-  }
-
-  return media;
+  return sources;
 }
 
 export type ImageSize = keyof NonNullable<Media["sizes"]>;

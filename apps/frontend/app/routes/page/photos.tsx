@@ -28,6 +28,7 @@ export function Photos({ photos }: PhotosProps) {
               media={photo.image}
               preferredSize="small"
               sizes="(min-width: 640px) 18rem, 11rem"
+              crop={{ aspectRatio: 9 / 10, widths: [176, 352, 288, 576] }}
               className="absolute inset-0 h-full w-full object-cover"
             />
           </div>
