@@ -5,6 +5,11 @@ export type ImageCrop = {
   widths: number[];
 };
 
+export type ImageCropSource = {
+  width?: number | null;
+  height?: number | null;
+};
+
 export function imagekitUrl(
   urlEndpoint: string,
   filename: string,
@@ -21,6 +26,7 @@ export function imagekitImageSources(
   urlEndpoint: string,
   filename: string,
   crop?: ImageCrop,
+  source?: ImageCropSource,
 ) {
   if (!crop) {
     return {
@@ -28,7 +34,10 @@ export function imagekitImageSources(
     };
   }
 
-  const widths = normalizeWidths(crop.widths);
+  const widths = normalizeWidths(
+    crop.widths,
+    getMaxCropWidth(crop.aspectRatio, source),
+  );
   if (widths.length === 0) {
     return {
       src: imagekitUrl(urlEndpoint, filename),
@@ -66,8 +75,29 @@ export function imageCropTransformation(
   };
 }
 
-function normalizeWidths(widths: number[]) {
-  return [...new Set(widths.map(Math.round).filter((width) => width > 0))].sort(
-    (a, b) => a - b,
-  );
+function normalizeWidths(widths: number[], maxWidth?: number) {
+  return [
+    ...new Set(
+      widths
+        .map(Math.round)
+        .filter((width) => width > 0)
+        .map((width) => (maxWidth ? Math.min(width, maxWidth) : width)),
+    ),
+  ].sort((a, b) => a - b);
+}
+
+function getMaxCropWidth(aspectRatio: number, source?: ImageCropSource) {
+  const maxWidths = [
+    source?.width ?? undefined,
+    source?.height && aspectRatio > 0
+      ? Math.floor(source.height * aspectRatio)
+      : undefined,
+  ]
+    .filter((width): width is number => typeof width === "number" && width > 0)
+    .map(Math.floor)
+    .filter((width) => width > 0);
+
+  if (maxWidths.length === 0) return undefined;
+
+  return Math.min(...maxWidths);
 }

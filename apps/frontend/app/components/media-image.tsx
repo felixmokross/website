@@ -49,9 +49,18 @@ function useImageSources(
   const sources = useMemo(
     () =>
       imageMeta?.filename
-        ? imagekitImageSources(imagekitBaseUrl, imageMeta.filename, crop)
+        ? imagekitImageSources(imagekitBaseUrl, imageMeta.filename, crop, {
+            width: imageMeta.width,
+            height: imageMeta.height,
+          })
         : null,
-    [crop, imageMeta?.filename, imagekitBaseUrl],
+    [
+      crop,
+      imageMeta?.filename,
+      imageMeta?.height,
+      imageMeta?.width,
+      imagekitBaseUrl,
+    ],
   );
 
   return sources;

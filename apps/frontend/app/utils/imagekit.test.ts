@@ -34,6 +34,42 @@ test("builds responsive cropped ImageKit sources", () => {
   });
 });
 
+test("clamps cropped ImageKit sources to source image width", () => {
+  expect(
+    imagekitImageSources(
+      "https://ik.imagekit.io/demo",
+      "folder/photo.jpg",
+      {
+        aspectRatio: 1,
+        widths: [320, 640, 1024],
+      },
+      { width: 500 },
+    ),
+  ).toEqual({
+    src: "https://ik.imagekit.io/demo/folder/photo.jpg?tr=w-500,h-500,c-maintain_ratio,fo-center",
+    srcSet:
+      "https://ik.imagekit.io/demo/folder/photo.jpg?tr=w-320,h-320,c-maintain_ratio,fo-center 320w, https://ik.imagekit.io/demo/folder/photo.jpg?tr=w-500,h-500,c-maintain_ratio,fo-center 500w",
+  });
+});
+
+test("clamps cropped ImageKit sources to source image height", () => {
+  expect(
+    imagekitImageSources(
+      "https://ik.imagekit.io/demo",
+      "folder/photo.jpg",
+      {
+        aspectRatio: 1,
+        widths: [320, 500],
+      },
+      { width: 500, height: 300 },
+    ),
+  ).toEqual({
+    src: "https://ik.imagekit.io/demo/folder/photo.jpg?tr=w-300,h-300,c-maintain_ratio,fo-center",
+    srcSet:
+      "https://ik.imagekit.io/demo/folder/photo.jpg?tr=w-300,h-300,c-maintain_ratio,fo-center 300w",
+  });
+});
+
 test("calculates crop height from aspect ratio", () => {
   expect(imageCropTransformation(9 / 10, 288)).toMatchObject({
     width: "288",
