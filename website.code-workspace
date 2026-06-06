@@ -6,7 +6,6 @@
     { "name": "libs/shared", "path": "./libs/shared" },
     { "name": "libs/payload-types", "path": "./libs/payload-types" },
     { "name": "tests/e2e", "path": "./tests/e2e" },
-    { "name": "tools/releaser", "path": "./tools/releaser" },
   ],
   "settings": {
     "editor.formatOnSave": true,

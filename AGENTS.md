@@ -35,7 +35,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the full contribution guidelines.
 - Generated Payload types package: `libs/payload-types`
 - Shared workspace package: `libs/shared`
 - End-to-end tests: `tests/e2e`
-- Release tooling: `tools/releaser`
+- Release tooling: `@fxmk/releaser`
 
 ## Development Commands
 
