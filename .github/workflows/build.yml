@@ -116,10 +116,6 @@ jobs:
           version: ${{ env.FLYCTL_VERSION }}
       - name: Setup
         uses: ./.github/actions/setup
-      - name: Set version on frontend
-        run: |
-          pnpm version ${{ needs.version.outputs.version }} --git-tag-version false
-        working-directory: apps/frontend
       - name: Download CMS types
         uses: actions/download-artifact@v4
         with:
@@ -139,6 +135,7 @@ jobs:
             --app ${{ steps.image-name.outputs.image_name }} \
             --config apps/frontend/fly.build.toml \
             --build-only \
+            --build-arg APP_VERSION=${{ needs.version.outputs.version }} \
             --image-label ${{ steps.image-name.outputs.image_tag }} \
             --label org.opencontainers.image.version=${{ steps.image-name.outputs.image_tag }} \
             --push \
@@ -186,10 +183,6 @@ jobs:
           version: ${{ env.FLYCTL_VERSION }}
       - name: Setup
         uses: ./.github/actions/setup
-      - name: Set version on CMS
-        run: |
-          pnpm version ${{ needs.version.outputs.version }} --git-tag-version false
-        working-directory: apps/cms
       - name: Get CMS image name
         id: image-name
         run: |
@@ -204,6 +197,7 @@ jobs:
             --app ${{ steps.image-name.outputs.image_name }} \
             --config apps/cms/fly.build.toml \
             --build-only \
+            --build-arg APP_VERSION=${{ needs.version.outputs.version }} \
             --image-label ${{ steps.image-name.outputs.image_tag }} \
             --label org.opencontainers.image.version=${{ steps.image-name.outputs.image_tag }} \
             --push \
