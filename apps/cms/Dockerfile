@@ -32,6 +32,7 @@ COPY --link libs/shared libs/shared
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
+RUN cp apps/cms/package.json /tmp/cms-package.json
 ARG APP_VERSION=0.0.0-unknown
 RUN node -e "const fs=require('node:fs'); const file='apps/cms/package.json'; const pkg=JSON.parse(fs.readFileSync(file,'utf8')); pkg.version=process.env.APP_VERSION; fs.writeFileSync(file, JSON.stringify(pkg, null, 2)+'\n');"
 
@@ -39,6 +40,7 @@ RUN cd apps/cms && \
     NODE_OPTIONS=--no-deprecation ./node_modules/.bin/payload generate:types && \
     NODE_OPTIONS=--no-deprecation ./node_modules/.bin/next build
 RUN node -e "const fs=require('node:fs'); const file='apps/cms/.next/standalone/apps/cms/package.json'; const pkg=JSON.parse(fs.readFileSync(file,'utf8')); pkg.version=process.env.APP_VERSION; fs.writeFileSync(file, JSON.stringify(pkg, null, 2)+'\n');"
+RUN cp /tmp/cms-package.json apps/cms/package.json
 
 # Production image, copy all the files and run next
 FROM base AS runner
