@@ -13,6 +13,7 @@
     "check": "pnpm generate:types && pnpm check-format && pnpm lint && pnpm typecheck:generated && pnpm test && pnpm build:generated"
   },
   "devDependencies": {
+    "@fxmk/releaser": "^0.5.5",
     "prettier": "^3.8.3"
   },
   "dependencies": {
